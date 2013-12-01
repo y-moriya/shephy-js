@@ -292,6 +292,24 @@ describe('shephy', function () {
       w.enemySheepCount = 1000;
       expect(S.listPossibleMoves(w).length).toEqual(0);
     });
+    it('lists only "remake Deck" if Hand and Deck are empty', function () {
+      var w = S.makeInitalWorld();
+      w.discardPile = w.deck;
+      w.deck = [];
+
+      expect(w.hand.length).toEqual(0);
+      expect(w.deck.length).toEqual(0);
+      expect(w.discardPile.length).toEqual(22);
+      expect(w.enemySheepCount).toEqual(1);
+
+      var moves = S.listPossibleMoves(w);
+      expect(moves.length).toEqual(1);
+      var wd = S.force(moves[0].gameTreePromise).world;
+      expect(wd.hand.length).toEqual(5);
+      expect(wd.deck.length).toEqual(17);
+      expect(wd.discardPile.length).toEqual(0);
+      expect(wd.enemySheepCount).toEqual(10);
+    });
   });
 });
 

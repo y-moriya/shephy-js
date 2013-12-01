@@ -166,6 +166,21 @@ var shephy = {};
     if (1000 <= world.enemySheepCount)
       return [];
 
+    if (world.hand.length == 0 && world.deck.length == 0) {
+      return [
+        {
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.remakeDeckX(wn);
+            while (S.shouldDraw(wn))
+              S.drawX(wn);
+            wn.enemySheepCount *= 10;
+            return S.makeGameTree(wn);
+          })
+        }
+      ];
+    }
+
     if (S.shouldDraw(world)) {
       return [
         {
