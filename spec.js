@@ -283,6 +283,15 @@ describe('shephy', function () {
       expect(wd.hand.length).toEqual(5);
       expect(wd.deck.length).toEqual(17);
     });
+    it('lists nothing if the game is lost by 1000 enemies', function () {
+      var w = S.makeInitalWorld();
+
+      w.enemySheepCount = 1;
+      expect(S.listPossibleMoves(w).length).toEqual(1);
+
+      w.enemySheepCount = 1000;
+      expect(S.listPossibleMoves(w).length).toEqual(0);
+    });
   });
 });
 

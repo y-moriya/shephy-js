@@ -163,6 +163,9 @@ var shephy = {};
   };
 
   S.listPossibleMoves = function (world) {
+    if (1000 <= world.enemySheepCount)
+      return [];
+
     if (S.shouldDraw(world)) {
       return [
         {
