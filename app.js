@@ -172,6 +172,9 @@ var shephy = {};
     if (1000 <= world.enemySheepCount)
       return [];
 
+    if (world.field.length == 0)
+      return [];
+
     if (world.hand.length == 0 && world.deck.length == 0) {
       return [
         {

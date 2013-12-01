@@ -331,6 +331,14 @@ describe('shephy', function () {
       expect(wd.discardPile.length).toEqual(0);
       expect(wd.enemySheepCount).toEqual(10);
     });
+    it('lists nothing if the game is lost by no Sheep in Field', function () {
+      var w = S.makeInitalWorld();
+      S.releaseX(w, 0);
+
+      expect(w.field.length).toEqual(0);
+      expect(w.sheepStock[1].length).toEqual(7);
+      expect(S.listPossibleMoves(w).length).toEqual(0);
+    });
   });
 });
 
