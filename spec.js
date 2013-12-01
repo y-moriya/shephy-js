@@ -61,6 +61,74 @@ describe('shephy', function () {
       }
     });
   });
+  describe('gainX', function () {
+    it('takes a Sheep card from Sheep Stock and puts into Field', function () {
+      var w = S.makeInitalWorld();
+      var c = w.sheepStock[3][7 - 1];
+
+      expect(w.field.length).toEqual(1);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.sheepStock[3].length).toEqual(7);
+
+      S.gainX(w, 3);
+
+      expect(w.field.length).toEqual(2);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.field[1]).toBe(c);
+      expect(w.sheepStock[3].length).toEqual(6);
+    });
+    it('does nothing if no Sheep with a given rank is available', function () {
+      var w = S.makeInitalWorld();
+      w.sheepStock[3] = [];
+
+      expect(w.field.length).toEqual(1);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.sheepStock[3].length).toEqual(0);
+      expect(w.sheepStock[10].length).toEqual(7);
+
+      S.gainX(w, 3);
+
+      expect(w.field.length).toEqual(1);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.sheepStock[3].length).toEqual(0);
+      expect(w.sheepStock[10].length).toEqual(7);
+
+      S.gainX(w, 10);
+
+      expect(w.field.length).toEqual(2);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.field[1].rank).toEqual(10);
+      expect(w.sheepStock[3].length).toEqual(0);
+      expect(w.sheepStock[10].length).toEqual(6);
+    });
+    it('does nothing if no space is available in Field', function () {
+      function test(n) {
+        expect(w.field.length).toEqual(1 + n);
+        expect(w.field[0].rank).toEqual(1);
+        for (var i = 1; i < n; i++)
+          expect(w.field[i].rank).toEqual(3);
+        expect(w.sheepStock[3].length).toEqual(7 - n);
+      }
+
+      var w = S.makeInitalWorld();
+      expect(w.field.length).toEqual(1);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.sheepStock[3].length).toEqual(7);
+
+      S.gainX(w, 3);
+      S.gainX(w, 3);
+      S.gainX(w, 3);
+      S.gainX(w, 3);
+      S.gainX(w, 3);
+      test(5);
+
+      S.gainX(w, 3);
+      test(6);
+
+      S.gainX(w, 3);
+      test(6);
+    });
+  });
 });
 
 // vim: expandtab softtabstop=2 shiftwidth=2

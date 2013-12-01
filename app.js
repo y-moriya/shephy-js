@@ -100,6 +100,15 @@ var shephy = {};
       exile: []
     };
   };
+
+  S.gainX = function (world, rank) {
+    if (world.sheepStock[rank].length == 0)
+      return;
+    if (7 - world.field.length <= 0)
+      return;
+
+    world.field.push(world.sheepStock[rank].pop());
+  };
 })(shephy, jQuery);
 
 // vim: expandtab softtabstop=2 shiftwidth=2 foldmethod=marker
