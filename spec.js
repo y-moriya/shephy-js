@@ -129,6 +129,33 @@ describe('shephy', function () {
       test(6);
     });
   });
+  describe('releaseX', function () {
+    it('moves a specified Sheep card in Field to Sheep Stock', function () {
+      var w = S.makeInitalWorld();
+      S.gainX(w, 3);
+      S.gainX(w, 10);
+      var c = w.field[1];
+
+      expect(w.field.length).toEqual(3);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.field[1].rank).toEqual(3);
+      expect(w.field[2].rank).toEqual(10);
+      expect(w.sheepStock[1].length).toEqual(6);
+      expect(w.sheepStock[3].length).toEqual(6);
+      expect(w.sheepStock[10].length).toEqual(6);
+      expect(w.sheepStock[3][w.sheepStock[3].length - 1]).not.toBe(c);
+
+      S.releaseX(w, 1);
+
+      expect(w.field.length).toEqual(2);
+      expect(w.field[0].rank).toEqual(1);
+      expect(w.field[1].rank).toEqual(10);
+      expect(w.sheepStock[1].length).toEqual(6);
+      expect(w.sheepStock[3].length).toEqual(7);
+      expect(w.sheepStock[10].length).toEqual(6);
+      expect(w.sheepStock[3][w.sheepStock[3].length - 1]).toBe(c);
+    });
+  });
 });
 
 // vim: expandtab softtabstop=2 shiftwidth=2

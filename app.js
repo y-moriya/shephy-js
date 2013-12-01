@@ -109,6 +109,11 @@ var shephy = {};
 
     world.field.push(world.sheepStock[rank].pop());
   };
+
+  S.releaseX = function (world, fieldIndex) {
+    var c = world.field.splice(fieldIndex, 1)[0];
+    world.sheepStock[c.rank].push(c);
+  };
 })(shephy, jQuery);
 
 // vim: expandtab softtabstop=2 shiftwidth=2 foldmethod=marker
