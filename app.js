@@ -137,6 +137,11 @@ var shephy = {};
     world.sheepStock[c.rank].push(c);
   };
 
+  S.discardX = function (world, handIndex) {
+    var c = world.hand.splice(handIndex, 1)[0];
+    world.discardPile.push(c);
+  };
+
   S.exileX = function (world, region, index) {
     var c = region.splice(index, 1)[0];
     world.exile.push(c);

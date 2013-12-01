@@ -269,6 +269,36 @@ describe('shephy', function () {
       expect(nsd.concat().sort()).toEqual(ns0.concat().sort());
     });
   });
+  describe('discardX', function () {
+    it('moves a card in Hand to Discard Pile', function () {
+      var w = S.makeInitalWorld();
+      S.drawX(w);
+      S.drawX(w);
+      S.drawX(w);
+      var c1 = w.hand[0];
+      var c2 = w.hand[1];
+      var c3 = w.hand[2];
+
+      expect(w.hand.length).toEqual(3);
+      expect(w.discardPile.length).toEqual(0);
+
+      S.discardX(w, 1);
+
+      expect(w.hand.length).toEqual(2);
+      expect(w.hand[0]).toBe(c1);
+      expect(w.hand[1]).toBe(c3);
+      expect(w.discardPile.length).toEqual(1);
+      expect(w.discardPile[0]).toBe(c2);
+
+      S.discardX(w, 0);
+
+      expect(w.hand.length).toEqual(1);
+      expect(w.hand[0]).toBe(c3);
+      expect(w.discardPile.length).toEqual(2);
+      expect(w.discardPile[0]).toBe(c2);
+      expect(w.discardPile[1]).toBe(c1);
+    });
+  });
   describe('shouldDraw', function () {
     it('returns false if Hand is full', function () {
       expect(S.shouldDraw({hand: [1, 2, 3, 4, 5], deck: ['...']})).toBeFalsy();
