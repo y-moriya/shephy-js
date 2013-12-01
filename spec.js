@@ -39,6 +39,7 @@ describe('shephy', function () {
         expect(c.type).toEqual(S.CARD_TYPE_EVENT);
       });
 
+      expect(w.hand.length).toEqual(0);
       expect(w.discardPile.length).toEqual(0);
       expect(w.exile.length).toEqual(0);
     });
@@ -50,6 +51,7 @@ describe('shephy', function () {
         'sheepStock',
         'field',
         'enemySheepCount',
+        'hand',
         'discardPile',
         'exile'
       ].forEach(function (member) {

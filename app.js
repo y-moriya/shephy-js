@@ -117,6 +117,7 @@ var shephy = {};
       field: [initialSheepCard],
       enemySheepCount: 1,
       deck: makeInitalDeck(),
+      hand: [],
       discardPile: [],
       exile: []
     };
