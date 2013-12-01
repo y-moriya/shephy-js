@@ -353,6 +353,20 @@ describe('shephy', function () {
       S.gainX(ww, 1000);
       expect(S.listPossibleMoves(ww).length).toEqual(0);
     });
+    it('lists "play a card in Hand" otherwise', function () {
+      var w = S.makeInitalWorld();
+      for (var i = 0; i < 5; i++)
+        S.drawX(w);
+
+      var moves = S.listPossibleMoves(w);
+      expect(moves.length).toEqual(5);
+      for (var i = 0; i < 5; i++) {
+        var wn = S.force(moves[i].gameTreePromise).world;
+        expect(wn.hand).not.toContain(w.hand[i]);
+        expect(wn.discardPile.length).toEqual(1);
+        expect(wn.discardPile).toContain(w.hand[i]);
+      }
+    });
   });
 });
 

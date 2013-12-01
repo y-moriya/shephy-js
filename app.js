@@ -207,9 +207,15 @@ var shephy = {};
       ];
     }
 
-    // TODO: List moves for more cases.
-    var moves = [];
-    return moves;
+    return world.hand.map(function (c, i) {
+      return {
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          S.discardX(wn, i);
+          return S.makeGameTree(wn, c);
+        })
+      };
+    });
   };
 })(shephy, jQuery);
 
