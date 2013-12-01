@@ -39,7 +39,7 @@ var shephy = {};
       cards.push({
         name: n + '',
         type: S.CARD_TYPE_SHEEP,
-        count: n
+        rank: n
       });
     }
     return cards;

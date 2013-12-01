@@ -9,13 +9,13 @@ describe('shephy', function () {
         expect(w.sheepStock[n].length).toEqual(n == 1 ? 6 : 7);
         w.sheepStock[n].forEach(function (c) {
           expect(c.type).toEqual(S.CARD_TYPE_SHEEP);
-          expect(c.count).toEqual(n);
+          expect(c.rank).toEqual(n);
         });
       });
 
       expect(w.field.length).toEqual(1);
       expect(w.field[0].type).toEqual(S.CARD_TYPE_SHEEP);
-      expect(w.field[0].count).toEqual(1);
+      expect(w.field[0].rank).toEqual(1);
 
       expect(w.enemySheepCount).toEqual(1);
 
