@@ -248,6 +248,17 @@ describe('shephy', function () {
       test(5);
     });
   });
+  describe('shouldDraw', function () {
+    it('returns false if Hand is full', function () {
+      expect(S.shouldDraw({hand: [1, 2, 3, 4, 5], deck: ['...']})).toBeFalsy();
+    });
+    it('returns false if Deck is empty', function () {
+      expect(S.shouldDraw({hand: [1, 2, 3, 4], deck: []})).toBeFalsy();
+    });
+    it('returns true if Hand is not full and Deck is not empty', function () {
+      expect(S.shouldDraw({hand: [1, 2, 3, 4], deck: ['...']})).toBeTruthy();
+    });
+  });
   describe('makeGameTree', function () {
     it('makes a whole game tree from a given world', function () {
       var w = S.makeInitalWorld();

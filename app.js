@@ -151,6 +151,10 @@ var shephy = {};
     world.hand.push(world.deck.pop());
   };
 
+  S.shouldDraw = function (world) {
+    return world.hand.length < 5 && 0 < world.deck.length;
+  };
+
   S.makeGameTree = function (world) {
     return {
       world: world,
