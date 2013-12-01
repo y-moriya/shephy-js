@@ -27,6 +27,39 @@ describe('shephy', function () {
       expect(w.discardPile.length).toEqual(0);
       expect(w.exile.length).toEqual(0);
     });
+    it('returns a world with the same regions except Deck', function () {
+      var w0 = S.makeInitalWorld();
+      var wt = S.makeInitalWorld();
+
+      [
+        'sheepStock',
+        'field',
+        'enemySheepCount',
+        'discardPile',
+        'exile'
+      ].forEach(function (member) {
+        expect(wt[member]).toEqual(w0[member]);
+      });
+
+      var ns0 = w0.deck.map(function (c) {return c.name;});
+      ns0.sort();
+      var nst = wt.deck.map(function (c) {return c.name;});
+      nst.sort();
+      expect(ns0).toEqual(nst);
+    });
+    it('returns a shuffled Deck with the same set of cards', function () {
+      while (true) {
+        var w0 = S.makeInitalWorld();
+        var wt = S.makeInitalWorld();
+        var ns0 = w0.deck.map(function (c) {return c.name;});
+        var nst = wt.deck.map(function (c) {return c.name;});
+        if (ns0 == nst)
+          continue;
+
+        expect(ns0).not.toEqual(nst);
+        break;
+      }
+    });
   });
 });
 
