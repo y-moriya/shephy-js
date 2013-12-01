@@ -156,6 +156,36 @@ describe('shephy', function () {
       expect(w.sheepStock[3][w.sheepStock[3].length - 1]).toBe(c);
     });
   });
+  describe('exileX', function () {
+    it('moves a card in a region to Exile', function () {
+      var w = S.makeInitalWorld();
+      var c1 = w.field[0];
+      var c3 = w.sheepStock[3][w.sheepStock[3].length - 1];
+
+      expect(w.field.length).toEqual(1);
+      expect(w.field[0]).toBe(c1);
+      expect(w.sheepStock[3].length).toEqual(7);
+      expect(w.sheepStock[3][w.sheepStock[3].length - 1]).toBe(c3);
+      expect(w.exile.length).toEqual(0);
+
+      S.exileX(w, w.field, 0);
+
+      expect(w.field.length).toEqual(0);
+      expect(w.sheepStock[3].length).toEqual(7);
+      expect(w.sheepStock[3][w.sheepStock[3].length - 1]).toBe(c3);
+      expect(w.exile.length).toEqual(1);
+      expect(w.exile[0]).toBe(c1);
+
+      S.exileX(w, w.sheepStock[3], w.sheepStock[3].length - 1);
+
+      expect(w.field.length).toEqual(0);
+      expect(w.sheepStock[3].length).toEqual(6);
+      expect(w.sheepStock[3][w.sheepStock[3].length - 1]).not.toBe(c3);
+      expect(w.exile.length).toEqual(2);
+      expect(w.exile[0]).toBe(c1);
+      expect(w.exile[1]).toBe(c3);
+    });
+  });
 });
 
 // vim: expandtab softtabstop=2 shiftwidth=2

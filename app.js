@@ -114,6 +114,11 @@ var shephy = {};
     var c = world.field.splice(fieldIndex, 1)[0];
     world.sheepStock[c.rank].push(c);
   };
+
+  S.exileX = function (world, region, index) {
+    var c = region.splice(index, 1)[0];
+    world.exile.push(c);
+  };
 })(shephy, jQuery);
 
 // vim: expandtab softtabstop=2 shiftwidth=2 foldmethod=marker
