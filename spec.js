@@ -339,6 +339,20 @@ describe('shephy', function () {
       expect(w.sheepStock[1].length).toEqual(7);
       expect(S.listPossibleMoves(w).length).toEqual(0);
     });
+    it('lists nothing if the game is won by 1000 Sheep in Field', function () {
+      var wl = S.makeInitalWorld();
+      S.releaseX(wl, 0);
+      S.gainX(wl, 300);
+      S.gainX(wl, 300);
+      S.gainX(wl, 300);
+      S.gainX(wl, 100);
+      expect(S.listPossibleMoves(wl).length).not.toEqual(0);
+
+      var ww = S.makeInitalWorld();
+      S.releaseX(ww, 0);
+      S.gainX(ww, 1000);
+      expect(S.listPossibleMoves(ww).length).toEqual(0);
+    });
   });
 });
 

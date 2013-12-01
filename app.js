@@ -169,6 +169,10 @@ var shephy = {};
   };
 
   S.listPossibleMoves = function (world) {
+    // TODO: Add an option to continue the current game to compete high score.
+    if (world.field.some(function (c) {return c.rank == 1000;}))
+      return [];
+
     if (1000 <= world.enemySheepCount)
       return [];
 
