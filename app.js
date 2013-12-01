@@ -74,7 +74,7 @@ var shephy = {};
     };
   }
 
-  function makeInitalDeck(n) {
+  function makeInitalDeck() {
     var names = [
       'All-purpose Sheep',
       'Be Fruitful',
