@@ -33,6 +33,23 @@ var shephy = {};
     }
   }
 
+  S.delay = function(expressionAsFunction) {
+    var result;
+    var isEvaluated = false;
+
+    return function () {
+      if (!isEvaluated) {
+        result = expressionAsFunction();
+        isEvaluated = true;
+      }
+      return result;
+    };
+  };
+
+  S.force = function (promise) {
+    return promise();
+  };
+
   function makeSheepStockPile(n) {
     var cards = [];
     for (var i = 0; i < 7; i++) {
