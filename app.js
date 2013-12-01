@@ -141,6 +141,32 @@ var shephy = {};
     var c = region.splice(index, 1)[0];
     world.exile.push(c);
   };
+
+  S.makeGameTree = function (world) {
+    return {
+      world: world,
+      moves: S.listPossibleMoves(world)
+    };
+  };
+
+  S.listPossibleMoves = function (world) {
+    if (S.shouldDraw(world)) {
+      return [
+        {
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            while (S.shouldDraw(wn))
+              S.drawX(wn);
+            return S.makeGameTree(wn);
+          })
+        }
+      ];
+    }
+
+    // TODO: List moves for more cases.
+    var moves = [];
+    return moves;
+  };
 })(shephy, jQuery);
 
 // vim: expandtab softtabstop=2 shiftwidth=2 foldmethod=marker

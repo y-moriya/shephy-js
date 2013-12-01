@@ -1,5 +1,6 @@
 describe('shephy', function () {
   var S = shephy;
+  var any = jasmine.any;
 
   describe('clone', function () {
     it('recursively copy a given object', function () {
@@ -201,6 +202,31 @@ describe('shephy', function () {
       expect(w.exile.length).toEqual(2);
       expect(w.exile[0]).toBe(c1);
       expect(w.exile[1]).toBe(c3);
+    });
+  });
+  describe('makeGameTree', function () {
+    it('makes a whole game tree from a given world', function () {
+      var w = S.makeInitalWorld();
+      var gt = S.makeGameTree(w);
+
+      expect(gt.world).toBe(w);
+      expect(gt.moves).toEqual(any(Array));
+    });
+  });
+  describe('listPossibleMoves', function () {
+    it('lists only one move "draw cards" from the initial world', function () {
+      var w0 = S.makeInitalWorld();
+      var moves = S.listPossibleMoves(w0);
+
+      expect(moves).toEqual(any(Array));
+      expect(moves.length).toEqual(1);
+      expect(moves[0].gameTreePromise).toEqual(any(Function));
+
+      var wd = S.force(moves[0].gameTreePromise).world;
+      expect(w0.hand.length).toEqual(0);
+      expect(w0.deck.length).toEqual(22);
+      expect(wd.hand.length).toEqual(5);
+      expect(wd.deck.length).toEqual(17);
     });
   });
 });
