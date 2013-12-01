@@ -142,6 +142,15 @@ var shephy = {};
     world.exile.push(c);
   };
 
+  S.drawX = function (world) {
+    if (world.deck.length == 0)
+      return;
+    if (5 - world.hand.length <= 0)
+      return;
+
+    world.hand.push(world.deck.pop());
+  };
+
   S.makeGameTree = function (world) {
     return {
       world: world,

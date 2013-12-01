@@ -204,6 +204,50 @@ describe('shephy', function () {
       expect(w.exile[1]).toBe(c3);
     });
   });
+  describe('drawX', function () {
+    it('moves the top card in Deck to Hand', function () {
+      var w = S.makeInitalWorld();
+      var c = w.deck[w.deck.length - 1];
+
+      expect(w.hand.length).toEqual(0);
+      expect(w.deck[w.deck.length - 1]).toBe(c);
+
+      S.drawX(w);
+
+      expect(w.hand.length).toEqual(1);
+      expect(w.hand[0]).toBe(c);
+      expect(w.deck[w.deck.length - 1]).not.toBe(c);
+    });
+    it('does nothing if Deck is empty', function () {
+      var w = S.makeInitalWorld();
+      w.deck = [];
+
+      expect(w.hand.length).toEqual(0);
+      expect(w.deck.length).toEqual(0);
+
+      S.drawX(w);
+
+      expect(w.hand.length).toEqual(0);
+      expect(w.deck.length).toEqual(0);
+    });
+    it('does nothing if Hand is full', function () {
+      function test(n) {
+        expect(w.hand.length).toEqual(n);
+        expect(w.deck.length).toEqual(22 - n);
+      }
+      var w = S.makeInitalWorld();
+
+      test(0);
+
+      for (var i = 1; i <= 5; i++) {
+        S.drawX(w);
+        test(i);
+      }
+
+      S.drawX(w);
+      test(5);
+    });
+  });
   describe('makeGameTree', function () {
     it('makes a whole game tree from a given world', function () {
       var w = S.makeInitalWorld();
