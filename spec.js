@@ -248,6 +248,27 @@ describe('shephy', function () {
       test(5);
     });
   });
+  describe('remakeDeckX', function () {
+    it('puts cards in Discard Pile into Deck and shuffles them', function () {
+      var w = S.makeInitalWorld();
+      var ns0 = w.deck.map(function (c) {return c.name;});
+      w.discardPile.push(w.deck.pop());
+
+      expect(w.hand.length).toEqual(0);
+      expect(w.deck.length).toEqual(21);
+      expect(w.discardPile.length).toEqual(1);
+
+      S.remakeDeckX(w);
+      var nsd = w.deck.map(function (c) {return c.name;});
+
+      expect(w.hand.length).toEqual(0);
+      expect(w.deck.length).toEqual(22);
+      expect(w.discardPile.length).toEqual(0);
+
+      expect(nsd).not.toEqual(ns0);  // FIXME: Rarely fails.
+      expect(nsd.concat().sort()).toEqual(ns0.concat().sort());
+    });
+  });
   describe('shouldDraw', function () {
     it('returns false if Hand is full', function () {
       expect(S.shouldDraw({hand: [1, 2, 3, 4, 5], deck: ['...']})).toBeFalsy();

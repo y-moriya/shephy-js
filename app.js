@@ -151,6 +151,12 @@ var shephy = {};
     world.hand.push(world.deck.pop());
   };
 
+  S.remakeDeckX = function (world) {
+    world.deck.push.apply(world.deck, world.discardPile);
+    world.discardPile = [];
+    shuffle(world.deck);
+  };
+
   S.shouldDraw = function (world) {
     return world.hand.length < 5 && 0 < world.deck.length;
   };
