@@ -50,6 +50,10 @@ var shephy = {};
     return promise();
   };
 
+  S.clone = function (x) {
+    return JSON.parse(JSON.stringify(x));
+  };
+
   function makeSheepStockPile(n) {
     var cards = [];
     for (var i = 0; i < 7; i++) {

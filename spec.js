@@ -1,6 +1,21 @@
 describe('shephy', function () {
   var S = shephy;
 
+  describe('clone', function () {
+    it('recursively copy a given object', function () {
+      var x = {a: {b: {c: ['...']}}};
+      var xd = S.clone(x);
+
+      expect(xd).toEqual(x);
+      expect(xd).not.toBe(x);
+      expect(xd.a).toEqual(x.a);
+      expect(xd.a).not.toBe(x.a);
+      expect(xd.a.b).toEqual(x.a.b);
+      expect(xd.a.b).not.toBe(x.a.b);
+      expect(xd.a.b.c).toEqual(x.a.b.c);
+      expect(xd.a.b.c).not.toBe(x.a.b.c);
+    });
+  });
   describe('makeInitalWorld', function () {
     it('makes a new world', function () {
       var w = S.makeInitalWorld();
