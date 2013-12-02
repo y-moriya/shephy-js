@@ -166,10 +166,10 @@ var shephy = {};
     return world.hand.length < 5 && 0 < world.deck.length;
   };
 
-  S.makeGameTree = function (world) {
+  S.makeGameTree = function (world, opt_state) {
     return {
       world: world,
-      moves: S.listPossibleMoves(world)
+      moves: S.listPossibleMoves(world, opt_state)
     };
   };
 
