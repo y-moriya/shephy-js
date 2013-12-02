@@ -175,7 +175,19 @@ var shephy = {};
   };
 
   S.makeWorld = function (world, opt_state) {
-    return [world, opt_state];
+    if (opt_state === undefined)
+      return [world, opt_state];
+
+    var state = opt_state;
+    var sn;
+    var wn = S.clone(world);
+
+    if (state.step == 'play')
+      S.discardX(wn, state.handIndex);
+
+    // TODO: Make a new world based on state.
+
+    return [wn, sn];
   };
 
   S.listPossibleMoves = function (world, opt_state) {
@@ -233,9 +245,7 @@ var shephy = {};
       return {
         description: 'Play ' + c.name,
         gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          S.discardX(wn, i);
-          return S.makeGameTree(wn, c);
+          return S.makeGameTree(world, {step: 'play', handIndex: i});
         })
       };
     });
