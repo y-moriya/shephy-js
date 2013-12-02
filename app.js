@@ -182,8 +182,17 @@ var shephy = {};
     var sn;
     var wn = S.clone(world);
 
-    if (state.step == 'play')
+    if (state.step == 'play') {
       S.discardX(wn, state.handIndex);
+      var eventName = world.hand[state.handIndex].name;
+      switch (eventName) {
+        case 'Multiply':
+          S.gainX(wn, 3);
+          break;
+        default:
+          throw 'Not implemented card - ' + eventName;
+      }
+    }
 
     // TODO: Make a new world based on state.
 

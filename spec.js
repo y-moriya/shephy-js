@@ -397,6 +397,70 @@ describe('shephy', function () {
       }
     });
   });
+  describe('Event', function () {
+    function indexOf(xs, predicate) {
+      for (var i = 0; i < xs.length; i++) {
+        if (predicate(xs[i]))
+          return i;
+      }
+      return -1;
+    }
+    function setUpWorld(cardName) {
+      var w = S.makeInitalWorld();
+      var i = indexOf(w.deck, function (c) {return c.name == cardName;});
+      w.hand.push(w.deck.splice(i, 1)[0]);
+      return w;
+    }
+    describe('Multiply', function () {
+      it('puts a 3 Sheep card into Field', function () {
+        var w = setUpWorld('Multiply');
+
+        expect(w.deck.length).toEqual(21);
+        expect(w.discardPile.length).toEqual(0);
+        expect(w.hand.length).toEqual(1);
+        expect(w.hand[0].name).toEqual('Multiply');
+        expect(w.sheepStock[3].length).toEqual(7);
+        expect(w.field.length).toEqual(1);
+        expect(w.field[0].rank).toEqual(1);
+
+        var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
+
+        expect(gt.world.deck.length).toEqual(21);
+        expect(gt.world.discardPile.length).toEqual(1);
+        expect(gt.world.discardPile[0]).toEqual(w.hand[0]);
+        expect(gt.world.hand.length).toEqual(0);
+        expect(gt.world.sheepStock[3].length).toEqual(6);
+        expect(gt.world.field.length).toEqual(2);
+        expect(gt.world.field[0].rank).toEqual(1);
+        expect(gt.world.field[1].rank).toEqual(3);
+      });
+      it('does nothing if there is no space in Field', function () {
+        var w = setUpWorld('Multiply');
+        for (var i = 0; i < 6; i++)
+          S.gainX(w, 1);
+
+        expect(w.deck.length).toEqual(21);
+        expect(w.discardPile.length).toEqual(0);
+        expect(w.hand.length).toEqual(1);
+        expect(w.hand[0].name).toEqual('Multiply');
+        expect(w.sheepStock[3].length).toEqual(7);
+        expect(w.field.length).toEqual(7);
+        for (var i = 0; i < 7; i++)
+          expect(w.field[i].rank).toEqual(1);
+
+        var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
+
+        expect(gt.world.deck.length).toEqual(21);
+        expect(gt.world.discardPile.length).toEqual(1);
+        expect(gt.world.discardPile[0]).toEqual(w.hand[0]);
+        expect(gt.world.hand.length).toEqual(0);
+        expect(gt.world.sheepStock[3].length).toEqual(7);
+        expect(gt.world.field.length).toEqual(7);
+        for (var i = 0; i < 7; i++)
+          expect(gt.world.field[i].rank).toEqual(1);
+      });
+    });
+  });
 });
 
 // vim: expandtab softtabstop=2 shiftwidth=2
