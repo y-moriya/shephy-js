@@ -173,8 +173,11 @@ var shephy = {};
     };
   };
 
-  S.listPossibleMoves = function (world) {
-    return S.listPossibleMovesForBasicRules(world);
+  S.listPossibleMoves = function (world, opt_state) {
+    if (opt_state === undefined)
+      return S.listPossibleMovesForBasicRules(world);
+    else
+      return S.listPossibleMovesForPlayingCard(world, opt_state);
   }
 
   S.listPossibleMovesForBasicRules = function (world) {
@@ -231,6 +234,11 @@ var shephy = {};
         })
       };
     });
+  };
+
+  S.listPossibleMovesForPlayingCard = function (world, state) {
+    // TODO: Implement more cards.
+    return [];
   };
 })(shephy, jQuery);
 
