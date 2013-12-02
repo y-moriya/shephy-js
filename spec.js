@@ -394,10 +394,6 @@ describe('shephy', function () {
       expect(moves.length).toEqual(5);
       for (var i = 0; i < 5; i++) {
         expect(moves[i].description).toEqual('Play ' + w.hand[i].name);
-        var wn = S.force(moves[i].gameTreePromise).world;
-        expect(wn.hand).not.toContain(w.hand[i]);
-        expect(wn.discardPile.length).toEqual(1);
-        expect(wn.discardPile).toContain(w.hand[i]);
       }
     });
   });

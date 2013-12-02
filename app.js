@@ -238,7 +238,7 @@ var shephy = {};
 
   S.listPossibleMovesForPlayingCard = function (world, state) {
     // TODO: Implement more cards.
-    return [];
+    throw 'Invalid operation: state = ' + JSON.stringify(state);
   };
 })(shephy, jQuery);
 
