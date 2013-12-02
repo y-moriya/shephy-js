@@ -187,6 +187,7 @@ var shephy = {};
     if (world.hand.length == 0 && world.deck.length == 0) {
       return [
         {
+          description: 'Remake Deck then fill Hand',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.remakeDeckX(wn);
@@ -202,6 +203,10 @@ var shephy = {};
     if (S.shouldDraw(world)) {
       return [
         {
+          description:
+            5 - world.hand.length == 1
+            ? 'Draw a card'
+            : 'Draw cards',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             while (S.shouldDraw(wn))
@@ -214,6 +219,7 @@ var shephy = {};
 
     return world.hand.map(function (c, i) {
       return {
+        description: 'Play ' + c.name,
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           S.discardX(wn, i);

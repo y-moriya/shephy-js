@@ -326,6 +326,7 @@ describe('shephy', function () {
 
       expect(moves).toEqual(any(Array));
       expect(moves.length).toEqual(1);
+      expect(moves[0].description).toEqual('Draw cards');
       expect(moves[0].gameTreePromise).toEqual(any(Function));
 
       var wd = S.force(moves[0].gameTreePromise).world;
@@ -355,6 +356,7 @@ describe('shephy', function () {
 
       var moves = S.listPossibleMoves(w);
       expect(moves.length).toEqual(1);
+      expect(moves[0].description).toEqual('Remake Deck then fill Hand');
       var wd = S.force(moves[0].gameTreePromise).world;
       expect(wd.hand.length).toEqual(5);
       expect(wd.deck.length).toEqual(17);
@@ -391,6 +393,7 @@ describe('shephy', function () {
       var moves = S.listPossibleMoves(w);
       expect(moves.length).toEqual(5);
       for (var i = 0; i < 5; i++) {
+        expect(moves[i].description).toEqual('Play ' + w.hand[i].name);
         var wn = S.force(moves[i].gameTreePromise).world;
         expect(wn.hand).not.toContain(w.hand[i]);
         expect(wn.discardPile.length).toEqual(1);
