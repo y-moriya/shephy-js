@@ -166,6 +166,29 @@ var shephy = {};
     return world.hand.length < 5 && 0 < world.deck.length;
   };
 
+  S.judgeGame = function (world) {
+    if (world.field.some(function (c) {return c.rank == 1000;})) {
+      return {
+        state: 'win',
+        description: 'You win!'
+      };
+    }
+    if (world.enemySheepCount == 1000) {
+      return {
+        state: 'lose',
+        description: 'Enemies reached 1000 sheep - you lose.'
+      };
+    }
+    if (world.field.length == 0) {
+      return {
+        state: 'lose',
+        description: 'You lost all your sheep - you lose.'
+      };
+    }
+
+    throw 'Invalid operation';
+  };
+
   S.makeGameTree = function (world, opt_state) {
     var x = S.makeWorld(world, opt_state);
     return {

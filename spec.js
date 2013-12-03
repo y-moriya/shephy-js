@@ -310,6 +310,33 @@ describe('shephy', function () {
       expect(S.shouldDraw({hand: [1, 2, 3, 4], deck: ['...']})).toBeTruthy();
     });
   });
+  describe('judgeGame', function () {
+    it('returns "win" if there are at least one 1000 Sheep card', function () {
+      var w = S.makeInitalWorld();
+      S.gainX(w, 1000);
+      var r = S.judgeGame(w);
+      expect(r.state).toEqual('win');
+      expect(r.description).toEqual(any(String));
+    });
+    it('returns "lose" if there are 1000 enemies', function () {
+      var w = S.makeInitalWorld();
+      w.enemySheepCount = 1000;
+      var r = S.judgeGame(w);
+      expect(r.state).toEqual('lose');
+      expect(r.description).toEqual(any(String));
+    });
+    it('returns "lose" if there is no sheep in Field', function () {
+      var w = S.makeInitalWorld();
+      S.releaseX(w, 0);
+      var r = S.judgeGame(w);
+      expect(r.state).toEqual('lose');
+      expect(r.description).toEqual(any(String));
+    });
+    it('fails otherwise', function () {
+      var w = S.makeInitalWorld();
+      expect(function () {S.judgeGame(w);}).toThrow();
+    });
+  });
   describe('makeGameTree', function () {
     it('makes a whole game tree from a given world', function () {
       var w = S.makeInitalWorld();
