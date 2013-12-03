@@ -340,12 +340,12 @@ var shephy = {};
       value: m.description
     });
     $m.click(function () {
-      drawState(S.force(m.gameTreePromise));
+      drawGameTree(S.force(m.gameTreePromise));
     });
     return $m;
   }
 
-  function drawState(gameTree) {
+  function drawGameTree(gameTree) {
     var w = gameTree.world;
     [1, 3, 10, 30, 100, 300, 1000].forEach(function (rank) {
       $('#sheepStock' + rank + ' > .count').text(w.sheepStock[rank].length);
@@ -377,7 +377,7 @@ var shephy = {};
   //       (Show "Start a game" instead of "Draw cards)
 
   $(function () {
-    drawState(S.makeGameTree(S.makeInitalWorld()));
+    drawGameTree(S.makeGameTree(S.makeInitalWorld()));
   });
 
   //}}}1
