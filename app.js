@@ -202,10 +202,9 @@ var shephy = {};
       return [world, opt_state];
 
     var state = opt_state;
-    var sn;
-    var wn = S.clone(world);
-
     if (state.step == 'play') {
+      var wn = S.clone(world);
+      var sn;
       S.discardX(wn, state.handIndex);
       var eventName = world.hand[state.handIndex].name;
       switch (eventName) {
@@ -215,11 +214,10 @@ var shephy = {};
         default:
           throw 'Not implemented card - ' + eventName;
       }
+      return [wn, sn];
+    } else {
+      return [world, opt_state];
     }
-
-    // TODO: Make a new world based on state.
-
-    return [wn, sn];
   };
 
   S.listPossibleMoves = function (world, opt_state) {
