@@ -333,6 +333,15 @@ var shephy = {};
     $('#moves').empty().append(gameTree.moves.map(nodizeMove));
   }
 
+
+
+
+  // Bootstrap  {{{1
+
+  $(function () {
+    drawState(S.makeGameTree(S.makeInitalWorld()));
+  });
+
   //}}}1
 })(shephy, jQuery);
 
