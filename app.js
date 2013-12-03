@@ -325,7 +325,11 @@ var shephy = {};
     $('#discardPile > .cards').text(textizeCards(w.discardPile));
     $('#exile > .cards').text(textizeCards(w.exile));
 
-    $('#message').text('Choose a move:');  // TODO: Update for no move.
+    $('#message').text(
+      gameTree.moves.length == 0
+      ? S.judgeGame(gameTree.world).description
+      : 'Choose a move:'
+    );
     $('#moves').empty().append(gameTree.moves.map(nodizeMove));
   }
 
