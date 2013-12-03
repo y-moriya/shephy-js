@@ -438,6 +438,82 @@ describe('shephy', function () {
       w.hand.push(w.deck.splice(i, 1)[0]);
       return w;
     }
+    describe('Fill the Earth', function () {
+      it('shows two moves - gain or not', function () {
+        var w = setUpWorld('Fill the Earth');
+        S.drawX(w);
+        S.drawX(w);
+        S.drawX(w);
+        S.drawX(w);
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
+        expect(w0.deck.length).toEqual(17);
+        expect(w0.discardPile.length).toEqual(1);
+        expect(w0.discardPile[0].name).toEqual('Fill the Earth');
+        expect(w0.hand.length).toEqual(4);
+        expect(w0.field.length).toEqual(1);
+        expect(w0.field[0].rank).toEqual(1);
+        expect(gt0.moves.length).toEqual(2);
+
+        expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
+        var gt1g = S.force(gt0.moves[0].gameTreePromise);
+        var w1g = gt1g.world;
+        expect(w1g.field.length).toEqual(2);
+        expect(w1g.field[0].rank).toEqual(1);
+        expect(w1g.field[1].rank).toEqual(1);
+        expect(gt1g.moves.length).toEqual(2);
+        expect(gt1g.moves[0].description).toEqual('Gain a 1 Sheep card');
+        expect(gt1g.moves[1].description).toEqual('Cancel');
+
+        expect(gt0.moves[1].description).toEqual('Cancel');
+        var gt1c = S.force(gt0.moves[1].gameTreePromise);
+        var w1c = gt1c.world;
+        expect(w1c.field.length).toEqual(1);
+        expect(w1c.field[0].rank).toEqual(1);
+        expect(gt1c.moves.length).toEqual(1);
+        expect(gt1c.moves[0].description).toEqual('Draw a card');
+      });
+      it('repeats the same two moves until user cancels', function () {
+        var gt0 = S.makeGameTree(
+          setUpWorld('Fill the Earth'),
+          {step: 'play', handIndex: 0}
+        );
+        var w0 = gt0.world;
+        expect(w0.field.length).toEqual(1);
+        expect(w0.field[0].rank).toEqual(1);
+        expect(gt0.moves.length).toEqual(2);
+        expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Cancel');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(w1.field.length).toEqual(2);
+        expect(w1.field[0].rank).toEqual(1);
+        expect(w1.field[1].rank).toEqual(1);
+        expect(gt1.moves.length).toEqual(2);
+        expect(gt1.moves[0].description).toEqual('Gain a 1 Sheep card');
+        expect(gt1.moves[1].description).toEqual('Cancel');
+
+        var gt2 = S.force(gt1.moves[0].gameTreePromise);
+        var w2 = gt2.world;
+        expect(w2.field.length).toEqual(3);
+        expect(w2.field[0].rank).toEqual(1);
+        expect(w2.field[1].rank).toEqual(1);
+        expect(w2.field[2].rank).toEqual(1);
+        expect(gt2.moves.length).toEqual(2);
+        expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
+        expect(gt2.moves[1].description).toEqual('Cancel');
+      });
+      it('shows only "cancel" if ther is no space in Field', function () {
+        var w = setUpWorld('Fill the Earth');
+        for (var i = 0; i < 6; i++)
+          S.gainX(w, 3);
+        var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
+
+        expect(gt.moves.length).toEqual(1);
+        expect(gt.moves[0].description).toEqual('Cancel');
+      });
+    });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
         var w = setUpWorld('Multiply');

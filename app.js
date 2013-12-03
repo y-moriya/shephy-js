@@ -208,6 +208,9 @@ var shephy = {};
       S.discardX(wn, state.handIndex);
       var eventName = world.hand[state.handIndex].name;
       switch (eventName) {
+        case 'Fill the Earth':
+          sn = {step: 'Fill the Earth'};
+          break;
         case 'Multiply':
           S.gainX(wn, 3);
           break;
@@ -282,8 +285,33 @@ var shephy = {};
   };
 
   S.listPossibleMovesForPlayingCard = function (world, state) {
+    var moves = [];
+
     // TODO: Implement more cards.
-    throw 'Invalid operation: state = ' + JSON.stringify(state);
+    switch (state.step) {
+      case 'Fill the Earth':
+        if (world.field.length < 7) {
+          moves.push({
+            description: 'Gain a 1 Sheep card',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.gainX(wn, 1);
+              return S.makeGameTree(wn, state);
+            })
+          });
+        }
+        moves.push({
+          description: 'Cancel',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world);
+          })
+        });
+        break;
+      default:
+        throw 'Invalid operation: state = ' + JSON.stringify(state);
+    }
+
+    return moves;
   };
 
   // UI  {{{1
