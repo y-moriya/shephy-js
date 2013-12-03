@@ -87,7 +87,7 @@ var shephy = {};
       'Fill the Earth',
       'Flourish',
       'Golden Hooves',
-      'Inspirationi',
+      'Inspiration',
       'Lightning',
       'Meteor',
       'Multiply',
