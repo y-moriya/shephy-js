@@ -264,6 +264,49 @@ var shephy = {};
     // TODO: Implement more cards.
     throw 'Invalid operation: state = ' + JSON.stringify(state);
   };
+
+  // UI  {{{1
+
+  function textizeCards(cs) {
+    if (cs.length == 0)
+      return '-';
+    else
+      return cs.map(function (c) {return c.name;}).join(', ');
+  }
+
+  function nodizeMove(m) {
+    var $m = $('<input>');
+    $m.attr({
+      type: 'button',
+      value: m.description
+    });
+    $m.click(function () {
+      drawState(S.force(m.gameTreePromise));
+    });
+    return $m;
+  }
+
+  function drawState(gameTree) {
+    var w = gameTree.world;
+    [1, 3, 10, 30, 100, 300, 1000].forEach(function (rank) {
+      $('#sheepStock' + rank + ' > .count').text(w.sheepStock[rank].length);
+    });
+    $('#enemySheepCount > .count').text(w.enemySheepCount);
+    $('#field > .cards').text(
+      w.field
+      .map(function (c) {return c.rank;})
+      .join(', ')
+    );
+    $('#hand > .cards').text(textizeCards(w.hand));
+    $('#deck > .count').text(w.deck.length);
+    $('#discardPile > .cards').text(textizeCards(w.discardPile));
+    $('#exile > .cards').text(textizeCards(w.exile));
+
+    $('#message').text('Choose a move:');  // TODO: Update for no move.
+    $('#moves').empty().append(gameTree.moves.map(nodizeMove));
+  }
+
+  //}}}1
 })(shephy, jQuery);
 
 // vim: expandtab softtabstop=2 shiftwidth=2 foldmethod=marker
