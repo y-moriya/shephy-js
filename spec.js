@@ -443,11 +443,7 @@ describe('shephy', function () {
     }
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
-        var w = setUpWorld('Fill the Earth');
-        S.drawX(w);
-        S.drawX(w);
-        S.drawX(w);
-        S.drawX(w);
+        var w = setUpWorld('Fill the Earth', 5);
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
         expect(w0.deck.length).toEqual(17);
