@@ -55,9 +55,9 @@ describe('shephy', function () {
         expect(c.type).toEqual(S.CARD_TYPE_EVENT);
       });
 
-      expect(w.hand.length).toEqual(0);
-      expect(w.discardPile.length).toEqual(0);
-      expect(w.exile.length).toEqual(0);
+      expect(w.hand).toBeEmpty();
+      expect(w.discardPile).toBeEmpty();
+      expect(w.exile).toBeEmpty();
     });
     it('returns a world with the same regions except Deck', function () {
       var w0 = S.makeInitalWorld();
@@ -116,14 +116,14 @@ describe('shephy', function () {
 
       expect(w.field.length).toEqual(1);
       expect(w.field[0].rank).toEqual(1);
-      expect(w.sheepStock[3].length).toEqual(0);
+      expect(w.sheepStock[3]).toBeEmpty();
       expect(w.sheepStock[10].length).toEqual(7);
 
       S.gainX(w, 3);
 
       expect(w.field.length).toEqual(1);
       expect(w.field[0].rank).toEqual(1);
-      expect(w.sheepStock[3].length).toEqual(0);
+      expect(w.sheepStock[3]).toBeEmpty();
       expect(w.sheepStock[10].length).toEqual(7);
 
       S.gainX(w, 10);
@@ -131,7 +131,7 @@ describe('shephy', function () {
       expect(w.field.length).toEqual(2);
       expect(w.field[0].rank).toEqual(1);
       expect(w.field[1].rank).toEqual(10);
-      expect(w.sheepStock[3].length).toEqual(0);
+      expect(w.sheepStock[3]).toBeEmpty();
       expect(w.sheepStock[10].length).toEqual(6);
     });
     it('does nothing if no space is available in Field', function () {
@@ -199,11 +199,11 @@ describe('shephy', function () {
       expect(w.field[0]).toBe(c1);
       expect(w.sheepStock[3].length).toEqual(7);
       expect(w.sheepStock[3][w.sheepStock[3].length - 1]).toBe(c3);
-      expect(w.exile.length).toEqual(0);
+      expect(w.exile).toBeEmpty();
 
       S.exileX(w, w.field, 0);
 
-      expect(w.field.length).toEqual(0);
+      expect(w.field).toBeEmpty();
       expect(w.sheepStock[3].length).toEqual(7);
       expect(w.sheepStock[3][w.sheepStock[3].length - 1]).toBe(c3);
       expect(w.exile.length).toEqual(1);
@@ -211,7 +211,7 @@ describe('shephy', function () {
 
       S.exileX(w, w.sheepStock[3], w.sheepStock[3].length - 1);
 
-      expect(w.field.length).toEqual(0);
+      expect(w.field).toBeEmpty();
       expect(w.sheepStock[3].length).toEqual(6);
       expect(w.sheepStock[3][w.sheepStock[3].length - 1]).not.toBe(c3);
       expect(w.exile.length).toEqual(2);
@@ -224,7 +224,7 @@ describe('shephy', function () {
       var w = S.makeInitalWorld();
       var c = w.deck[w.deck.length - 1];
 
-      expect(w.hand.length).toEqual(0);
+      expect(w.hand).toBeEmpty();
       expect(w.deck[w.deck.length - 1]).toBe(c);
 
       S.drawX(w);
@@ -237,13 +237,13 @@ describe('shephy', function () {
       var w = S.makeInitalWorld();
       w.deck = [];
 
-      expect(w.hand.length).toEqual(0);
-      expect(w.deck.length).toEqual(0);
+      expect(w.hand).toBeEmpty();
+      expect(w.deck).toBeEmpty();
 
       S.drawX(w);
 
-      expect(w.hand.length).toEqual(0);
-      expect(w.deck.length).toEqual(0);
+      expect(w.hand).toBeEmpty();
+      expect(w.deck).toBeEmpty();
     });
     it('does nothing if Hand is full', function () {
       function test(n) {
@@ -269,16 +269,16 @@ describe('shephy', function () {
       var ns0 = w.deck.map(function (c) {return c.name;});
       w.discardPile.push(w.deck.pop());
 
-      expect(w.hand.length).toEqual(0);
+      expect(w.hand).toBeEmpty();
       expect(w.deck.length).toEqual(21);
       expect(w.discardPile.length).toEqual(1);
 
       S.remakeDeckX(w);
       var nsd = w.deck.map(function (c) {return c.name;});
 
-      expect(w.hand.length).toEqual(0);
+      expect(w.hand).toBeEmpty();
       expect(w.deck.length).toEqual(22);
-      expect(w.discardPile.length).toEqual(0);
+      expect(w.discardPile).toBeEmpty();
 
       expect(nsd).not.toEqual(ns0);  // FIXME: Rarely fails.
       expect(nsd.concat().sort()).toEqual(ns0.concat().sort());
@@ -295,7 +295,7 @@ describe('shephy', function () {
       var c3 = w.hand[2];
 
       expect(w.hand.length).toEqual(3);
-      expect(w.discardPile.length).toEqual(0);
+      expect(w.discardPile).toBeEmpty();
 
       S.discardX(w, 1);
 
@@ -372,7 +372,7 @@ describe('shephy', function () {
       expect(moves[0].gameTreePromise).toEqual(any(Function));
 
       var wd = S.force(moves[0].gameTreePromise).world;
-      expect(w0.hand.length).toEqual(0);
+      expect(w0.hand).toBeEmpty();
       expect(w0.deck.length).toEqual(22);
       expect(wd.hand.length).toEqual(5);
       expect(wd.deck.length).toEqual(17);
@@ -384,15 +384,15 @@ describe('shephy', function () {
       expect(S.listPossibleMoves(w).length).toEqual(1);
 
       w.enemySheepCount = 1000;
-      expect(S.listPossibleMoves(w).length).toEqual(0);
+      expect(S.listPossibleMoves(w)).toBeEmpty();
     });
     it('lists only "remake Deck" if Hand and Deck are empty', function () {
       var w = S.makeInitalWorld();
       w.discardPile = w.deck;
       w.deck = [];
 
-      expect(w.hand.length).toEqual(0);
-      expect(w.deck.length).toEqual(0);
+      expect(w.hand).toBeEmpty();
+      expect(w.deck).toBeEmpty();
       expect(w.discardPile.length).toEqual(22);
       expect(w.enemySheepCount).toEqual(1);
 
@@ -402,16 +402,16 @@ describe('shephy', function () {
       var wd = S.force(moves[0].gameTreePromise).world;
       expect(wd.hand.length).toEqual(5);
       expect(wd.deck.length).toEqual(17);
-      expect(wd.discardPile.length).toEqual(0);
+      expect(wd.discardPile).toBeEmpty();
       expect(wd.enemySheepCount).toEqual(10);
     });
     it('lists nothing if the game is lost by no Sheep in Field', function () {
       var w = S.makeInitalWorld();
       S.releaseX(w, 0);
 
-      expect(w.field.length).toEqual(0);
+      expect(w.field).toBeEmpty();
       expect(w.sheepStock[1].length).toEqual(7);
-      expect(S.listPossibleMoves(w).length).toEqual(0);
+      expect(S.listPossibleMoves(w)).toBeEmpty();
     });
     it('lists nothing if the game is won by 1000 Sheep in Field', function () {
       var wl = S.makeInitalWorld();
@@ -425,7 +425,7 @@ describe('shephy', function () {
       var ww = S.makeInitalWorld();
       S.releaseX(ww, 0);
       S.gainX(ww, 1000);
-      expect(S.listPossibleMoves(ww).length).toEqual(0);
+      expect(S.listPossibleMoves(ww)).toBeEmpty();
     });
     it('lists "play a card in Hand" otherwise', function () {
       var w = S.makeInitalWorld();
@@ -533,7 +533,7 @@ describe('shephy', function () {
         var w = setUpWorld('Multiply');
 
         expect(w.deck.length).toEqual(21);
-        expect(w.discardPile.length).toEqual(0);
+        expect(w.discardPile).toBeEmpty();
         expect(w.hand.length).toEqual(1);
         expect(w.hand[0].name).toEqual('Multiply');
         expect(w.sheepStock[3].length).toEqual(7);
@@ -545,7 +545,7 @@ describe('shephy', function () {
         expect(gt.world.deck.length).toEqual(21);
         expect(gt.world.discardPile.length).toEqual(1);
         expect(gt.world.discardPile[0]).toEqual(w.hand[0]);
-        expect(gt.world.hand.length).toEqual(0);
+        expect(gt.world.hand).toBeEmpty();
         expect(gt.world.sheepStock[3].length).toEqual(6);
         expect(gt.world.field.length).toEqual(2);
         expect(gt.world.field[0].rank).toEqual(1);
@@ -557,7 +557,7 @@ describe('shephy', function () {
           S.gainX(w, 1);
 
         expect(w.deck.length).toEqual(21);
-        expect(w.discardPile.length).toEqual(0);
+        expect(w.discardPile).toBeEmpty();
         expect(w.hand.length).toEqual(1);
         expect(w.hand[0].name).toEqual('Multiply');
         expect(w.sheepStock[3].length).toEqual(7);
@@ -570,7 +570,7 @@ describe('shephy', function () {
         expect(gt.world.deck.length).toEqual(21);
         expect(gt.world.discardPile.length).toEqual(1);
         expect(gt.world.discardPile[0]).toEqual(w.hand[0]);
-        expect(gt.world.hand.length).toEqual(0);
+        expect(gt.world.hand).toBeEmpty();
         expect(gt.world.sheepStock[3].length).toEqual(7);
         expect(gt.world.field.length).toEqual(7);
         for (var i = 0; i < 7; i++)
