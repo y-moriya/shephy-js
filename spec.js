@@ -1,6 +1,21 @@
 describe('shephy', function () {
   var S = shephy;
   var any = jasmine.any;
+  var addMatchers = jasmine.addMatchers;
+
+  beforeEach(function () {
+    addMatchers({
+      toBeEmpty: function () {
+        return {
+          compare: function (actual) {
+            return {
+              pass: actual.length == 0
+            };
+          }
+        };
+      }
+    });
+  });
 
   describe('clone', function () {
     it('recursively copy a given object', function () {
