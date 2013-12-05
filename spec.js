@@ -486,8 +486,7 @@ describe('shephy', function () {
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
         expect(w0.deck.length).toEqual(17);
-        expect(w0.discardPile.length).toEqual(1);
-        expect(w0.discardPile[0].name).toEqual('Fill the Earth');
+        expect(w0.discardPile).toEqualCards(['Fill the Earth']);
         expect(w0.hand.length).toEqual(4);
         expect(w0.field.length).toEqual(1);
         expect(w0.field[0].rank).toEqual(1);
@@ -558,8 +557,7 @@ describe('shephy', function () {
 
         expect(w.deck.length).toEqual(21);
         expect(w.discardPile).toBeEmpty();
-        expect(w.hand.length).toEqual(1);
-        expect(w.hand[0].name).toEqual('Multiply');
+        expect(w.hand).toEqualCards(['Multiply']);
         expect(w.sheepStock[3].length).toEqual(7);
         expect(w.field.length).toEqual(1);
         expect(w.field[0].rank).toEqual(1);
@@ -567,8 +565,7 @@ describe('shephy', function () {
         var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
 
         expect(gt.world.deck.length).toEqual(21);
-        expect(gt.world.discardPile.length).toEqual(1);
-        expect(gt.world.discardPile[0]).toEqual(w.hand[0]);
+        expect(gt.world.discardPile).toEqualCards([w.hand[0].name]);
         expect(gt.world.hand).toBeEmpty();
         expect(gt.world.sheepStock[3].length).toEqual(6);
         expect(gt.world.field.length).toEqual(2);
@@ -582,8 +579,7 @@ describe('shephy', function () {
 
         expect(w.deck.length).toEqual(21);
         expect(w.discardPile).toBeEmpty();
-        expect(w.hand.length).toEqual(1);
-        expect(w.hand[0].name).toEqual('Multiply');
+        expect(w.hand).toEqualCards(['Multiply']);
         expect(w.sheepStock[3].length).toEqual(7);
         expect(w.field.length).toEqual(7);
         for (var i = 0; i < 7; i++)
@@ -592,8 +588,7 @@ describe('shephy', function () {
         var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
 
         expect(gt.world.deck.length).toEqual(21);
-        expect(gt.world.discardPile.length).toEqual(1);
-        expect(gt.world.discardPile[0]).toEqual(w.hand[0]);
+        expect(gt.world.discardPile).toEqualCards([w.hand[0].name]);
         expect(gt.world.hand).toBeEmpty();
         expect(gt.world.sheepStock[3].length).toEqual(7);
         expect(gt.world.field.length).toEqual(7);
@@ -607,8 +602,7 @@ describe('shephy', function () {
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
 
-        expect(w0.discardPile.length).toEqual(1);
-        expect(w0.discardPile[0].name).toEqual('Sheep Dog');
+        expect(w0.discardPile).toEqualCards(['Sheep Dog']);
         expect(w0.hand.length).toEqual(4);
         expect(w0.hand).not.toContainCard('Sheep Dog');
         expect(gt0.moves.length).toEqual(w0.hand.length);
@@ -617,9 +611,7 @@ describe('shephy', function () {
 
         var gt1 = S.force(gt0.moves[2].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.discardPile.length).toEqual(2);
-        expect(w1.discardPile[0].name).toEqual('Sheep Dog');
-        expect(w1.discardPile[1].name).toEqual(w0.hand[2].name);
+        expect(w1.discardPile).toEqualCards(['Sheep Dog', w0.hand[2].name]);
         expect(w1.hand.length).toEqual(3);
         expect(w1.hand).not.toContainCard('Sheep Dog');
         expect(w1.hand).not.toContainCard(w0.hand[2].name);
@@ -631,17 +623,15 @@ describe('shephy', function () {
 
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
-        expect(w0.discardPile.length).toEqual(1);
-        expect(w0.discardPile[0].name).toEqual('Sheep Dog');
-        expect(w0.hand.length).toEqual(0);
+        expect(w0.discardPile).toEqualCards(['Sheep Dog']);
+        expect(w0.hand).toEqualCards([]);
         expect(gt0.moves.length).toEqual(1);
         expect(gt0.moves[0].description).toEqual('Nothing happened');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.discardPile.length).toEqual(1);
-        expect(w1.discardPile[0].name).toEqual('Sheep Dog');
-        expect(w1.hand.length).toEqual(0);
+        expect(w1.discardPile).toEqualCards(['Sheep Dog']);
+        expect(w1.hand).toEqualCards([]);
         expect(gt1.moves.length).toEqual(1);
         expect(gt1.moves[0].description).toEqual('Draw cards');
       });
