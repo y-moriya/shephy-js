@@ -624,14 +624,14 @@ describe('shephy', function () {
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
         expect(w0.discardPile).toEqualCards(['Sheep Dog']);
-        expect(w0.hand).toEqualCards([]);
+        expect(w0.hand).toBeEmpty();
         expect(gt0.moves.length).toEqual(1);
         expect(gt0.moves[0].description).toEqual('Nothing happened');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(w1.discardPile).toEqualCards(['Sheep Dog']);
-        expect(w1.hand).toEqualCards([]);
+        expect(w1.hand).toBeEmpty();
         expect(gt1.moves.length).toEqual(1);
         expect(gt1.moves[0].description).toEqual('Draw cards');
       });
