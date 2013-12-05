@@ -603,7 +603,7 @@ describe('shephy', function () {
         expect(w0.discardPile.length).toEqual(1);
         expect(w0.discardPile[0].name).toEqual('Sheep Dog');
         expect(w0.hand.length).toEqual(4);
-        expect(w0.hand.map(function (c) {return c.name;})).not.toContain('Sheep Dog');
+        expect(w0.hand).not.toContainCard('Sheep Dog');
         expect(gt0.moves.length).toEqual(w0.hand.length);
         for (var i = 0; i < w0.hand.length; i++)
           expect(gt0.moves[i].description).toEqual('Discard ' + w0.hand[i].name);
@@ -614,8 +614,8 @@ describe('shephy', function () {
         expect(w1.discardPile[0].name).toEqual('Sheep Dog');
         expect(w1.discardPile[1].name).toEqual(w0.hand[2].name);
         expect(w1.hand.length).toEqual(3);
-        expect(w1.hand.map(function (c) {return c.name;})).not.toContain('Sheep Dog');
-        expect(w1.hand.map(function (c) {return c.name;})).not.toContain(w0.hand[2].name);
+        expect(w1.hand).not.toContainCard('Sheep Dog');
+        expect(w1.hand).not.toContainCard(w0.hand[2].name);
         expect(gt1.moves.length).toEqual(1);
         expect(gt1.moves[0].description).toEqual('Draw cards');
       });
