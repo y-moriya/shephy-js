@@ -214,6 +214,9 @@ var shephy = {};
         case 'Multiply':
           S.gainX(wn, 3);
           break;
+        case 'Sheep Dog':
+          sn = {step: 'Sheep Dog'};
+          break;
         default:
           throw 'Not implemented card - ' + eventName;
       }
@@ -306,6 +309,26 @@ var shephy = {};
             return S.makeGameTree(world);
           })
         });
+        break;
+      case 'Sheep Dog':
+        world.hand.forEach(function (c, i) {
+          moves.push({
+            description: 'Discard ' + c.name,
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.discardX(wn, i);
+              return S.makeGameTree(wn);
+            })
+          });
+        });
+        if (world.hand.length == 0) {
+          moves.push({
+            description: 'Nothing happened',
+            gameTreePromise: S.delay(function () {
+              return S.makeGameTree(world);
+            })
+          });
+        }
         break;
       default:
         throw 'Invalid operation: state = ' + JSON.stringify(state);

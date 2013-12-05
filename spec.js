@@ -588,6 +588,51 @@ describe('shephy', function () {
           expect(gt.world.field[i].rank).toEqual(1);
       });
     });
+    describe('Sheep Dog', function () {
+      it('shows moves to discard a card', function () {
+        var w = setUpWorld('Sheep Dog', 5);
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
+
+        expect(w0.discardPile.length).toEqual(1);
+        expect(w0.discardPile[0].name).toEqual('Sheep Dog');
+        expect(w0.hand.length).toEqual(4);
+        expect(w0.hand.map(function (c) {return c.name;})).not.toContain('Sheep Dog');
+        expect(gt0.moves.length).toEqual(w0.hand.length);
+        for (var i = 0; i < w0.hand.length; i++)
+          expect(gt0.moves[i].description).toEqual('Discard ' + w0.hand[i].name);
+
+        var gt1 = S.force(gt0.moves[2].gameTreePromise);
+        var w1 = gt1.world;
+        expect(w1.discardPile.length).toEqual(2);
+        expect(w1.discardPile[0].name).toEqual('Sheep Dog');
+        expect(w1.discardPile[1].name).toEqual(w0.hand[2].name);
+        expect(w1.hand.length).toEqual(3);
+        expect(w1.hand.map(function (c) {return c.name;})).not.toContain('Sheep Dog');
+        expect(w1.hand.map(function (c) {return c.name;})).not.toContain(w0.hand[2].name);
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Draw cards');
+      });
+      it('shows a move to do nothing if there is no card in Hand', function () {
+        var w = setUpWorld('Sheep Dog');
+
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
+        expect(w0.discardPile.length).toEqual(1);
+        expect(w0.discardPile[0].name).toEqual('Sheep Dog');
+        expect(w0.hand.length).toEqual(0);
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('Nothing happened');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(w1.discardPile.length).toEqual(1);
+        expect(w1.discardPile[0].name).toEqual('Sheep Dog');
+        expect(w1.hand.length).toEqual(0);
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Draw cards');
+      });
+    });
   });
 });
 
