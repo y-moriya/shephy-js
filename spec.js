@@ -30,6 +30,13 @@ describe('shephy', function () {
           return actualCards.some(function (c) {
             return c.name == expectedName;
           });
+        },
+      toEqualCards:
+        function (actualCards, expectedNames) {
+          return actualCards.length == expectedNames.length &&
+            actualCards.every(function (c, i) {
+              return c.name == expectedNames[i];
+            });
         }
     });
   });
