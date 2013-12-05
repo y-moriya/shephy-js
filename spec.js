@@ -130,14 +130,12 @@ describe('shephy', function () {
       var w = S.makeInitalWorld();
       var c = w.sheepStock[3][7 - 1];
 
-      expect(w.field.length).toEqual(1);
-      expect(w.field[0].rank).toEqual(1);
+      expect(w.field).toEqualRanks([1]);
       expect(w.sheepStock[3].length).toEqual(7);
 
       S.gainX(w, 3);
 
-      expect(w.field.length).toEqual(2);
-      expect(w.field[0].rank).toEqual(1);
+      expect(w.field).toEqualRanks([1, 3]);
       expect(w.field[1]).toBe(c);
       expect(w.sheepStock[3].length).toEqual(6);
     });
@@ -145,38 +143,25 @@ describe('shephy', function () {
       var w = S.makeInitalWorld();
       w.sheepStock[3] = [];
 
-      expect(w.field.length).toEqual(1);
-      expect(w.field[0].rank).toEqual(1);
+      expect(w.field).toEqualRanks([1]);
       expect(w.sheepStock[3]).toBeEmpty();
       expect(w.sheepStock[10].length).toEqual(7);
 
       S.gainX(w, 3);
 
-      expect(w.field.length).toEqual(1);
-      expect(w.field[0].rank).toEqual(1);
+      expect(w.field).toEqualRanks([1]);
       expect(w.sheepStock[3]).toBeEmpty();
       expect(w.sheepStock[10].length).toEqual(7);
 
       S.gainX(w, 10);
 
-      expect(w.field.length).toEqual(2);
-      expect(w.field[0].rank).toEqual(1);
-      expect(w.field[1].rank).toEqual(10);
+      expect(w.field).toEqualRanks([1, 10]);
       expect(w.sheepStock[3]).toBeEmpty();
       expect(w.sheepStock[10].length).toEqual(6);
     });
     it('does nothing if no space is available in Field', function () {
-      function test(n) {
-        expect(w.field.length).toEqual(1 + n);
-        expect(w.field[0].rank).toEqual(1);
-        for (var i = 1; i < n; i++)
-          expect(w.field[i].rank).toEqual(3);
-        expect(w.sheepStock[3].length).toEqual(7 - n);
-      }
-
       var w = S.makeInitalWorld();
-      expect(w.field.length).toEqual(1);
-      expect(w.field[0].rank).toEqual(1);
+      expect(w.field).toEqualRanks([1]);
       expect(w.sheepStock[3].length).toEqual(7);
 
       S.gainX(w, 3);
@@ -184,13 +169,16 @@ describe('shephy', function () {
       S.gainX(w, 3);
       S.gainX(w, 3);
       S.gainX(w, 3);
-      test(5);
+      expect(w.field).toEqualRanks([1, 3, 3, 3, 3, 3]);
+      expect(w.sheepStock[3].length).toEqual(2);
 
       S.gainX(w, 3);
-      test(6);
+      expect(w.field).toEqualRanks([1, 3, 3, 3, 3, 3, 3]);
+      expect(w.sheepStock[3].length).toEqual(1);
 
       S.gainX(w, 3);
-      test(6);
+      expect(w.field).toEqualRanks([1, 3, 3, 3, 3, 3, 3]);
+      expect(w.sheepStock[3].length).toEqual(1);
     });
   });
   describe('releaseX', function () {
@@ -200,10 +188,7 @@ describe('shephy', function () {
       S.gainX(w, 10);
       var c = w.field[1];
 
-      expect(w.field.length).toEqual(3);
-      expect(w.field[0].rank).toEqual(1);
-      expect(w.field[1].rank).toEqual(3);
-      expect(w.field[2].rank).toEqual(10);
+      expect(w.field).toEqualRanks([1, 3, 10]);
       expect(w.sheepStock[1].length).toEqual(6);
       expect(w.sheepStock[3].length).toEqual(6);
       expect(w.sheepStock[10].length).toEqual(6);
@@ -211,9 +196,7 @@ describe('shephy', function () {
 
       S.releaseX(w, 1);
 
-      expect(w.field.length).toEqual(2);
-      expect(w.field[0].rank).toEqual(1);
-      expect(w.field[1].rank).toEqual(10);
+      expect(w.field).toEqualRanks([1, 10]);
       expect(w.sheepStock[1].length).toEqual(6);
       expect(w.sheepStock[3].length).toEqual(7);
       expect(w.sheepStock[10].length).toEqual(6);
@@ -495,16 +478,13 @@ describe('shephy', function () {
         expect(w0.deck.length).toEqual(17);
         expect(w0.discardPile).toEqualCards(['Fill the Earth']);
         expect(w0.hand.length).toEqual(4);
-        expect(w0.field.length).toEqual(1);
-        expect(w0.field[0].rank).toEqual(1);
+        expect(w0.field).toEqualRanks([1]);
         expect(gt0.moves.length).toEqual(2);
 
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
         var gt1g = S.force(gt0.moves[0].gameTreePromise);
         var w1g = gt1g.world;
-        expect(w1g.field.length).toEqual(2);
-        expect(w1g.field[0].rank).toEqual(1);
-        expect(w1g.field[1].rank).toEqual(1);
+        expect(w1g.field).toEqualRanks([1, 1]);
         expect(gt1g.moves.length).toEqual(2);
         expect(gt1g.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt1g.moves[1].description).toEqual('Cancel');
@@ -512,8 +492,7 @@ describe('shephy', function () {
         expect(gt0.moves[1].description).toEqual('Cancel');
         var gt1c = S.force(gt0.moves[1].gameTreePromise);
         var w1c = gt1c.world;
-        expect(w1c.field.length).toEqual(1);
-        expect(w1c.field[0].rank).toEqual(1);
+        expect(w1c.field).toEqualRanks([1]);
         expect(gt1c.moves.length).toEqual(1);
         expect(gt1c.moves[0].description).toEqual('Draw a card');
       });
@@ -523,27 +502,21 @@ describe('shephy', function () {
           {step: 'play', handIndex: 0}
         );
         var w0 = gt0.world;
-        expect(w0.field.length).toEqual(1);
-        expect(w0.field[0].rank).toEqual(1);
+        expect(w0.field).toEqualRanks([1]);
         expect(gt0.moves.length).toEqual(2);
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt0.moves[1].description).toEqual('Cancel');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.field.length).toEqual(2);
-        expect(w1.field[0].rank).toEqual(1);
-        expect(w1.field[1].rank).toEqual(1);
+        expect(w1.field).toEqualRanks([1, 1]);
         expect(gt1.moves.length).toEqual(2);
         expect(gt1.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt1.moves[1].description).toEqual('Cancel');
 
         var gt2 = S.force(gt1.moves[0].gameTreePromise);
         var w2 = gt2.world;
-        expect(w2.field.length).toEqual(3);
-        expect(w2.field[0].rank).toEqual(1);
-        expect(w2.field[1].rank).toEqual(1);
-        expect(w2.field[2].rank).toEqual(1);
+        expect(w2.field).toEqualRanks([1, 1, 1]);
         expect(gt2.moves.length).toEqual(2);
         expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt2.moves[1].description).toEqual('Cancel');
@@ -566,8 +539,7 @@ describe('shephy', function () {
         expect(w.discardPile).toBeEmpty();
         expect(w.hand).toEqualCards(['Multiply']);
         expect(w.sheepStock[3].length).toEqual(7);
-        expect(w.field.length).toEqual(1);
-        expect(w.field[0].rank).toEqual(1);
+        expect(w.field).toEqualRanks([1]);
 
         var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
 
@@ -575,9 +547,7 @@ describe('shephy', function () {
         expect(gt.world.discardPile).toEqualCards([w.hand[0].name]);
         expect(gt.world.hand).toBeEmpty();
         expect(gt.world.sheepStock[3].length).toEqual(6);
-        expect(gt.world.field.length).toEqual(2);
-        expect(gt.world.field[0].rank).toEqual(1);
-        expect(gt.world.field[1].rank).toEqual(3);
+        expect(gt.world.field).toEqualRanks([1, 3]);
       });
       it('does nothing if there is no space in Field', function () {
         var w = setUpWorld('Multiply');
@@ -588,9 +558,7 @@ describe('shephy', function () {
         expect(w.discardPile).toBeEmpty();
         expect(w.hand).toEqualCards(['Multiply']);
         expect(w.sheepStock[3].length).toEqual(7);
-        expect(w.field.length).toEqual(7);
-        for (var i = 0; i < 7; i++)
-          expect(w.field[i].rank).toEqual(1);
+        expect(w.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
 
         var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
 
@@ -598,9 +566,7 @@ describe('shephy', function () {
         expect(gt.world.discardPile).toEqualCards([w.hand[0].name]);
         expect(gt.world.hand).toBeEmpty();
         expect(gt.world.sheepStock[3].length).toEqual(7);
-        expect(gt.world.field.length).toEqual(7);
-        for (var i = 0; i < 7; i++)
-          expect(gt.world.field[i].rank).toEqual(1);
+        expect(gt.world.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
       });
     });
     describe('Sheep Dog', function () {
