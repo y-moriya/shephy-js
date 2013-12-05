@@ -37,6 +37,13 @@ describe('shephy', function () {
             actualCards.every(function (c, i) {
               return c.name == expectedNames[i];
             });
+        },
+      toEqualRanks:
+        function (actualSheep, expectedRanks) {
+          return actualSheep.length == expectedRanks.length &&
+            actualSheep.every(function (c, i) {
+              return c.rank == expectedRanks[i];
+            });
         }
     });
   });
