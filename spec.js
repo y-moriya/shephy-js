@@ -24,6 +24,12 @@ describe('shephy', function () {
       toBeEmpty:
         function (actual) {
           return actual.length == 0;
+        },
+      toContainCard:
+        function (actualCards, expectedName) {
+          return actualCards.some(function (c) {
+            return c.name == expectedName;
+          });
         }
     });
   });
