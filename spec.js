@@ -1,19 +1,30 @@
 describe('shephy', function () {
   var S = shephy;
   var any = jasmine.any;
-  var addMatchers = jasmine.addMatchers;
+  function addMatchers(simpleMatchers) {
+    var regularMatchers = {};
+    for (var name in simpleMatchers) {
+      regularMatchers[name] = (function (f) {
+        return function () {
+          return {
+            compare: function () {
+              return {
+                pass: f.apply(null, arguments)
+              };
+            }
+          };
+        };
+      })(simpleMatchers[name]);
+    }
+    jasmine.addMatchers(regularMatchers);
+  }
 
   beforeEach(function () {
     addMatchers({
-      toBeEmpty: function () {
-        return {
-          compare: function (actual) {
-            return {
-              pass: actual.length == 0
-            };
-          }
-        };
-      }
+      toBeEmpty:
+        function (actual) {
+          return actual.length == 0;
+        }
     });
   });
 
