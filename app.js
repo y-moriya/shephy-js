@@ -214,6 +214,9 @@ var shephy = {};
         case 'Multiply':
           S.gainX(wn, 3);
           break;
+        case 'Planning Sheep':
+          sn = {step: 'Planning Sheep'};
+          break;
         case 'Sheep Dog':
           sn = {step: 'Sheep Dog'};
           break;
@@ -309,6 +312,26 @@ var shephy = {};
             return S.makeGameTree(world);
           })
         });
+        break;
+      case 'Planning Sheep':
+        world.hand.forEach(function (c, i) {
+          moves.push({
+            description: 'Exile ' + c.name,
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.exileX(wn, wn.hand, i);
+              return S.makeGameTree(wn);
+            })
+          });
+        });
+        if (world.hand.length == 0) {
+          moves.push({
+            description: 'Nothing happened',
+            gameTreePromise: S.delay(function () {
+              return S.makeGameTree(world);
+            })
+          });
+        }
         break;
       case 'Sheep Dog':
         world.hand.forEach(function (c, i) {

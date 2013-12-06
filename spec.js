@@ -569,6 +569,50 @@ describe('shephy', function () {
         expect(gt.world.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
       });
     });
+    describe('Planning Sheep', function () {
+      it('shows moves to exile a card', function () {
+        var w = setUpWorld('Planning Sheep', 5);
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
+
+        expect(w0.discardPile).toEqualCards(['Planning Sheep']);
+        expect(w0.exile).toEqualCards([]);
+        expect(w0.hand.length).toEqual(4);
+        expect(w0.hand).not.toContainCard('Planning Sheep');
+        expect(gt0.moves.length).toEqual(w0.hand.length);
+        for (var i = 0; i < w0.hand.length; i++)
+          expect(gt0.moves[i].description).toEqual('Exile ' + w0.hand[i].name);
+
+        var gt1 = S.force(gt0.moves[2].gameTreePromise);
+        var w1 = gt1.world;
+        expect(w1.discardPile).toEqualCards(['Planning Sheep']);
+        expect(w1.exile).toEqualCards([w0.hand[2].name]);
+        expect(w1.hand.length).toEqual(3);
+        expect(w1.hand).not.toContainCard('Planning Sheep');
+        expect(w1.hand).not.toContainCard(w0.hand[2].name);
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Draw cards');
+      });
+      it('shows a move to do nothing if there is no card in Hand', function () {
+        var w = setUpWorld('Planning Sheep');
+
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
+        expect(w0.discardPile).toEqualCards(['Planning Sheep']);
+        expect(w0.exile).toEqualCards([]);
+        expect(w0.hand).toBeEmpty();
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('Nothing happened');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(w1.discardPile).toEqualCards(['Planning Sheep']);
+        expect(w1.exile).toEqualCards([]);
+        expect(w1.hand).toBeEmpty();
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Draw cards');
+      });
+    });
     describe('Sheep Dog', function () {
       it('shows moves to discard a card', function () {
         var w = setUpWorld('Sheep Dog', 5);
