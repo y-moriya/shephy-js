@@ -209,6 +209,8 @@ var shephy = {};
       S.discardX(wn, state.handIndex);
       switch (eventName) {
         case 'Multiply':
+          // TODO: Though Multiply doesn't have any choice, it's better to add
+          // an intermediate move to show transition of the current world?
           sn = undefined;
           S.gainX(wn, 3);
           break;
