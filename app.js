@@ -205,21 +205,16 @@ var shephy = {};
     if (state.step == 'play') {
       var eventName = world.hand[state.handIndex].name;
       var wn = S.clone(world);
-      var sn = {step: eventName};
+      var sn;
       S.discardX(wn, state.handIndex);
       switch (eventName) {
-        case 'Fill the Earth':
-          break;
         case 'Multiply':
           sn = undefined;
           S.gainX(wn, 3);
           break;
-        case 'Planning Sheep':
-          break;
-        case 'Sheep Dog':
-          break;
         default:
-          throw 'Not implemented card - ' + eventName;
+          sn = {step: eventName};
+          break;
       }
       return [wn, sn];
     } else {
