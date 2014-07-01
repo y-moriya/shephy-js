@@ -198,6 +198,8 @@ var shephy = {};
     };
   };
 
+  // TODO: This function seems to be verbose and might be unified into code
+  // that lists moves to play each card.
   S.makeWorld = function (world, opt_state) {
     if (opt_state === undefined)
       return [world, opt_state];
