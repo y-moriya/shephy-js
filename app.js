@@ -107,8 +107,8 @@ var shephy = {};
 
   S.makeInitalWorld = function () {
     var sheepStock = {};
-    S.RANKS.forEach(function (n) {
-      sheepStock[n] = makeSheepStockPile(n);
+    S.RANKS.forEach(function (rank) {
+      sheepStock[rank] = makeSheepStockPile(rank);
     });
 
     var initialSheepCard = sheepStock[1].pop();

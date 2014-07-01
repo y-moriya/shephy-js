@@ -67,11 +67,11 @@ describe('shephy', function () {
     it('makes a new world', function () {
       var w = S.makeInitalWorld();
 
-      S.RANKS.forEach(function (n) {
-        expect(w.sheepStock[n].length).toEqual(n == 1 ? 6 : 7);
-        w.sheepStock[n].forEach(function (c) {
+      S.RANKS.forEach(function (rank) {
+        expect(w.sheepStock[rank].length).toEqual(rank == 1 ? 6 : 7);
+        w.sheepStock[rank].forEach(function (c) {
           expect(c.type).toEqual(S.CARD_TYPE_SHEEP);
-          expect(c.rank).toEqual(n);
+          expect(c.rank).toEqual(rank);
         });
       });
 
