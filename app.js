@@ -107,7 +107,7 @@ var shephy = {};
 
   S.makeInitalWorld = function () {
     var sheepStock = {};
-    [1, 3, 10, 30, 100, 300, 1000].forEach(function (n) {
+    S.RANKS.forEach(function (n) {
       sheepStock[n] = makeSheepStockPile(n);
     });
 
@@ -389,7 +389,7 @@ var shephy = {};
 
   function drawGameTree(gameTree) {
     var w = gameTree.world;
-    [1, 3, 10, 30, 100, 300, 1000].forEach(function (rank) {
+    S.RANKS.forEach(function (rank) {
       $('#sheepStock' + rank + ' > .count').text(w.sheepStock[rank].length);
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
