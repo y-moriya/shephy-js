@@ -209,12 +209,6 @@ var shephy = {};
       var sn;
       S.discardX(wn, state.handIndex);
       switch (eventName) {
-        case 'Multiply':
-          // TODO: Though Multiply doesn't have any choice, it's better to add
-          // an intermediate move to show transition of the current world?
-          sn = undefined;
-          S.gainX(wn, 3);
-          break;
         default:
           sn = {step: eventName};
           break;
@@ -308,6 +302,25 @@ var shephy = {};
             return S.makeGameTree(world);
           })
         });
+        break;
+      case 'Multiply':
+        if (world.field.length < 7 && 0 < world.sheepStock[3].length) {
+          moves.push({
+            description: 'Gain a 3 Sheep card',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.gainX(wn, 3);
+              return S.makeGameTree(wn);
+            })
+          });
+        } else {
+          moves.push({
+            description: 'Nothing happened',
+            gameTreePromise: S.delay(function () {
+              return S.makeGameTree(world);
+            })
+          });
+        }
         break;
       case 'Planning Sheep':
         world.hand.forEach(function (c, i) {
