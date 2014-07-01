@@ -206,14 +206,8 @@ var shephy = {};
     if (state.step == 'play') {
       var eventName = world.hand[state.handIndex].name;
       var wn = S.clone(world);
-      var sn;
       S.discardX(wn, state.handIndex);
-      switch (eventName) {
-        default:
-          sn = {step: eventName};
-          break;
-      }
-      return [wn, sn];
+      return [wn, {step: eventName}];
     } else {
       return [world, opt_state];
     }
