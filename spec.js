@@ -122,8 +122,7 @@ describe('shephy', function () {
 
       expect(w.deck.length).toEqual(22);
       w.deck.forEach(function (c) {
-        expect(c.name).not.toBeUndefined();
-        expect(c.rank).toBeUndefined();
+        expect(c).toBeEventCard();
       });
 
       expect(w.hand).toBeEmpty();
