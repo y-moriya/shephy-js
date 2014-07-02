@@ -266,7 +266,9 @@ var shephy = {};
       return {
         description: 'Play ' + c.name,
         gameTreePromise: S.delay(function () {
-          return S.makeGameTree(world, {step: 'play', handIndex: i});
+          var wn = S.clone(world);
+          S.discardX(wn, i);
+          return S.makeGameTree(wn, {step: c.name});
         })
       };
     });
