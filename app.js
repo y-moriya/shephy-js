@@ -17,8 +17,6 @@
 var shephy = {};
 
 (function (S, $) {
-  S.CARD_TYPE_SHEEP = 'Sheep';
-  S.CARD_TYPE_EVENT = 'Event';
   S.RANKS = [1, 3, 10, 30, 100, 300, 1000];
 
   function random(n) {
@@ -60,7 +58,6 @@ var shephy = {};
     for (var i = 0; i < 7; i++) {
       cards.push({
         name: n + '',
-        type: S.CARD_TYPE_SHEEP,
         rank: n
       });
     }
@@ -70,8 +67,7 @@ var shephy = {};
   function makeEventCard(name) {
     // TODO: Implement effects when a card is played.
     return {
-      name: name,
-      type: S.CARD_TYPE_EVENT
+      name: name
     };
   }
 

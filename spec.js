@@ -62,6 +62,10 @@ describe('shephy', function () {
         function (actual) {
           return actual.length == 0;
         },
+      toBeEventCard:
+        function (actual) {
+          return actual.name !== undefined && actual.rank === undefined;
+        },
       toContainCard:
         function (actualCards, expectedName) {
           return actualCards.some(function (c) {
@@ -107,20 +111,18 @@ describe('shephy', function () {
       S.RANKS.forEach(function (rank) {
         expect(w.sheepStock[rank].length).toEqual(rank == 1 ? 6 : 7);
         w.sheepStock[rank].forEach(function (c) {
-          expect(c.type).toEqual(S.CARD_TYPE_SHEEP);
           expect(c.rank).toEqual(rank);
         });
       });
 
       expect(w.field.length).toEqual(1);
-      expect(w.field[0].type).toEqual(S.CARD_TYPE_SHEEP);
       expect(w.field[0].rank).toEqual(1);
 
       expect(w.enemySheepCount).toEqual(1);
 
       expect(w.deck.length).toEqual(22);
       w.deck.forEach(function (c) {
-        expect(c.type).toEqual(S.CARD_TYPE_EVENT);
+        expect(c).toBeEventCard();
       });
 
       expect(w.hand).toBeEmpty();
