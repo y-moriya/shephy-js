@@ -578,60 +578,34 @@ describe('shephy', function () {
     });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
-        var w0 = setUpWorld('Multiply');
+        var w = setUpWorld('Multiply');
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
 
-        expect(w0.deck.length).toEqual(21);
-        expect(w0.discardPile).toBeEmpty();
-        expect(w0.hand).toEqualCards(['Multiply']);
-        expect(w0.sheepStock[3].length).toEqual(7);
-        expect(w0.field).toEqualRanks([1]);
-
-        var gt0 = S.makeGameTree(w0, {step: 'play', handIndex: 0});
-
-        expect(gt0.world.deck.length).toEqual(21);
-        expect(gt0.world.discardPile).toEqualCards(['Multiply']);
-        expect(gt0.world.hand).toBeEmpty();
-        expect(gt0.world.sheepStock[3].length).toEqual(7);
-        expect(gt0.world.field).toEqualRanks([1]);
         expect(gt0.moves[0].description).toEqual('Gain a 3 Sheep card');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
 
-        expect(w1.deck.length).toEqual(21);
-        expect(w1.discardPile).toEqualCards(['Multiply']);
-        expect(w1.hand).toBeEmpty();
-        expect(w1.sheepStock[3].length).toEqual(6);
-        expect(w1.field).toEqualRanks([1, 3]);
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock3: 6,
+          field: ['1', '3']
+        });
       });
       it('does nothing if there is no space in Field', function () {
-        var w0 = setUpWorld('Multiply');
+        var w = setUpWorld('Multiply');
         for (var i = 0; i < 6; i++)
-          S.gainX(w0, 1);
+          S.gainX(w, 1);
 
-        expect(w0.deck.length).toEqual(21);
-        expect(w0.discardPile).toBeEmpty();
-        expect(w0.hand).toEqualCards(['Multiply']);
-        expect(w0.sheepStock[3].length).toEqual(7);
-        expect(w0.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
 
-        var gt0 = S.makeGameTree(w0, {step: 'play', handIndex: 0});
-
-        expect(gt0.world.deck.length).toEqual(21);
-        expect(gt0.world.discardPile).toEqualCards(['Multiply']);
-        expect(gt0.world.hand).toBeEmpty();
-        expect(gt0.world.sheepStock[3].length).toEqual(7);
-        expect(gt0.world.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
         expect(gt0.moves[0].description).toEqual('Nothing happened');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
 
-        expect(w1.deck.length).toEqual(21);
-        expect(w1.discardPile).toEqualCards(['Multiply']);
-        expect(w1.hand).toBeEmpty();
-        expect(w1.sheepStock[3].length).toEqual(7);
-        expect(w1.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
       });
     });
     describe('Planning Sheep', function () {
