@@ -19,6 +19,34 @@ describe('shephy', function () {
     jasmine.addMatchers(regularMatchers);
   }
 
+  function cardToName(card) {
+    return card.name;
+  }
+
+  function changedRegionsBetween(w0, w1) {
+    var changes = {};
+
+    S.RANKS.forEach(function (rank) {
+      if (w0.sheepStock[rank].length != w1.sheepStock[rank].length)
+        changes['sheepStock' + rank] = w1.sheepStock[rank].length;
+    });
+
+    if (w0.enemySheepCount != w1.enemySheepCount)
+      changes.enemySheepCount = w1.enemySheepCount;
+
+    if (w0.deck.length != w1.deck.length)
+      changes.deck = w1.deck.length;
+
+    ['field', 'hand', 'discardPile', 'exile'].forEach(function (regionName) {
+      var cns0 = w0[regionName].map(cardToName);
+      var cns1 = w1[regionName].map(cardToName);
+      if (cns0.toString() != cns1.toString())
+        changes[regionName] = cns1;
+    });
+
+    return changes;
+  }
+
   beforeEach(function () {
     addMatchers({
       toBeEmpty:
