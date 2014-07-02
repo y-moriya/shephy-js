@@ -118,7 +118,8 @@ describe('shephy', function () {
 
       expect(w.deck.length).toEqual(22);
       w.deck.forEach(function (c) {
-        expect(c.type).toEqual(S.CARD_TYPE_EVENT);
+        expect(c.name).not.toBeUndefined();
+        expect(c.rank).toBeUndefined();
       });
 
       expect(w.hand).toBeEmpty();
