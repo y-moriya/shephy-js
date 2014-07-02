@@ -62,6 +62,10 @@ describe('shephy', function () {
         function (actual) {
           return actual.length == 0;
         },
+      toBeEventCard:
+        function (actual) {
+          return actual.name !== undefined && actual.rank === undefined;
+        },
       toContainCard:
         function (actualCards, expectedName) {
           return actualCards.some(function (c) {
