@@ -19,6 +19,43 @@ describe('shephy', function () {
     jasmine.addMatchers(regularMatchers);
   }
 
+  function cardToName(card) {
+    return card.name;
+  }
+
+  function cardToRank(card) {
+    return card.rank;
+  }
+
+  function changedRegionsBetween(w0, w1) {
+    var changes = {};
+
+    S.RANKS.forEach(function (rank) {
+      if (w0.sheepStock[rank].length != w1.sheepStock[rank].length)
+        changes['sheepStock' + rank] = w1.sheepStock[rank].length;
+    });
+
+    if (w0.enemySheepCount != w1.enemySheepCount)
+      changes.enemySheepCount = w1.enemySheepCount;
+
+    if (w0.deck.length != w1.deck.length)
+      changes.deck = w1.deck.length;
+
+    ['hand', 'discardPile', 'exile'].forEach(function (regionName) {
+      var cns0 = w0[regionName].map(cardToName);
+      var cns1 = w1[regionName].map(cardToName);
+      if (cns0.toString() != cns1.toString())
+        changes[regionName] = cns1;
+    });
+
+    var crs0 = w0.field.map(cardToRank);
+    var crs1 = w1.field.map(cardToRank);
+    if (crs0.toString() != crs1.toString())
+      changes.field = crs1;
+
+    return changes;
+  }
+
   beforeEach(function () {
     addMatchers({
       toBeEmpty:
@@ -470,30 +507,24 @@ describe('shephy', function () {
         S.drawX(w);
       return w;
     }
-    // TODO: Expectations about playing cards are too verbose to read.
-    // It should be simplified before implementing more cards.
-    // It might be better to specify difference between two worlds, e.g.:
-    //
-    //     expect(changedRegionsBetween(w0, w1)).toEqual({
-    //       'hand': [],
-    //       'sheepStock1': 5,
-    //       'field': [1, 1]
-    //     });
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
         var w = setUpWorld('Fill the Earth', 5);
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
-        expect(w0.deck.length).toEqual(17);
-        expect(w0.discardPile).toEqualCards(['Fill the Earth']);
-        expect(w0.hand.length).toEqual(4);
-        expect(w0.field).toEqualRanks([1]);
+        expect(changedRegionsBetween(w, w0)).toEqual({
+          discardPile: ['Fill the Earth'],
+          hand: w0.hand.map(cardToName)
+        });
         expect(gt0.moves.length).toEqual(2);
 
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
         var gt1g = S.force(gt0.moves[0].gameTreePromise);
         var w1g = gt1g.world;
-        expect(w1g.field).toEqualRanks([1, 1]);
+        expect(changedRegionsBetween(w0, w1g)).toEqual({
+          sheepStock1: 5,
+          field: [1, 1]
+        });
         expect(gt1g.moves.length).toEqual(2);
         expect(gt1g.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt1g.moves[1].description).toEqual('Cancel');
@@ -501,7 +532,7 @@ describe('shephy', function () {
         expect(gt0.moves[1].description).toEqual('Cancel');
         var gt1c = S.force(gt0.moves[1].gameTreePromise);
         var w1c = gt1c.world;
-        expect(w1c.field).toEqualRanks([1]);
+        expect(changedRegionsBetween(w0, w1c)).toEqual({});
         expect(gt1c.moves.length).toEqual(1);
         expect(gt1c.moves[0].description).toEqual('Draw a card');
       });
@@ -511,21 +542,26 @@ describe('shephy', function () {
           {step: 'play', handIndex: 0}
         );
         var w0 = gt0.world;
-        expect(w0.field).toEqualRanks([1]);
         expect(gt0.moves.length).toEqual(2);
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt0.moves[1].description).toEqual('Cancel');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.field).toEqualRanks([1, 1]);
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock1: 5,
+          field: [1, 1]
+        });
         expect(gt1.moves.length).toEqual(2);
         expect(gt1.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt1.moves[1].description).toEqual('Cancel');
 
         var gt2 = S.force(gt1.moves[0].gameTreePromise);
         var w2 = gt2.world;
-        expect(w2.field).toEqualRanks([1, 1, 1]);
+        expect(changedRegionsBetween(w1, w2)).toEqual({
+          sheepStock1: 4,
+          field: [1, 1, 1]
+        });
         expect(gt2.moves.length).toEqual(2);
         expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt2.moves[1].description).toEqual('Cancel');
@@ -542,60 +578,34 @@ describe('shephy', function () {
     });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
-        var w0 = setUpWorld('Multiply');
+        var w = setUpWorld('Multiply');
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
 
-        expect(w0.deck.length).toEqual(21);
-        expect(w0.discardPile).toBeEmpty();
-        expect(w0.hand).toEqualCards(['Multiply']);
-        expect(w0.sheepStock[3].length).toEqual(7);
-        expect(w0.field).toEqualRanks([1]);
-
-        var gt0 = S.makeGameTree(w0, {step: 'play', handIndex: 0});
-
-        expect(gt0.world.deck.length).toEqual(21);
-        expect(gt0.world.discardPile).toEqualCards(['Multiply']);
-        expect(gt0.world.hand).toBeEmpty();
-        expect(gt0.world.sheepStock[3].length).toEqual(7);
-        expect(gt0.world.field).toEqualRanks([1]);
         expect(gt0.moves[0].description).toEqual('Gain a 3 Sheep card');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
 
-        expect(w1.deck.length).toEqual(21);
-        expect(w1.discardPile).toEqualCards(['Multiply']);
-        expect(w1.hand).toBeEmpty();
-        expect(w1.sheepStock[3].length).toEqual(6);
-        expect(w1.field).toEqualRanks([1, 3]);
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock3: 6,
+          field: [1, 3]
+        });
       });
       it('does nothing if there is no space in Field', function () {
-        var w0 = setUpWorld('Multiply');
+        var w = setUpWorld('Multiply');
         for (var i = 0; i < 6; i++)
-          S.gainX(w0, 1);
+          S.gainX(w, 1);
 
-        expect(w0.deck.length).toEqual(21);
-        expect(w0.discardPile).toBeEmpty();
-        expect(w0.hand).toEqualCards(['Multiply']);
-        expect(w0.sheepStock[3].length).toEqual(7);
-        expect(w0.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
+        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var w0 = gt0.world;
 
-        var gt0 = S.makeGameTree(w0, {step: 'play', handIndex: 0});
-
-        expect(gt0.world.deck.length).toEqual(21);
-        expect(gt0.world.discardPile).toEqualCards(['Multiply']);
-        expect(gt0.world.hand).toBeEmpty();
-        expect(gt0.world.sheepStock[3].length).toEqual(7);
-        expect(gt0.world.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
         expect(gt0.moves[0].description).toEqual('Nothing happened');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
 
-        expect(w1.deck.length).toEqual(21);
-        expect(w1.discardPile).toEqualCards(['Multiply']);
-        expect(w1.hand).toBeEmpty();
-        expect(w1.sheepStock[3].length).toEqual(7);
-        expect(w1.field).toEqualRanks([1, 1, 1, 1, 1, 1, 1]);
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
       });
     });
     describe('Planning Sheep', function () {
@@ -604,21 +614,17 @@ describe('shephy', function () {
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
 
-        expect(w0.discardPile).toEqualCards(['Planning Sheep']);
-        expect(w0.exile).toEqualCards([]);
-        expect(w0.hand.length).toEqual(4);
-        expect(w0.hand).not.toContainCard('Planning Sheep');
         expect(gt0.moves.length).toEqual(w0.hand.length);
         for (var i = 0; i < w0.hand.length; i++)
           expect(gt0.moves[i].description).toEqual('Exile ' + w0.hand[i].name);
 
         var gt1 = S.force(gt0.moves[2].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.discardPile).toEqualCards(['Planning Sheep']);
-        expect(w1.exile).toEqualCards([w0.hand[2].name]);
-        expect(w1.hand.length).toEqual(3);
-        expect(w1.hand).not.toContainCard('Planning Sheep');
-        expect(w1.hand).not.toContainCard(w0.hand[2].name);
+
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          exile: [w0.hand[2].name],
+          hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
+        });
         expect(gt1.moves.length).toEqual(1);
         expect(gt1.moves[0].description).toEqual('Draw cards');
       });
@@ -627,17 +633,14 @@ describe('shephy', function () {
 
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
-        expect(w0.discardPile).toEqualCards(['Planning Sheep']);
-        expect(w0.exile).toEqualCards([]);
-        expect(w0.hand).toBeEmpty();
+
         expect(gt0.moves.length).toEqual(1);
         expect(gt0.moves[0].description).toEqual('Nothing happened');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.discardPile).toEqualCards(['Planning Sheep']);
-        expect(w1.exile).toEqualCards([]);
-        expect(w1.hand).toBeEmpty();
+
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
         expect(gt1.moves[0].description).toEqual('Draw cards');
       });
@@ -648,19 +651,17 @@ describe('shephy', function () {
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
 
-        expect(w0.discardPile).toEqualCards(['Sheep Dog']);
-        expect(w0.hand.length).toEqual(4);
-        expect(w0.hand).not.toContainCard('Sheep Dog');
         expect(gt0.moves.length).toEqual(w0.hand.length);
         for (var i = 0; i < w0.hand.length; i++)
           expect(gt0.moves[i].description).toEqual('Discard ' + w0.hand[i].name);
 
         var gt1 = S.force(gt0.moves[2].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.discardPile).toEqualCards(['Sheep Dog', w0.hand[2].name]);
-        expect(w1.hand.length).toEqual(3);
-        expect(w1.hand).not.toContainCard('Sheep Dog');
-        expect(w1.hand).not.toContainCard(w0.hand[2].name);
+
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          discardPile: ['Sheep Dog', w0.hand[2].name],
+          hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
+        });
         expect(gt1.moves.length).toEqual(1);
         expect(gt1.moves[0].description).toEqual('Draw cards');
       });
@@ -669,15 +670,14 @@ describe('shephy', function () {
 
         var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
         var w0 = gt0.world;
-        expect(w0.discardPile).toEqualCards(['Sheep Dog']);
-        expect(w0.hand).toBeEmpty();
+
         expect(gt0.moves.length).toEqual(1);
         expect(gt0.moves[0].description).toEqual('Nothing happened');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
-        expect(w1.discardPile).toEqualCards(['Sheep Dog']);
-        expect(w1.hand).toBeEmpty();
+
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
         expect(gt1.moves[0].description).toEqual('Draw cards');
       });
