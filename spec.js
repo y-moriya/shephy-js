@@ -383,21 +383,21 @@ describe('shephy', function () {
       var w = S.makeInitalWorld();
       S.gainX(w, 1000);
       var r = S.judgeGame(w);
-      expect(r.state).toEqual('win');
+      expect(r.result).toEqual('win');
       expect(r.description).toEqual(any(String));
     });
     it('returns "lose" if there are 1000 enemies', function () {
       var w = S.makeInitalWorld();
       w.enemySheepCount = 1000;
       var r = S.judgeGame(w);
-      expect(r.state).toEqual('lose');
+      expect(r.result).toEqual('lose');
       expect(r.description).toEqual(any(String));
     });
     it('returns "lose" if there is no sheep in Field', function () {
       var w = S.makeInitalWorld();
       S.releaseX(w, 0);
       var r = S.judgeGame(w);
-      expect(r.state).toEqual('lose');
+      expect(r.result).toEqual('lose');
       expect(r.description).toEqual(any(String));
     });
     it('fails otherwise', function () {

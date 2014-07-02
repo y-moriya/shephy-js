@@ -166,19 +166,19 @@ var shephy = {};
   S.judgeGame = function (world) {
     if (world.field.some(function (c) {return c.rank == 1000;})) {
       return {
-        state: 'win',
+        result: 'win',
         description: 'You win!'
       };
     }
     if (world.enemySheepCount == 1000) {
       return {
-        state: 'lose',
+        result: 'lose',
         description: 'Enemies reached 1000 sheep - you lose.'
       };
     }
     if (world.field.length == 0) {
       return {
-        state: 'lose',
+        result: 'lose',
         description: 'You lost all your sheep - you lose.'
       };
     }
