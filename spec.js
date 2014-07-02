@@ -498,15 +498,6 @@ describe('shephy', function () {
         S.drawX(w);
       return w;
     }
-    // TODO: Expectations about playing cards are too verbose to read.
-    // It should be simplified before implementing more cards.
-    // It might be better to specify difference between two worlds, e.g.:
-    //
-    //     expect(changedRegionsBetween(w0, w1)).toEqual({
-    //       'hand': [],
-    //       'sheepStock1': 5,
-    //       'field': [1, 1]
-    //     });
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
         var w = setUpWorld('Fill the Earth', 5);
