@@ -23,6 +23,10 @@ describe('shephy', function () {
     return card.name;
   }
 
+  function cardToRank(card) {
+    return card.rank;
+  }
+
   function changedRegionsBetween(w0, w1) {
     var changes = {};
 
@@ -37,12 +41,17 @@ describe('shephy', function () {
     if (w0.deck.length != w1.deck.length)
       changes.deck = w1.deck.length;
 
-    ['field', 'hand', 'discardPile', 'exile'].forEach(function (regionName) {
+    ['hand', 'discardPile', 'exile'].forEach(function (regionName) {
       var cns0 = w0[regionName].map(cardToName);
       var cns1 = w1[regionName].map(cardToName);
       if (cns0.toString() != cns1.toString())
         changes[regionName] = cns1;
     });
+
+    var crs0 = w0.field.map(cardToRank);
+    var crs1 = w1.field.map(cardToRank);
+    if (crs0.toString() != crs1.toString())
+      changes.field = crs1;
 
     return changes;
   }
@@ -514,7 +523,7 @@ describe('shephy', function () {
         var w1g = gt1g.world;
         expect(changedRegionsBetween(w0, w1g)).toEqual({
           sheepStock1: 5,
-          field: ['1', '1']
+          field: [1, 1]
         });
         expect(gt1g.moves.length).toEqual(2);
         expect(gt1g.moves[0].description).toEqual('Gain a 1 Sheep card');
@@ -541,7 +550,7 @@ describe('shephy', function () {
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({
           sheepStock1: 5,
-          field: ['1', '1']
+          field: [1, 1]
         });
         expect(gt1.moves.length).toEqual(2);
         expect(gt1.moves[0].description).toEqual('Gain a 1 Sheep card');
@@ -551,7 +560,7 @@ describe('shephy', function () {
         var w2 = gt2.world;
         expect(changedRegionsBetween(w1, w2)).toEqual({
           sheepStock1: 4,
-          field: ['1', '1', '1']
+          field: [1, 1, 1]
         });
         expect(gt2.moves.length).toEqual(2);
         expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
@@ -580,7 +589,7 @@ describe('shephy', function () {
 
         expect(changedRegionsBetween(w0, w1)).toEqual({
           sheepStock3: 6,
-          field: ['1', '3']
+          field: [1, 3]
         });
       });
       it('does nothing if there is no space in Field', function () {
