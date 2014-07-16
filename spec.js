@@ -383,21 +383,21 @@ describe('shephy', function () {
       var w = S.makeInitalWorld();
       S.gainX(w, 1000);
       var r = S.judgeGame(w);
-      expect(r.state).toEqual('win');
+      expect(r.result).toEqual('win');
       expect(r.description).toEqual(any(String));
     });
     it('returns "lose" if there are 1000 enemies', function () {
       var w = S.makeInitalWorld();
       w.enemySheepCount = 1000;
       var r = S.judgeGame(w);
-      expect(r.state).toEqual('lose');
+      expect(r.result).toEqual('lose');
       expect(r.description).toEqual(any(String));
     });
     it('returns "lose" if there is no sheep in Field', function () {
       var w = S.makeInitalWorld();
       S.releaseX(w, 0);
       var r = S.judgeGame(w);
-      expect(r.state).toEqual('lose');
+      expect(r.result).toEqual('lose');
       expect(r.description).toEqual(any(String));
     });
     it('fails otherwise', function () {
@@ -500,24 +500,26 @@ describe('shephy', function () {
       }
       return -1;
     }
-    function setUpWorld(cardName, opt_handCount) {
+    function makeGameTreeAfterPlaying(cardName, opt_options) {
+      var options = opt_options || {};
       var w = S.makeInitalWorld();
       var i = indexOf(w.deck, function (c) {return c.name == cardName;});
       w.hand.push(w.deck.splice(i, 1)[0]);
-      var restHandCount = (opt_handCount || 1) - 1;
+      var restHandCount = (options.handCount || 5) - 1;
       for (j = 0; j < restHandCount; j++)
         S.drawX(w);
-      return w;
+      if (!options.keepDeck) {
+        w.discardPile = w.deck;
+        w.deck = [];
+      }
+      if (options.customize)
+        options.customize(w);
+      return S.force(S.makeGameTree(w).moves[0].gameTreePromise);
     }
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
-        var w = setUpWorld('Fill the Earth', 5);
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
         var w0 = gt0.world;
-        expect(changedRegionsBetween(w, w0)).toEqual({
-          discardPile: ['Fill the Earth'],
-          hand: w0.hand.map(cardToName)
-        });
         expect(gt0.moves.length).toEqual(2);
 
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
@@ -535,14 +537,11 @@ describe('shephy', function () {
         var gt1c = S.force(gt0.moves[1].gameTreePromise);
         var w1c = gt1c.world;
         expect(changedRegionsBetween(w0, w1c)).toEqual({});
-        expect(gt1c.moves.length).toEqual(1);
-        expect(gt1c.moves[0].description).toEqual('Draw a card');
+        expect(gt1c.moves.length).toEqual(4);
+        expect(gt1c.moves[0].description).toMatch(/Play /);
       });
       it('repeats the same two moves until user cancels', function () {
-        var gt0 = S.makeGameTree(
-          setUpWorld('Fill the Earth'),
-          {step: 'play', handIndex: 0}
-        );
+        var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(2);
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
@@ -568,11 +567,13 @@ describe('shephy', function () {
         expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt2.moves[1].description).toEqual('Cancel');
       });
-      it('shows only "cancel" if ther is no space in Field', function () {
-        var w = setUpWorld('Fill the Earth');
-        for (var i = 0; i < 6; i++)
-          S.gainX(w, 3);
-        var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
+      it('shows only "cancel" if there is no space in Field', function () {
+        var gt = makeGameTreeAfterPlaying('Fill the Earth', {
+          customize: function (w) {
+            for (var i = 0; i < 6; i++)
+              S.gainX(w, 3);
+          }
+        });
 
         expect(gt.moves.length).toEqual(1);
         expect(gt.moves[0].description).toEqual('Cancel');
@@ -580,8 +581,7 @@ describe('shephy', function () {
     });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
-        var w = setUpWorld('Multiply');
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Multiply');
         var w0 = gt0.world;
 
         expect(gt0.moves[0].description).toEqual('Gain a 3 Sheep card');
@@ -595,11 +595,12 @@ describe('shephy', function () {
         });
       });
       it('does nothing if there is no space in Field', function () {
-        var w = setUpWorld('Multiply');
-        for (var i = 0; i < 6; i++)
-          S.gainX(w, 1);
-
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Multiply', {
+          customize: function (w) {
+            for (var i = 0; i < 6; i++)
+              S.gainX(w, 1);
+          }
+        });
         var w0 = gt0.world;
 
         expect(gt0.moves[0].description).toEqual('Nothing happened');
@@ -612,8 +613,7 @@ describe('shephy', function () {
     });
     describe('Planning Sheep', function () {
       it('shows moves to exile a card', function () {
-        var w = setUpWorld('Planning Sheep', 5);
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Planning Sheep');
         var w0 = gt0.world;
 
         expect(gt0.moves.length).toEqual(w0.hand.length);
@@ -627,13 +627,11 @@ describe('shephy', function () {
           exile: [w0.hand[2].name],
           hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
         });
-        expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Draw cards');
+        expect(gt1.moves.length).toEqual(3);  // 5 - (Planning Sheep + exiled)
+        expect(gt1.moves[0].description).toMatch(/Play /);
       });
       it('shows a move to do nothing if there is no card in Hand', function () {
-        var w = setUpWorld('Planning Sheep');
-
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Planning Sheep', {handCount: 1});
         var w0 = gt0.world;
 
         expect(gt0.moves.length).toEqual(1);
@@ -644,13 +642,12 @@ describe('shephy', function () {
 
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Draw cards');
+        expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
       });
     });
     describe('Sheep Dog', function () {
       it('shows moves to discard a card', function () {
-        var w = setUpWorld('Sheep Dog', 5);
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Sheep Dog');
         var w0 = gt0.world;
 
         expect(gt0.moves.length).toEqual(w0.hand.length);
@@ -661,16 +658,15 @@ describe('shephy', function () {
         var w1 = gt1.world;
 
         expect(changedRegionsBetween(w0, w1)).toEqual({
-          discardPile: ['Sheep Dog', w0.hand[2].name],
+          discardPile: w0.discardPile.map(function (c) {return c.name;})
+                       .concat(w0.hand[2].name),
           hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
         });
-        expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Draw cards');
+        expect(gt1.moves.length).toEqual(3);  // 5 - (Planning Sheep + exiled)
+        expect(gt1.moves[0].description).toMatch(/Play /);
       });
       it('shows a move to do nothing if there is no card in Hand', function () {
-        var w = setUpWorld('Sheep Dog');
-
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Sheep Dog', {handCount: 1});
         var w0 = gt0.world;
 
         expect(gt0.moves.length).toEqual(1);
@@ -681,7 +677,7 @@ describe('shephy', function () {
 
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Draw cards');
+        expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
       });
     });
   });

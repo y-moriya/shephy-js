@@ -166,19 +166,19 @@ var shephy = {};
   S.judgeGame = function (world) {
     if (world.field.some(function (c) {return c.rank == 1000;})) {
       return {
-        state: 'win',
+        result: 'win',
         description: 'You win!'
       };
     }
     if (world.enemySheepCount == 1000) {
       return {
-        state: 'lose',
+        result: 'lose',
         description: 'Enemies reached 1000 sheep - you lose.'
       };
     }
     if (world.field.length == 0) {
       return {
-        state: 'lose',
+        result: 'lose',
         description: 'You lost all your sheep - you lose.'
       };
     }
@@ -187,28 +187,10 @@ var shephy = {};
   };
 
   S.makeGameTree = function (world, opt_state) {
-    var x = S.makeWorld(world, opt_state);
     return {
-      world: x[0],
-      moves: S.listPossibleMoves(x[0], x[1])
+      world: world,
+      moves: S.listPossibleMoves(world, opt_state)
     };
-  };
-
-  // TODO: This function seems to be verbose and might be unified into code
-  // that lists moves to play each card.
-  S.makeWorld = function (world, opt_state) {
-    if (opt_state === undefined)
-      return [world, opt_state];
-
-    var state = opt_state;
-    if (state.step == 'play') {
-      var eventName = world.hand[state.handIndex].name;
-      var wn = S.clone(world);
-      S.discardX(wn, state.handIndex);
-      return [wn, {step: eventName}];
-    } else {
-      return [world, opt_state];
-    }
   };
 
   S.listPossibleMoves = function (world, opt_state) {
@@ -266,7 +248,9 @@ var shephy = {};
       return {
         description: 'Play ' + c.name,
         gameTreePromise: S.delay(function () {
-          return S.makeGameTree(world, {step: 'play', handIndex: i});
+          var wn = S.clone(world);
+          S.discardX(wn, i);
+          return S.makeGameTree(wn, {step: c.name});
         })
       };
     });
