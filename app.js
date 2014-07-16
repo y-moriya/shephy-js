@@ -197,18 +197,7 @@ var shephy = {};
   // TODO: This function seems to be verbose and might be unified into code
   // that lists moves to play each card.
   S.makeWorld = function (world, opt_state) {
-    if (opt_state === undefined)
-      return [world, opt_state];
-
-    var state = opt_state;
-    if (state.step == 'play') {
-      var eventName = world.hand[state.handIndex].name;
-      var wn = S.clone(world);
-      S.discardX(wn, state.handIndex);
-      return [wn, {step: eventName}];
-    } else {
-      return [world, opt_state];
-    }
+    return [world, opt_state];
   };
 
   S.listPossibleMoves = function (world, opt_state) {
