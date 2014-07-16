@@ -509,6 +509,22 @@ describe('shephy', function () {
         S.drawX(w);
       return w;
     }
+    function makeGameTreeAfterPlaying(cardName, opt_options) {
+      var options = opt_options || {};
+      var w = S.makeInitalWorld();
+      var i = indexOf(w.deck, function (c) {return c.name == cardName;});
+      w.hand.push(w.deck.splice(i, 1)[0]);
+      var restHandCount = (options.handCount || 5) - 1;
+      for (j = 0; j < restHandCount; j++)
+        S.drawX(w);
+      if (!options.keepDeck) {
+        w.discardPile = w.deck;
+        w.deck = [];
+      }
+      if (options.customize)
+        options.customize(w);
+      return S.force(S.makeGameTree(w).moves[0].gameTreePromise);
+    }
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
         var w = setUpWorld('Fill the Earth', 5);
