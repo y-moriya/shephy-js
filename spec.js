@@ -500,15 +500,6 @@ describe('shephy', function () {
       }
       return -1;
     }
-    function setUpWorld(cardName, opt_handCount) {
-      var w = S.makeInitalWorld();
-      var i = indexOf(w.deck, function (c) {return c.name == cardName;});
-      w.hand.push(w.deck.splice(i, 1)[0]);
-      var restHandCount = (opt_handCount || 1) - 1;
-      for (j = 0; j < restHandCount; j++)
-        S.drawX(w);
-      return w;
-    }
     function makeGameTreeAfterPlaying(cardName, opt_options) {
       var options = opt_options || {};
       var w = S.makeInitalWorld();
