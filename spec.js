@@ -590,8 +590,7 @@ describe('shephy', function () {
     });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
-        var w = setUpWorld('Multiply');
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Multiply');
         var w0 = gt0.world;
 
         expect(gt0.moves[0].description).toEqual('Gain a 3 Sheep card');
@@ -605,11 +604,12 @@ describe('shephy', function () {
         });
       });
       it('does nothing if there is no space in Field', function () {
-        var w = setUpWorld('Multiply');
-        for (var i = 0; i < 6; i++)
-          S.gainX(w, 1);
-
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Multiply', {
+          customize: function (w) {
+            for (var i = 0; i < 6; i++)
+              S.gainX(w, 1);
+          }
+        });
         var w0 = gt0.world;
 
         expect(gt0.moves[0].description).toEqual('Nothing happened');
