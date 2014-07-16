@@ -527,13 +527,8 @@ describe('shephy', function () {
     }
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
-        var w = setUpWorld('Fill the Earth', 5);
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
         var w0 = gt0.world;
-        expect(changedRegionsBetween(w, w0)).toEqual({
-          discardPile: ['Fill the Earth'],
-          hand: w0.hand.map(cardToName)
-        });
         expect(gt0.moves.length).toEqual(2);
 
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
@@ -551,14 +546,11 @@ describe('shephy', function () {
         var gt1c = S.force(gt0.moves[1].gameTreePromise);
         var w1c = gt1c.world;
         expect(changedRegionsBetween(w0, w1c)).toEqual({});
-        expect(gt1c.moves.length).toEqual(1);
-        expect(gt1c.moves[0].description).toEqual('Draw a card');
+        expect(gt1c.moves.length).toEqual(4);
+        expect(gt1c.moves[0].description).toMatch(/Play /);
       });
       it('repeats the same two moves until user cancels', function () {
-        var gt0 = S.makeGameTree(
-          setUpWorld('Fill the Earth'),
-          {step: 'play', handIndex: 0}
-        );
+        var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(2);
         expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
@@ -584,11 +576,13 @@ describe('shephy', function () {
         expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
         expect(gt2.moves[1].description).toEqual('Cancel');
       });
-      it('shows only "cancel" if ther is no space in Field', function () {
-        var w = setUpWorld('Fill the Earth');
-        for (var i = 0; i < 6; i++)
-          S.gainX(w, 3);
-        var gt = S.makeGameTree(w, {step: 'play', handIndex: 0});
+      it('shows only "cancel" if there is no space in Field', function () {
+        var gt = makeGameTreeAfterPlaying('Fill the Earth', {
+          customize: function (w) {
+            for (var i = 0; i < 6; i++)
+              S.gainX(w, 3);
+          }
+        });
 
         expect(gt.moves.length).toEqual(1);
         expect(gt.moves[0].description).toEqual('Cancel');
