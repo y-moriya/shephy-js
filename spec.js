@@ -622,8 +622,7 @@ describe('shephy', function () {
     });
     describe('Planning Sheep', function () {
       it('shows moves to exile a card', function () {
-        var w = setUpWorld('Planning Sheep', 5);
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Planning Sheep');
         var w0 = gt0.world;
 
         expect(gt0.moves.length).toEqual(w0.hand.length);
@@ -637,13 +636,11 @@ describe('shephy', function () {
           exile: [w0.hand[2].name],
           hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
         });
-        expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Draw cards');
+        expect(gt1.moves.length).toEqual(3);  // 5 - (Planning Sheep + exiled)
+        expect(gt1.moves[0].description).toMatch(/Play /);
       });
       it('shows a move to do nothing if there is no card in Hand', function () {
-        var w = setUpWorld('Planning Sheep');
-
-        var gt0 = S.makeGameTree(w, {step: 'play', handIndex: 0});
+        var gt0 = makeGameTreeAfterPlaying('Planning Sheep', {handCount: 1});
         var w0 = gt0.world;
 
         expect(gt0.moves.length).toEqual(1);
@@ -654,7 +651,7 @@ describe('shephy', function () {
 
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Draw cards');
+        expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
       });
     });
     describe('Sheep Dog', function () {
