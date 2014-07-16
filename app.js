@@ -187,17 +187,10 @@ var shephy = {};
   };
 
   S.makeGameTree = function (world, opt_state) {
-    var x = S.makeWorld(world, opt_state);
     return {
-      world: x[0],
-      moves: S.listPossibleMoves(x[0], x[1])
+      world: world,
+      moves: S.listPossibleMoves(world, opt_state)
     };
-  };
-
-  // TODO: This function seems to be verbose and might be unified into code
-  // that lists moves to play each card.
-  S.makeWorld = function (world, opt_state) {
-    return [world, opt_state];
   };
 
   S.listPossibleMoves = function (world, opt_state) {
