@@ -62,12 +62,8 @@ var shephy = {};
 
   function makeSheepStockPile(n) {
     var cards = [];
-    for (var i = 0; i < 7; i++) {
-      cards.push({
-        name: n + '',
-        rank: n
-      });
-    }
+    for (var i = 0; i < 7; i++)
+      cards.push(makeSheepCard(n));
     return cards;
   }
 
