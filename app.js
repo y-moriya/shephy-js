@@ -342,7 +342,14 @@ var shephy = {};
         }
         break;
       default:
-        throw 'Invalid operation: state = ' + JSON.stringify(state);
+        // TODO: Throw an error after all event cards are implemented.
+        moves.push({
+          description: 'Nothing happened (not implemented yet)',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world);
+          })
+        });
+        break;
     }
 
     return moves;
