@@ -60,10 +60,10 @@ var shephy = {};
     };
   }
 
-  function makeSheepStockPile(n) {
+  function makeSheepStockPile(rank) {
     var cards = [];
     for (var i = 0; i < 7; i++)
-      cards.push(makeSheepCard(n));
+      cards.push(makeSheepCard(rank));
     return cards;
   }
 
