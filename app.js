@@ -53,6 +53,13 @@ var shephy = {};
     return JSON.parse(JSON.stringify(x));
   };
 
+  function makeSheepCard(rank) {
+    return {
+      name: rank + '',
+      rank: rank
+    };
+  }
+
   function makeSheepStockPile(n) {
     var cards = [];
     for (var i = 0; i < 7; i++) {
