@@ -20,6 +20,10 @@ var shephy = {};
   // Utilities  {{{1
   S.RANKS = [1, 3, 10, 30, 100, 300, 1000];
 
+  function max(xs) {
+    return Math.max.apply(Math, xs);
+  }
+
   function random(n) {
     return Math.floor(Math.random() * n);
   }
