@@ -20,6 +20,10 @@ var shephy = {};
   // Utilities  {{{1
   S.RANKS = [1, 3, 10, 30, 100, 300, 1000];
 
+  function max(xs) {
+    return Math.max.apply(Math, xs);
+  }
+
   function random(n) {
     return Math.floor(Math.random() * n);
   }
@@ -62,6 +66,16 @@ var shephy = {};
       return rank / 3;
     else
       return rank * 3 / 10;
+  };
+
+  S.raiseRank = function (rank) {
+    if (rank == 1000)
+      return undefined;
+    var r = rank % 3;
+    if (r == 0)
+      return rank * 10 / 3;
+    else
+      return rank * 3;
   };
 
   function makeSheepCard(rank) {
@@ -374,6 +388,41 @@ var shephy = {};
         }];
       }
     }
+  };
+
+  cardHandlerTable['Golden Hooves'] = function (world, state) {  //{{{2
+    var highestRank = max(world.field.map(function (c) {return c.rank;}));
+    var chosenIndice = state.chosenIndice || [];
+    var moves = [];
+    world.field.forEach(function (c, i) {
+      if (c.rank < highestRank && chosenIndice.indexOf(i) == -1) {
+        moves.push({
+          description: 'Choose ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world, {
+              step: state.step,
+              chosenIndice: (chosenIndice || []).concat([i]).sort()
+            });
+          })
+        });
+      }
+    });
+    moves.push({
+      description:
+        chosenIndice.length == 0
+        ? 'Cancel'
+        : 'Raise ranks of chosen Sheep cards',
+      gameTreePromise: S.delay(function () {
+        var wn = S.clone(world);
+        for (var i = chosenIndice.length - 1; 0 <= i; i--) {
+          var c = world.field[chosenIndice[i]];
+          S.releaseX(wn, chosenIndice[i]);
+          S.gainX(wn, S.raiseRank(c.rank));
+        }
+        return S.makeGameTree(wn);
+      })
+    });
+    return moves;
   };
 
   cardHandlerTable['Multiply'] = function (world, state) {  //{{{2

@@ -117,6 +117,19 @@ describe('shephy', function () {
       expect(S.dropRank(1)).toBeUndefined();
     });
   });
+  describe('raiseRank', function () {
+    it('returns a higher rank', function () {
+      expect(S.raiseRank(1)).toEqual(3);
+      expect(S.raiseRank(3)).toEqual(10);
+      expect(S.raiseRank(10)).toEqual(30);
+      expect(S.raiseRank(30)).toEqual(100);
+      expect(S.raiseRank(100)).toEqual(300);
+      expect(S.raiseRank(300)).toEqual(1000);
+    });
+    it('returns undefined if the highest rank is given', function () {
+      expect(S.raiseRank(1000)).toBeUndefined();
+    });
+  });
   describe('makeInitalWorld', function () {
     it('makes a new world', function () {
       var w = S.makeInitalWorld();
@@ -774,6 +787,71 @@ describe('shephy', function () {
         expect(changedRegionsBetween(w1, w1d)).toEqual({});
         expect(gt1d.moves.length).toEqual(4);
         expect(gt1d.moves[0].description).toMatch(/Play /);
+      });
+    });
+    describe('Golden Hooves', function () {
+      it('repeats asking choice of sheep', function () {
+        var gt0 = makeGameTreeAfterPlaying('Golden Hooves', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(4);
+        expect(gt0.moves[0].description).toEqual('Choose 1 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[2].description).toEqual('Choose 30 Sheep card');
+        expect(gt0.moves[3].description).toEqual('Cancel');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(3);
+        expect(gt1.moves[0].description).toEqual('Choose 3 Sheep card');
+        expect(gt1.moves[1].description).toEqual('Choose 30 Sheep card');
+        expect(gt1.moves[2].description).toEqual('Raise ranks of chosen Sheep cards');
+
+        var gt2 = S.force(gt1.moves[0].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w1, w2)).toEqual({});
+        expect(gt2.moves.length).toEqual(2);
+        expect(gt2.moves[0].description).toEqual('Choose 30 Sheep card');
+        expect(gt2.moves[1].description).toEqual('Raise ranks of chosen Sheep cards');
+
+        var gt3 = S.force(gt2.moves[0].gameTreePromise);
+        var w3 = gt3.world;
+        expect(changedRegionsBetween(w2, w3)).toEqual({});
+        expect(gt3.moves.length).toEqual(1);
+        expect(gt3.moves[0].description).toEqual('Raise ranks of chosen Sheep cards');
+
+        var gt2d = S.force(gt2.moves[1].gameTreePromise);
+        var w2d = gt2d.world;
+        expect(changedRegionsBetween(w2, w2d)).toEqual({
+          sheepStock1: 7,
+          sheepStock10: 6,
+          field: [30, 100, 10, 3]
+        });
+        expect(gt2d.moves.length).toEqual(4);
+        expect(gt2d.moves[0].description).toMatch(/Play /);
+      });
+      it('does nothing if Field if full', function () {
+        var gt0 = makeGameTreeAfterPlaying('Golden Hooves', {
+          customize: function (w) {
+            for (var i = 1; i <= 6; i++)
+              S.gainX(w, 1);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+
+        expect(gt0.moves[0].description).toEqual('Cancel');
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(4);
+        expect(gt1.moves[0].description).toMatch(/Play /);
       });
     });
     describe('Multiply', function () {
