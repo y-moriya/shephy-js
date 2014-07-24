@@ -117,6 +117,19 @@ describe('shephy', function () {
       expect(S.dropRank(1)).toBeUndefined();
     });
   });
+  describe('raiseRank', function () {
+    it('returns a higher rank', function () {
+      expect(S.raiseRank(1)).toEqual(3);
+      expect(S.raiseRank(3)).toEqual(10);
+      expect(S.raiseRank(10)).toEqual(30);
+      expect(S.raiseRank(30)).toEqual(100);
+      expect(S.raiseRank(100)).toEqual(300);
+      expect(S.raiseRank(300)).toEqual(1000);
+    });
+    it('returns undefined if the highest rank is given', function () {
+      expect(S.raiseRank(1000)).toBeUndefined();
+    });
+  });
   describe('makeInitalWorld', function () {
     it('makes a new world', function () {
       var w = S.makeInitalWorld();

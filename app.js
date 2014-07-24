@@ -64,6 +64,16 @@ var shephy = {};
       return rank * 3 / 10;
   };
 
+  S.raiseRank = function (rank) {
+    if (rank == 1000)
+      return undefined;
+    var r = rank % 3;
+    if (r == 0)
+      return rank * 10 / 3;
+    else
+      return rank * 3;
+  };
+
   function makeSheepCard(rank) {
     return {
       name: rank + '',
