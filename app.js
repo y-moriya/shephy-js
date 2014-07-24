@@ -17,6 +17,7 @@
 var shephy = {};
 
 (function (S, $) {
+  // Utilities  {{{1
   S.RANKS = [1, 3, 10, 30, 100, 300, 1000];
 
   function random(n) {
@@ -189,21 +190,22 @@ var shephy = {};
     throw 'Invalid operation';
   };
 
-  S.makeGameTree = function (world, opt_state) {
+  // Core  {{{1
+  S.makeGameTree = function (world, opt_state) {  //{{{2
     return {
       world: world,
       moves: S.listPossibleMoves(world, opt_state)
     };
   };
 
-  S.listPossibleMoves = function (world, opt_state) {
+  S.listPossibleMoves = function (world, opt_state) {  //{{{2
     if (opt_state === undefined)
       return S.listPossibleMovesForBasicRules(world);
     else
       return S.listPossibleMovesForPlayingCard(world, opt_state);
   }
 
-  S.listPossibleMovesForBasicRules = function (world) {
+  S.listPossibleMovesForBasicRules = function (world) {  //{{{2
     // TODO: Add an option to continue the current game to compete high score.
     if (world.field.some(function (c) {return c.rank == 1000;}))
       return [];
@@ -259,14 +261,14 @@ var shephy = {};
     });
   };
 
-  S.listPossibleMovesForPlayingCard = function (world, state) {
+  S.listPossibleMovesForPlayingCard = function (world, state) {  //{{{2
     var h = cardHandlerTable[state.step] || unimplementedCardHandler;
     return h(world, state);
   };
 
-  var cardHandlerTable = {};
+  var cardHandlerTable = {};  //{{{2
 
-  cardHandlerTable['Fill the Earth'] = function (world, state) {
+  cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
     var moves = [];
     if (world.field.length < 7) {
       moves.push({
@@ -287,7 +289,7 @@ var shephy = {};
     return moves;
   };
 
-  cardHandlerTable['Multiply'] = function (world, state) {
+  cardHandlerTable['Multiply'] = function (world, state) {  //{{{2
     if (world.field.length < 7 && 0 < world.sheepStock[3].length) {
       return [{
         description: 'Gain a 3 Sheep card',
@@ -307,7 +309,7 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Planning Sheep'] = function (world, state) {
+  cardHandlerTable['Planning Sheep'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return [{
         description: 'Nothing happened',
@@ -329,7 +331,7 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Sheep Dog'] = function (world, state) {
+  cardHandlerTable['Sheep Dog'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return [{
         description: 'Nothing happened',
@@ -351,7 +353,7 @@ var shephy = {};
     }
   };
 
-  function unimplementedCardHandler(world, state) {
+  function unimplementedCardHandler(world, state) {  //{{{2
     // TODO: Throw an error after all event cards are implemented.
     return [{
       description: 'Nothing happened (not implemented yet)',
