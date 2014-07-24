@@ -268,6 +268,37 @@ var shephy = {};
 
   var cardHandlerTable = {};  //{{{2
 
+  cardHandlerTable['Be Fruitful'] = function (world, state) {  //{{{2
+    if (state.rank === undefined) {
+      if (world.field.length < 7) {
+        return world.field.map(function (c) {
+          return {
+            description: 'Copy ' + c.rank + ' Sheep card',
+            gameTreePromise: S.delay(function () {
+              return S.makeGameTree(world, {step: state.step, rank: c.rank});
+            })
+          };
+        });
+      } else {
+        return [{
+          description: 'Nothing happened',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world);
+          })
+        }];
+      }
+    } else {
+      return [{
+        description: 'Gain a ' + state.rank + ' Sheep card',
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          S.gainX(wn, state.rank);
+          return S.makeGameTree(wn);
+        })
+      }];
+    }
+  };
+
   cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
     var moves = [];
     if (world.field.length < 7) {

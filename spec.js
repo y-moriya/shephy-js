@@ -516,6 +516,67 @@ describe('shephy', function () {
         options.customize(w);
       return S.force(S.makeGameTree(w).moves[0].gameTreePromise);
     }
+    describe('Be Fruitful', function () {
+      it('shows a move for each sheep in Field', function () {
+        var gt0 = makeGameTreeAfterPlaying('Be Fruitful', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(5);
+
+        expect(gt0.moves[0].description).toEqual('Copy 1 Sheep card');
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Gain a 1 Sheep card');
+        var gt1d = S.force(gt1.moves[0].gameTreePromise);
+        var w1d = gt1d.world;
+        expect(changedRegionsBetween(w1, w1d)).toEqual({
+          sheepStock1: 5,
+          field: [1, 3, 30, 30, 100, 1]
+        });
+        expect(gt1d.moves.length).toEqual(4);
+        expect(gt1d.moves[0].description).toMatch(/Play /);
+
+        expect(gt0.moves[2].description).toEqual('Copy 30 Sheep card');
+        var gt3 = S.force(gt0.moves[2].gameTreePromise);
+        var w3 = gt3.world;
+        expect(changedRegionsBetween(w0, w3)).toEqual({});
+        expect(gt3.moves.length).toEqual(1);
+        expect(gt3.moves[0].description).toEqual('Gain a 30 Sheep card');
+        var gt3d = S.force(gt3.moves[0].gameTreePromise);
+        var w3d = gt3d.world;
+        expect(changedRegionsBetween(w3, w3d)).toEqual({
+          sheepStock30: 4,
+          field: [1, 3, 30, 30, 100, 30]
+        });
+        expect(gt3d.moves.length).toEqual(4);
+        expect(gt3d.moves[0].description).toMatch(/Play /);
+      });
+      it('shows a move for nothing if Field is full', function () {
+        var gt0 = makeGameTreeAfterPlaying('Be Fruitful', {
+          customize: function (w) {
+            for (var i = 1; i <= 6; i++)
+              S.gainX(w, 1);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+
+        expect(gt0.moves[0].description).toEqual('Nothing happened');
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(4);
+        expect(gt1.moves[0].description).toMatch(/Play /);
+      });
+    });
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
         var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
