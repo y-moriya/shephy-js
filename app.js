@@ -54,6 +54,16 @@ var shephy = {};
     return JSON.parse(JSON.stringify(x));
   };
 
+  S.dropRank = function (rank) {
+    if (rank == 1)
+      return undefined;
+    var r = rank % 3;
+    if (r == 0)
+      return rank / 3;
+    else
+      return rank * 3 / 10;
+  };
+
   function makeSheepCard(rank) {
     return {
       name: rank + '',

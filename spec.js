@@ -104,6 +104,19 @@ describe('shephy', function () {
       expect(xd.a.b.c).not.toBe(x.a.b.c);
     });
   });
+  describe('dropRank', function () {
+    it('returns a lower rank', function () {
+      expect(S.dropRank(1000)).toEqual(300);
+      expect(S.dropRank(300)).toEqual(100);
+      expect(S.dropRank(100)).toEqual(30);
+      expect(S.dropRank(30)).toEqual(10);
+      expect(S.dropRank(10)).toEqual(3);
+      expect(S.dropRank(3)).toEqual(1);
+    });
+    it('returns undefined if the lowest rank is given', function () {
+      expect(S.dropRank(1)).toBeUndefined();
+    });
+  });
   describe('makeInitalWorld', function () {
     it('makes a new world', function () {
       var w = S.makeInitalWorld();
