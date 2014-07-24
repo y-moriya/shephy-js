@@ -54,6 +54,16 @@ var shephy = {};
     return JSON.parse(JSON.stringify(x));
   };
 
+  S.dropRank = function (rank) {
+    if (rank == 1)
+      return undefined;
+    var r = rank % 3;
+    if (r == 0)
+      return rank / 3;
+    else
+      return rank * 3 / 10;
+  };
+
   function makeSheepCard(rank) {
     return {
       name: rank + '',
@@ -318,6 +328,52 @@ var shephy = {};
       })
     });
     return moves;
+  };
+
+  cardHandlerTable['Flourish'] = function (world, state) {  //{{{2
+    if (state.rank === undefined) {
+      if (world.field.length < 7) {
+        return world.field.map(function (c) {
+          return {
+            description: 'Choose ' + c.rank + ' Sheep card',
+            gameTreePromise: S.delay(function () {
+              return S.makeGameTree(world, {step: state.step, rank: c.rank});
+            })
+          };
+        });
+      } else {
+        return [{
+          description: 'Nothing happened',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world);
+          })
+        }];
+      }
+    } else {
+      var lowerRank = S.dropRank(state.rank);
+      if (lowerRank === undefined) {
+        return [{
+          description: 'Gain nothing',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world);
+          })
+        }];
+      } else {
+        var n = Math.min(3, 7 - world.field.length);
+        return [{
+          description:
+            n == 1
+            ? 'Gain a ' + lowerRank + ' Sheep card'
+            : 'Gain ' + n + ' cards of ' + lowerRank + ' Sheep',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            for (var i = 1; i <= n; i++)
+              S.gainX(wn, lowerRank);
+            return S.makeGameTree(wn);
+          })
+        }];
+      }
+    }
   };
 
   cardHandlerTable['Multiply'] = function (world, state) {  //{{{2
