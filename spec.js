@@ -653,6 +653,129 @@ describe('shephy', function () {
         expect(gt.moves[0].description).toEqual('Cancel');
       });
     });
+    describe('Flourish', function () {
+      it('shows a move for each sheep in Field to gain 3 cards', function () {
+        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(4);
+
+        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        var gt2 = S.force(gt0.moves[1].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w0, w2)).toEqual({});
+        expect(gt2.moves.length).toEqual(1);
+        expect(gt2.moves[0].description).toEqual('Gain 3 cards of 1 Sheep');
+        var gt2d = S.force(gt2.moves[0].gameTreePromise);
+        var w2d = gt2d.world;
+        expect(changedRegionsBetween(w2, w2d)).toEqual({
+          sheepStock1: 3,
+          field: [1, 3, 30, 100, 1, 1, 1]
+        });
+        expect(gt2d.moves.length).toEqual(4);
+        expect(gt2d.moves[0].description).toMatch(/Play /);
+      });
+      it('shows a move to gain 2 cards if Field is nearly full', function () {
+        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(5);
+
+        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        var gt2 = S.force(gt0.moves[1].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w0, w2)).toEqual({});
+        expect(gt2.moves.length).toEqual(1);
+        expect(gt2.moves[0].description).toEqual('Gain 2 cards of 1 Sheep');
+        var gt2d = S.force(gt2.moves[0].gameTreePromise);
+        var w2d = gt2d.world;
+        expect(changedRegionsBetween(w2, w2d)).toEqual({
+          sheepStock1: 4,
+          field: [1, 3, 30, 100, 100, 1, 1]
+        });
+        expect(gt2d.moves.length).toEqual(4);
+        expect(gt2d.moves[0].description).toMatch(/Play /);
+      });
+      it('shows a move to gain 1 cards if Field is nearly full', function () {
+        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+            S.gainX(w, 100);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(6);
+
+        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        var gt2 = S.force(gt0.moves[1].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w0, w2)).toEqual({});
+        expect(gt2.moves.length).toEqual(1);
+        expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
+        var gt2d = S.force(gt2.moves[0].gameTreePromise);
+        var w2d = gt2d.world;
+        expect(changedRegionsBetween(w2, w2d)).toEqual({
+          sheepStock1: 5,
+          field: [1, 3, 30, 100, 100, 100, 1]
+        });
+        expect(gt2d.moves.length).toEqual(4);
+        expect(gt2d.moves[0].description).toMatch(/Play /);
+      });
+      it('shows a move for nothing if Field is full', function () {
+        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+          customize: function (w) {
+            for (var i = 1; i <= 6; i++)
+              S.gainX(w, 1);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+
+        expect(gt0.moves[0].description).toEqual('Nothing happened');
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(4);
+        expect(gt1.moves[0].description).toMatch(/Play /);
+      });
+      it('shows a move for nothing if 1 Sheep is chosen', function () {
+        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(4);
+
+        expect(gt0.moves[0].description).toEqual('Choose 1 Sheep card');
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Gain nothing');
+        var gt1d = S.force(gt1.moves[0].gameTreePromise);
+        var w1d = gt1d.world;
+        expect(changedRegionsBetween(w1, w1d)).toEqual({});
+        expect(gt1d.moves.length).toEqual(4);
+        expect(gt1d.moves[0].description).toMatch(/Play /);
+      });
+    });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
         var gt0 = makeGameTreeAfterPlaying('Multiply');
