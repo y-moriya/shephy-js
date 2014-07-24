@@ -260,99 +260,105 @@ var shephy = {};
   };
 
   S.listPossibleMovesForPlayingCard = function (world, state) {
+    var h = cardHandlerTable[state.step] || unimplementedCardHandler;
+    return h(world, state);
+  };
+
+  var cardHandlerTable = {};
+
+  cardHandlerTable['Fill the Earth'] = function (world, state) {
     var moves = [];
-
-    // TODO: Implement more cards.
-    switch (state.step) {
-      case 'Fill the Earth':
-        if (world.field.length < 7) {
-          moves.push({
-            description: 'Gain a 1 Sheep card',
-            gameTreePromise: S.delay(function () {
-              var wn = S.clone(world);
-              S.gainX(wn, 1);
-              return S.makeGameTree(wn, state);
-            })
-          });
-        }
-        moves.push({
-          description: 'Cancel',
-          gameTreePromise: S.delay(function () {
-            return S.makeGameTree(world);
-          })
-        });
-        break;
-      case 'Multiply':
-        if (world.field.length < 7 && 0 < world.sheepStock[3].length) {
-          moves.push({
-            description: 'Gain a 3 Sheep card',
-            gameTreePromise: S.delay(function () {
-              var wn = S.clone(world);
-              S.gainX(wn, 3);
-              return S.makeGameTree(wn);
-            })
-          });
-        } else {
-          moves.push({
-            description: 'Nothing happened',
-            gameTreePromise: S.delay(function () {
-              return S.makeGameTree(world);
-            })
-          });
-        }
-        break;
-      case 'Planning Sheep':
-        world.hand.forEach(function (c, i) {
-          moves.push({
-            description: 'Exile ' + c.name,
-            gameTreePromise: S.delay(function () {
-              var wn = S.clone(world);
-              S.exileX(wn, wn.hand, i);
-              return S.makeGameTree(wn);
-            })
-          });
-        });
-        if (world.hand.length == 0) {
-          moves.push({
-            description: 'Nothing happened',
-            gameTreePromise: S.delay(function () {
-              return S.makeGameTree(world);
-            })
-          });
-        }
-        break;
-      case 'Sheep Dog':
-        world.hand.forEach(function (c, i) {
-          moves.push({
-            description: 'Discard ' + c.name,
-            gameTreePromise: S.delay(function () {
-              var wn = S.clone(world);
-              S.discardX(wn, i);
-              return S.makeGameTree(wn);
-            })
-          });
-        });
-        if (world.hand.length == 0) {
-          moves.push({
-            description: 'Nothing happened',
-            gameTreePromise: S.delay(function () {
-              return S.makeGameTree(world);
-            })
-          });
-        }
-        break;
-      default:
-        // TODO: Throw an error after all event cards are implemented.
-        moves.push({
-          description: 'Nothing happened (not implemented yet)',
-          gameTreePromise: S.delay(function () {
-            return S.makeGameTree(world);
-          })
-        });
-        break;
+    if (world.field.length < 7) {
+      moves.push({
+        description: 'Gain a 1 Sheep card',
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          S.gainX(wn, 1);
+          return S.makeGameTree(wn, state);
+        })
+      });
     }
-
+    moves.push({
+      description: 'Cancel',
+      gameTreePromise: S.delay(function () {
+        return S.makeGameTree(world);
+      })
+    });
     return moves;
+  };
+
+  cardHandlerTable['Multiply'] = function (world, state) {
+    if (world.field.length < 7 && 0 < world.sheepStock[3].length) {
+      return [{
+        description: 'Gain a 3 Sheep card',
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          S.gainX(wn, 3);
+          return S.makeGameTree(wn);
+        })
+      }];
+    } else {
+      return [{
+        description: 'Nothing happened',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      }];
+    }
+  };
+
+  cardHandlerTable['Planning Sheep'] = function (world, state) {
+    if (world.hand.length == 0) {
+      return [{
+        description: 'Nothing happened',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      }];
+    } else {
+      return world.hand.map(function (c, i) {
+        return {
+          description: 'Exile ' + c.name,
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.exileX(wn, wn.hand, i);
+            return S.makeGameTree(wn);
+          })
+        };
+      });
+    }
+  };
+
+  cardHandlerTable['Sheep Dog'] = function (world, state) {
+    if (world.hand.length == 0) {
+      return [{
+        description: 'Nothing happened',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      }];
+    } else {
+      return world.hand.map(function (c, i) {
+        return {
+          description: 'Discard ' + c.name,
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.discardX(wn, i);
+            return S.makeGameTree(wn);
+          })
+        };
+      });
+    }
+  };
+
+  function unimplementedCardHandler(world, state) {
+    // TODO: Throw an error after all event cards are implemented.
+    return [{
+      description: 'Nothing happened (not implemented yet)',
+      gameTreePromise: S.delay(function () {
+        return S.makeGameTree(world);
+      })
+    }];
   };
 
   // UI  {{{1
