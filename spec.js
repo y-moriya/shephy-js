@@ -130,6 +130,16 @@ describe('shephy', function () {
       expect(S.raiseRank(1000)).toBeUndefined();
     });
   });
+  describe('compositeRanks', function () {
+    it('returns the greatest rank not greater than sum of given ranks', function () {
+      expect(S.compositeRanks([1])).toEqual(1);
+      expect(S.compositeRanks([1, 1])).toEqual(1);
+      expect(S.compositeRanks([1, 1, 1])).toEqual(3);
+      expect(S.compositeRanks([1, 1, 1, 1])).toEqual(3);
+      expect(S.compositeRanks([300, 30, 30, 100, 10])).toEqual(300);
+      expect(S.compositeRanks([1000, 1000, 1000])).toEqual(1000);
+    });
+  });
   describe('makeInitalWorld', function () {
     it('makes a new world', function () {
       var w = S.makeInitalWorld();
@@ -601,6 +611,76 @@ describe('shephy', function () {
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(4);
         expect(gt1.moves[0].description).toMatch(/Play /);
+      });
+    });
+    describe('Dominion', function () {
+      it('repeats asking choice of sheep then composite them', function () {
+        var gt0 = makeGameTreeAfterPlaying('Dominion', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 3);
+            S.gainX(w, 3);
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(7);
+        expect(gt0.moves[0].description).toEqual('Choose 1 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[2].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[3].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[4].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[5].description).toEqual('Choose 30 Sheep card');
+        expect(gt0.moves[6].description).toEqual('Cancel');
+
+        var gt1 = S.force(gt0.moves[1].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(6);
+        expect(gt1.moves[0].description).toEqual('Choose 1 Sheep card');
+        expect(gt1.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt1.moves[2].description).toEqual('Choose 3 Sheep card');
+        expect(gt1.moves[3].description).toEqual('Choose 3 Sheep card');
+        expect(gt1.moves[4].description).toEqual('Choose 30 Sheep card');
+        expect(gt1.moves[5].description).toEqual('Combine chosen Sheep cards');
+
+        var gt2 = S.force(gt1.moves[1].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w1, w2)).toEqual({});
+        expect(gt2.moves.length).toEqual(5);
+        expect(gt2.moves[0].description).toEqual('Choose 1 Sheep card');
+        expect(gt2.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt2.moves[2].description).toEqual('Choose 3 Sheep card');
+        expect(gt2.moves[3].description).toEqual('Choose 30 Sheep card');
+        expect(gt2.moves[4].description).toEqual('Combine chosen Sheep cards');
+
+        var gt3 = S.force(gt2.moves[1].gameTreePromise);
+        var w3 = gt3.world;
+        expect(changedRegionsBetween(w2, w3)).toEqual({});
+        expect(gt3.moves.length).toEqual(4);
+        expect(gt3.moves[0].description).toEqual('Choose 1 Sheep card');
+        expect(gt3.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt3.moves[2].description).toEqual('Choose 30 Sheep card');
+        expect(gt3.moves[3].description).toEqual('Combine chosen Sheep cards');
+
+        var gt4 = S.force(gt3.moves[1].gameTreePromise);
+        var w4 = gt4.world;
+        expect(changedRegionsBetween(w3, w4)).toEqual({});
+        expect(gt4.moves.length).toEqual(3);
+        expect(gt4.moves[0].description).toEqual('Choose 1 Sheep card');
+        expect(gt4.moves[1].description).toEqual('Choose 30 Sheep card');
+        expect(gt4.moves[2].description).toEqual('Combine chosen Sheep cards');
+
+        var gt5 = S.force(gt4.moves[2].gameTreePromise);
+        var w5 = gt5.world;
+        expect(changedRegionsBetween(w4, w5)).toEqual({
+          sheepStock3: 7,
+          sheepStock10: 6,
+          field: [1, 30, 10]
+        });
+        expect(gt5.moves.length).toEqual(4);
+        expect(gt5.moves[0].description).toMatch(/^Play /);
       });
     });
     describe('Fill the Earth', function () {

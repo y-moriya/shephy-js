@@ -78,6 +78,12 @@ var shephy = {};
       return rank * 3;
   };
 
+  S.compositeRanks = function (ranks) {
+    var rankSum = ranks.reduce(function (ra, r) {return ra + r;});
+    var candidateRanks = S.RANKS.filter(function (r) {return r <= rankSum;});
+    return max(candidateRanks);
+  };
+
   function makeSheepCard(rank) {
     return {
       name: rank + '',
@@ -321,6 +327,40 @@ var shephy = {};
         })
       }];
     }
+  };
+
+  cardHandlerTable['Dominion'] = function (world, state) {  //{{{2
+    var chosenIndice = state.chosenIndice || [];
+    var moves = [];
+    world.field.forEach(function (c, i) {
+      if (chosenIndice.indexOf(i) == -1) {
+        moves.push({
+          description: 'Choose ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world, {
+              step: state.step,
+              chosenIndice: (chosenIndice || []).concat([i]).sort()
+            });
+          })
+        });
+      }
+    });
+    moves.push({
+      description:
+        chosenIndice.length == 0
+        ? 'Cancel'
+        : 'Combine chosen Sheep cards',
+      gameTreePromise: S.delay(function () {
+        var wn = S.clone(world);
+        for (var i = chosenIndice.length - 1; 0 <= i; i--)
+          S.releaseX(wn, chosenIndice[i]);
+        S.gainX(wn, S.compositeRanks(
+          chosenIndice.map(function (i) {return world.field[i].rank;})
+        ));
+        return S.makeGameTree(wn);
+      })
+    });
+    return moves;
   };
 
   cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
