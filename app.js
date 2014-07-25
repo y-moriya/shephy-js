@@ -329,6 +329,40 @@ var shephy = {};
     }
   };
 
+  cardHandlerTable['Dominion'] = function (world, state) {  //{{{2
+    var chosenIndice = state.chosenIndice || [];
+    var moves = [];
+    world.field.forEach(function (c, i) {
+      if (chosenIndice.indexOf(i) == -1) {
+        moves.push({
+          description: 'Choose ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world, {
+              step: state.step,
+              chosenIndice: (chosenIndice || []).concat([i]).sort()
+            });
+          })
+        });
+      }
+    });
+    moves.push({
+      description:
+        chosenIndice.length == 0
+        ? 'Cancel'
+        : 'Combine chosen Sheep cards',
+      gameTreePromise: S.delay(function () {
+        var wn = S.clone(world);
+        for (var i = chosenIndice.length - 1; 0 <= i; i--)
+          S.releaseX(wn, chosenIndice[i]);
+        S.gainX(wn, S.compositeRanks(
+          chosenIndice.map(function (i) {return world.field[i].rank;})
+        ));
+        return S.makeGameTree(wn);
+      })
+    });
+    return moves;
+  };
+
   cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
     var moves = [];
     if (world.field.length < 7) {
