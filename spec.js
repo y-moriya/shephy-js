@@ -130,6 +130,16 @@ describe('shephy', function () {
       expect(S.raiseRank(1000)).toBeUndefined();
     });
   });
+  describe('compositeRanks', function () {
+    it('returns the greatest rank not greater than sum of given ranks', function () {
+      expect(S.compositeRanks([1])).toEqual(1);
+      expect(S.compositeRanks([1, 1])).toEqual(1);
+      expect(S.compositeRanks([1, 1, 1])).toEqual(3);
+      expect(S.compositeRanks([1, 1, 1, 1])).toEqual(3);
+      expect(S.compositeRanks([300, 30, 30, 100, 10])).toEqual(300);
+      expect(S.compositeRanks([1000, 1000, 1000])).toEqual(1000);
+    });
+  });
   describe('makeInitalWorld', function () {
     it('makes a new world', function () {
       var w = S.makeInitalWorld();

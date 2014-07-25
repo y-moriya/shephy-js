@@ -78,6 +78,12 @@ var shephy = {};
       return rank * 3;
   };
 
+  S.compositeRanks = function (ranks) {
+    var rankSum = ranks.reduce(function (ra, r) {return ra + r;});
+    var candidateRanks = S.RANKS.filter(function (r) {return r <= rankSum;});
+    return max(candidateRanks);
+  };
+
   function makeSheepCard(rank) {
     return {
       name: rank + '',
