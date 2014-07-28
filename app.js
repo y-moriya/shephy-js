@@ -430,6 +430,19 @@ var shephy = {};
     }
   };
 
+  cardHandlerTable['Falling Rock'] = function (world, state) {  //{{{2
+    return world.field.map(function (c, i) {
+      return {
+        description: 'Release ' + c.rank + ' Sheep card',
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          S.releaseX(wn, i);
+          return S.makeGameTree(wn);
+        })
+      };
+    });
+  };
+
   cardHandlerTable['Golden Hooves'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     var chosenIndice = state.chosenIndice || [];
