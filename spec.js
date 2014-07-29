@@ -1070,6 +1070,57 @@ describe('shephy', function () {
         expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
       });
     });
+    describe('Storm', function () {
+      it('asks two Sheep cards to release', function () {
+        var gt0 = makeGameTreeAfterPlaying('Storm', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(4);
+        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Release 3 Sheep card');
+        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
+        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock1: 7,
+          field: [3, 30, 100]
+        });
+        expect(gt1.moves.length).toEqual(3);
+        expect(gt1.moves[0].description).toEqual('Release 3 Sheep card');
+        expect(gt1.moves[1].description).toEqual('Release 30 Sheep card');
+        expect(gt1.moves[2].description).toEqual('Release 100 Sheep card');
+
+        var gt2 = S.force(gt1.moves[2].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w1, w2)).toEqual({
+          sheepStock100: 7,
+          field: [3, 30]
+        });
+        expect(gt2.moves.length).toEqual(4);
+        expect(gt2.moves[0].description).toMatch(/^Play /);
+      });
+      it('asks one Sheep card to release if it is only one in the Field', function () {
+        var gt0 = makeGameTreeAfterPlaying('Storm');
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock1: 7,
+          field: []
+        });
+        expect(gt1.moves.length).toEqual(0);
+      });
+    });
   });
 });
 
