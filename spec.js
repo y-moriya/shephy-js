@@ -969,6 +969,31 @@ describe('shephy', function () {
         expect(gt1.moves[0].description).toMatch(/Play /);
       });
     });
+    describe('Lightning', function () {
+      it('asks Sheep cards with the highest rank to release', function () {
+        var gt0 = makeGameTreeAfterPlaying('Lightning', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(2);
+        expect(gt0.moves[0].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Release 100 Sheep card');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock100: 6,
+          field: [1, 3, 30, 100]
+        });
+        expect(gt1.moves.length).toEqual(4);
+        expect(gt1.moves[0].description).toMatch(/^Play /);
+      });
+    });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
         var gt0 = makeGameTreeAfterPlaying('Multiply');
