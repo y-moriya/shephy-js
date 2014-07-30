@@ -363,6 +363,19 @@ var shephy = {};
     return moves;
   };
 
+  cardHandlerTable['Falling Rock'] = function (world, state) {  //{{{2
+    return world.field.map(function (c, i) {
+      return {
+        description: 'Release ' + c.rank + ' Sheep card',
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          S.releaseX(wn, i);
+          return S.makeGameTree(wn);
+        })
+      };
+    });
+  };
+
   cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
     var moves = [];
     if (world.field.length < 7) {
@@ -428,19 +441,6 @@ var shephy = {};
         }];
       }
     }
-  };
-
-  cardHandlerTable['Falling Rock'] = function (world, state) {  //{{{2
-    return world.field.map(function (c, i) {
-      return {
-        description: 'Release ' + c.rank + ' Sheep card',
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          S.releaseX(wn, i);
-          return S.makeGameTree(wn);
-        })
-      };
-    });
   };
 
   cardHandlerTable['Golden Hooves'] = function (world, state) {  //{{{2

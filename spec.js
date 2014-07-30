@@ -683,6 +683,41 @@ describe('shephy', function () {
         expect(gt5.moves[0].description).toMatch(/^Play /);
       });
     });
+    describe('Falling Rock', function () {
+      it('asks which Sheep card to release', function () {
+        var gt0 = makeGameTreeAfterPlaying('Falling Rock', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(4);
+        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Release 3 Sheep card');
+        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
+        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
+
+        var gt1a = S.force(gt0.moves[0].gameTreePromise);
+        var w1a = gt1a.world;
+        expect(changedRegionsBetween(w0, w1a)).toEqual({
+          sheepStock1: 7,
+          field: [3, 30, 100]
+        });
+        expect(gt1a.moves.length).toEqual(4);
+        expect(gt1a.moves[0].description).toMatch(/^Play /);
+
+        var gt1b = S.force(gt0.moves[2].gameTreePromise);
+        var w1b = gt1b.world;
+        expect(changedRegionsBetween(w0, w1b)).toEqual({
+          sheepStock30: 7,
+          field: [1, 3, 100]
+        });
+        expect(gt1b.moves.length).toEqual(4);
+        expect(gt1b.moves[0].description).toMatch(/^Play /);
+      });
+    });
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
         var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
@@ -867,41 +902,6 @@ describe('shephy', function () {
         expect(changedRegionsBetween(w1, w1d)).toEqual({});
         expect(gt1d.moves.length).toEqual(4);
         expect(gt1d.moves[0].description).toMatch(/Play /);
-      });
-    });
-    describe('Falling Rock', function () {
-      it('asks which Sheep card to release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Falling Rock', {
-          customize: function (w) {
-            S.gainX(w, 3);
-            S.gainX(w, 30);
-            S.gainX(w, 100);
-          }
-        });
-        var w0 = gt0.world;
-        expect(gt0.moves.length).toEqual(4);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 3 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
-
-        var gt1a = S.force(gt0.moves[0].gameTreePromise);
-        var w1a = gt1a.world;
-        expect(changedRegionsBetween(w0, w1a)).toEqual({
-          sheepStock1: 7,
-          field: [3, 30, 100]
-        });
-        expect(gt1a.moves.length).toEqual(4);
-        expect(gt1a.moves[0].description).toMatch(/^Play /);
-
-        var gt1b = S.force(gt0.moves[2].gameTreePromise);
-        var w1b = gt1b.world;
-        expect(changedRegionsBetween(w0, w1b)).toEqual({
-          sheepStock30: 7,
-          field: [1, 3, 100]
-        });
-        expect(gt1b.moves.length).toEqual(4);
-        expect(gt1b.moves[0].description).toMatch(/^Play /);
       });
     });
     describe('Golden Hooves', function () {
