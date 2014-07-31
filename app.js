@@ -576,6 +576,28 @@ var shephy = {};
     });
   };
 
+  cardHandlerTable['Wolves'] = function (world, state) {  //{{{2
+    var highestRank = max(world.field.map(function (c) {return c.rank;}));
+    if (highestRank == 1)
+      return cardHandlerTable['Lightning'](world, state);
+    return (
+      world.field
+      .map(function (c, i) {return [c, i];})
+      .filter(function (x) {return x[0].rank == highestRank;})
+      .map(function (x) {
+        return {
+          description: 'Reduce the rank of ' + x[0].rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.releaseX(wn, x[1]);
+            S.gainX(wn, S.dropRank(highestRank));
+            return S.makeGameTree(wn);
+          })
+        };
+      })
+    );
+  };
+
   function unimplementedCardHandler(world, state) {  //{{{2
     // TODO: Throw an error after all event cards are implemented.
     return [{
