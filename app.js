@@ -329,6 +329,29 @@ var shephy = {};
     }
   };
 
+  cardHandlerTable['Crowding'] = function (world, state) {  //{{{2
+    if (world.field.length <= 2) {
+      return [{
+        description: 'Too few sheep - nothing happened',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      }];
+    } else {
+      return world.field.map(function (c, i) {
+        return {
+          description: 'Release ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.releaseX(wn, i);
+            var sn = wn.field.length <= 2 ? undefined : state;
+            return S.makeGameTree(wn, sn);
+          })
+        };
+      });
+    }
+  };
+
   cardHandlerTable['Dominion'] = function (world, state) {  //{{{2
     var chosenIndice = state.chosenIndice || [];
     var moves = [];
