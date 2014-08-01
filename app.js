@@ -517,6 +517,39 @@ var shephy = {};
     }
   };
 
+  cardHandlerTable['Plague'] = function (world, state) {  //{{{2
+    var ranks = uniq(world.field.map(function (c) {return c.rank;}));
+    return (
+      ranks
+      .map(function (r) {
+        return {
+          description: 'Release all ' + r + ' Sheep cards',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            for (var i = wn.field.length - 1; 0 <= i; i--) {
+              if (wn.field[i].rank == r)
+                S.releaseX(wn, i);
+            }
+            return S.makeGameTree(wn);
+          })
+        };
+      })
+    );
+  };
+
+  function uniq(xs) {
+    var us = [];
+    var found = {};
+    for (var i = 0; i < xs.length; i++) {
+      var x = xs[i];
+      if (!found[x]) {
+        us.push(x);
+        found[x] = true;
+      }
+    }
+    return us;
+  }
+
   cardHandlerTable['Planning Sheep'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return [{
