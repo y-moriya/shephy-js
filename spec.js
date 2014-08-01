@@ -1026,6 +1026,50 @@ describe('shephy', function () {
         expect(changedRegionsBetween(w0, w1)).toEqual({});
       });
     });
+    describe('Plague', function () {
+      it('asks a rank of Sheep cards to release', function () {
+        var gt0 = makeGameTreeAfterPlaying('Plague', {
+          customize: function (w) {
+            S.gainX(w, 1);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(3);
+        expect(gt0.moves[0].description).toEqual('Release all 1 Sheep cards');
+        expect(gt0.moves[1].description).toEqual('Release all 30 Sheep cards');
+        expect(gt0.moves[2].description).toEqual('Release all 100 Sheep cards');
+
+        var gt1a = S.force(gt0.moves[0].gameTreePromise);
+        var w1a = gt1a.world;
+        expect(changedRegionsBetween(w0, w1a)).toEqual({
+          sheepStock1: 7,
+          field: [30, 100, 100]
+        });
+        expect(gt1a.moves.length).toEqual(4);
+        expect(gt1a.moves[0].description).toMatch(/^Play /);
+
+        var gt1b = S.force(gt0.moves[1].gameTreePromise);
+        var w1b = gt1b.world;
+        expect(changedRegionsBetween(w0, w1b)).toEqual({
+          sheepStock30: 7,
+          field: [1, 1, 100, 100]
+        });
+        expect(gt1b.moves.length).toEqual(4);
+        expect(gt1b.moves[0].description).toMatch(/^Play /);
+
+        var gt1c = S.force(gt0.moves[2].gameTreePromise);
+        var w1c = gt1c.world;
+        expect(changedRegionsBetween(w0, w1c)).toEqual({
+          sheepStock100: 7,
+          field: [1, 1, 30]
+        });
+        expect(gt1c.moves.length).toEqual(4);
+        expect(gt1c.moves[0].description).toMatch(/^Play /);
+      });
+    });
     describe('Planning Sheep', function () {
       it('shows moves to exile a card', function () {
         var gt0 = makeGameTreeAfterPlaying('Planning Sheep');
