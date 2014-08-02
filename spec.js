@@ -1064,6 +1064,51 @@ describe('shephy', function () {
         expect(gt1.moves[0].description).toMatch(/Play /);
       });
     });
+    describe('Inspiration', function () {
+      it('asks which card in deck to put it into hand', function () {
+        var gt0 = makeGameTreeAfterPlaying('Inspiration', {keepDeck: true});
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(w0.deck.length);
+        for (var i = 0; i < w0.deck.length; i++)
+          expect(gt0.moves[i].description).toEqual('Put ' + w0.deck[i].name + ' into your hand');
+
+        function cardToName(c) {
+          return c.name;
+        }
+
+        var gt1 = S.force(gt0.moves[3].gameTreePromise);
+        var w1 = gt1.world;
+        var w1deck = w0.deck.map(cardToName);
+        w1deck.splice(3, 1);
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          hand: w0.hand.map(cardToName).concat([w0.deck[3].name]),
+          deck: w1deck
+        });
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Shuffle the deck');
+
+        var gt2 = S.force(gt1.moves[0].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w1, w2)).toEqual({
+          deck: w2.deck.map(cardToName)
+        });
+        expect(w2.deck.map(cardToName).sort()).toEqual(w1.deck.map(cardToName).sort())
+        expect(gt2.moves.length).toEqual(5);
+        expect(gt2.moves[0].description).toMatch(/Play /);
+      });
+      it('does nothing if deck is empty', function () {
+        var gt0 = makeGameTreeAfterPlaying('Inspiration');
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('No card in deck - nothing happened');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(4);
+        expect(gt1.moves[0].description).toMatch(/Play /);
+      });
+    });
     describe('Lightning', function () {
       it('asks Sheep cards with the highest rank to release', function () {
         var gt0 = makeGameTreeAfterPlaying('Lightning', {
