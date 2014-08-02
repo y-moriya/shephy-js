@@ -38,10 +38,7 @@ describe('shephy', function () {
     if (w0.enemySheepCount != w1.enemySheepCount)
       changes.enemySheepCount = w1.enemySheepCount;
 
-    if (w0.deck.length != w1.deck.length)
-      changes.deck = w1.deck.length;
-
-    ['hand', 'discardPile', 'exile'].forEach(function (regionName) {
+    ['hand', 'discardPile', 'exile', 'deck'].forEach(function (regionName) {
       var cns0 = w0[regionName].map(cardToName);
       var cns1 = w1[regionName].map(cardToName);
       if (cns0.toString() != cns1.toString())
