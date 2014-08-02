@@ -388,21 +388,27 @@ var shephy = {};
         });
       }
     });
-    moves.push({
-      description:
-        chosenIndice.length == 0
-        ? 'Cancel'
-        : 'Combine chosen Sheep cards',
-      gameTreePromise: S.delay(function () {
-        var wn = S.clone(world);
-        for (var i = chosenIndice.length - 1; 0 <= i; i--)
-          S.releaseX(wn, chosenIndice[i]);
-        S.gainX(wn, S.compositeRanks(
-          chosenIndice.map(function (i) {return world.field[i].rank;})
-        ));
-        return S.makeGameTree(wn);
-      })
-    });
+    if (chosenIndice.length == 0) {
+      moves.push({
+        description: 'Cancel',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      });
+    } else {
+      moves.push({
+        description: 'Combine chosen Sheep cards',
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          for (var i = chosenIndice.length - 1; 0 <= i; i--)
+            S.releaseX(wn, chosenIndice[i]);
+          S.gainX(wn, S.compositeRanks(
+            chosenIndice.map(function (i) {return world.field[i].rank;})
+          ));
+          return S.makeGameTree(wn);
+        })
+      });
+    }
     return moves;
   };
 
