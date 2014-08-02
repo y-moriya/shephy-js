@@ -613,6 +613,73 @@ describe('shephy', function () {
         expect(gt1.moves[0].description).toMatch(/Play /);
       });
     });
+    describe('Crowding', function () {
+      it('repeats asking which Sheep card to release', function () {
+        var gt0 = makeGameTreeAfterPlaying('Crowding', {
+          customize: function (w) {
+            S.gainX(w, 1);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(5);
+        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
+        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[4].description).toEqual('Release 100 Sheep card');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock1: 6,
+          field: [1, 30, 100, 100]
+        });
+        expect(gt1.moves.length).toEqual(4);
+        expect(gt1.moves[0].description).toEqual('Release 1 Sheep card');
+        expect(gt1.moves[1].description).toEqual('Release 30 Sheep card');
+        expect(gt1.moves[2].description).toEqual('Release 100 Sheep card');
+        expect(gt1.moves[3].description).toEqual('Release 100 Sheep card');
+
+        var gt2 = S.force(gt1.moves[0].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w1, w2)).toEqual({
+          sheepStock1: 7,
+          field: [30, 100, 100]
+        });
+        expect(gt2.moves.length).toEqual(3);
+        expect(gt2.moves[0].description).toEqual('Release 30 Sheep card');
+        expect(gt2.moves[1].description).toEqual('Release 100 Sheep card');
+        expect(gt2.moves[2].description).toEqual('Release 100 Sheep card');
+
+        var gt3 = S.force(gt2.moves[0].gameTreePromise);
+        var w3 = gt3.world;
+        expect(changedRegionsBetween(w2, w3)).toEqual({
+          sheepStock30: 7,
+          field: [100, 100]
+        });
+        expect(gt3.moves.length).toEqual(4);
+        expect(gt3.moves[0].description).toMatch(/^Play /);
+      });
+      it('does nothing if not so many Sheep cards are in the Field', function () {
+        var gt0 = makeGameTreeAfterPlaying('Crowding', {
+          customize: function (w) {
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('Too few sheep - nothing happened');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(4);
+        expect(gt1.moves[0].description).toMatch(/^Play /);
+      });
+    });
     describe('Dominion', function () {
       it('repeats asking choice of sheep then composite them', function () {
         var gt0 = makeGameTreeAfterPlaying('Dominion', {
