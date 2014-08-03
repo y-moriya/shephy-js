@@ -617,6 +617,33 @@ var shephy = {};
     }
   };
 
+  cardHandlerTable['Slump'] = function (world, state) {  //{{{2
+    if (world.field.length == 1) {
+      return [{
+        description: 'No sheep to release - nothing happened',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      }];
+    } else {
+      var n = state.initialCount || world.field.length;
+      var countToKeep = Math.ceil(n / 2);
+      return world.field.map(function (c, i) {
+        return {
+          description: 'Release ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.releaseX(wn, i);
+            var sn = wn.field.length == countToKeep
+              ? undefined
+              : {step: state.step, initialCount: n};
+            return S.makeGameTree(wn, sn);
+          })
+        };
+      });
+    }
+  };
+
   cardHandlerTable['Storm'] = function (world, state) {  //{{{2
     var n = Math.min(state.rest || 2, world.field.length);
     return world.field.map(function (c, i) {
