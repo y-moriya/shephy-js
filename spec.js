@@ -1061,6 +1061,72 @@ describe('shephy', function () {
         expect(gt1.moves[0].description).toMatch(/^Play /);
       });
     });
+    describe('Meteor', function () {
+      it('asks three Sheep cards to release', function () {
+        var gt0 = makeGameTreeAfterPlaying('Meteor', {
+          customize: function (w) {
+            S.gainX(w, 3);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+          },
+          keepDeck: true
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(4);
+        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[1].description).toEqual('Release 3 Sheep card');
+        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
+        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock1: 7,
+          field: [3, 30, 100],
+          discardPile: [],
+          exile: ['Meteor']
+        });
+        expect(gt1.moves.length).toEqual(3);
+        expect(gt1.moves[0].description).toEqual('Release 3 Sheep card');
+        expect(gt1.moves[1].description).toEqual('Release 30 Sheep card');
+        expect(gt1.moves[2].description).toEqual('Release 100 Sheep card');
+
+        var gt2 = S.force(gt1.moves[2].gameTreePromise);
+        var w2 = gt2.world;
+        expect(changedRegionsBetween(w1, w2)).toEqual({
+          sheepStock100: 7,
+          field: [3, 30]
+        });
+        expect(gt2.moves.length).toEqual(2);
+        expect(gt2.moves[0].description).toEqual('Release 3 Sheep card');
+        expect(gt2.moves[1].description).toEqual('Release 30 Sheep card');
+
+        var gt3 = S.force(gt2.moves[0].gameTreePromise);
+        var w3 = gt3.world;
+        expect(changedRegionsBetween(w2, w3)).toEqual({
+          sheepStock3: 7,
+          field: [30]
+        });
+        expect(gt3.moves.length).toEqual(1);
+        expect(gt3.moves[0].description).toEqual('Draw a card');
+      });
+      it('stops asking if no Sheep card is in the Field', function () {
+        var gt0 = makeGameTreeAfterPlaying('Meteor', {keepDeck: true});
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock1: 7,
+          field: [],
+          discardPile: [],
+          exile: ['Meteor']
+        });
+        expect(gt1.moves.length).toEqual(0);
+      });
+    });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
         var gt0 = makeGameTreeAfterPlaying('Multiply');
