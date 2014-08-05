@@ -634,6 +634,18 @@ var shephy = {};
     }
   };
 
+  cardHandlerTable['Shephion'] = function (world, state) {  //{{{2
+    return [{
+      description: 'Release all Sheep cards',
+      gameTreePromise: S.delay(function () {
+        var wn = S.clone(world);
+        while (1 <= wn.field.length)
+          S.releaseX(wn, 0);
+        return S.makeGameTree(wn);
+      })
+    }];
+  };
+
   cardHandlerTable['Slump'] = function (world, state) {  //{{{2
     if (world.field.length == 1) {
       return [{

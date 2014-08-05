@@ -1272,6 +1272,31 @@ describe('shephy', function () {
         expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
       });
     });
+    describe('Shephion', function () {
+      it('shows a move to release all Sheep cards', function () {
+        var gt0 = makeGameTreeAfterPlaying('Shephion', {
+          customize: function (w) {
+            S.gainX(w, 1);
+            S.gainX(w, 30);
+            S.gainX(w, 100);
+            S.gainX(w, 100);
+          }
+        });
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('Release all Sheep cards');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({
+          sheepStock1: 7,
+          sheepStock30: 7,
+          sheepStock100: 7,
+          field: []
+        });
+        expect(gt1.moves.length).toEqual(0);
+      });
+    });
     describe('Slump', function () {
       it('repeats asking which Sheep card to release', function () {
         var gt0 = makeGameTreeAfterPlaying('Slump', {
