@@ -833,7 +833,7 @@ var shephy = {};
     $('#hand > .cards').html(visualizeCards(w.hand));
     $('#deck > .count').text(w.deck.length);
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
-    $('#exile > .cards').text(textizeCards(w.exile));
+    $('#exile > .cards').html(visualizeCards(w.exile));
 
     $('#message').text(
       gameTree.moves.length == 0
