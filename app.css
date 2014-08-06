@@ -1,0 +1,11 @@
+.card {
+  display: inline-block;
+  width: 5.6ex;
+  height: 7.8ex;
+  border: thin solid #000;
+  background: #eee;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0.5ex;
+  padding: 0.5ex;
+}
