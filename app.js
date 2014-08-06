@@ -796,6 +796,13 @@ var shephy = {};
       return cs.map(function (c) {return c.name;}).join(', ');
   }
 
+  function visualizeCard(card) {
+    var $card = $('<span>');
+    $card.addClass('card');
+    $card.text(card.name);
+    return $card;
+  }
+
   function nodizeMove(m) {
     var $m = $('<input>');
     $m.attr({
