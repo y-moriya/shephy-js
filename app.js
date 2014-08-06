@@ -830,7 +830,7 @@ var shephy = {};
       .map(function (c) {return c.rank;})
       .join(', ')
     );
-    $('#hand > .cards').text(textizeCards(w.hand));
+    $('#hand > .cards').html(visualizeCards(w.hand));
     $('#deck > .count').text(w.deck.length);
     $('#discardPile > .cards').text(textizeCards(w.discardPile));
     $('#exile > .cards').text(textizeCards(w.exile));
