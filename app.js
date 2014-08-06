@@ -803,6 +803,10 @@ var shephy = {};
     return $card;
   }
 
+  function visualizeCards(cards) {
+    return cards.map(visualizeCard);
+  }
+
   function nodizeMove(m) {
     var $m = $('<input>');
     $m.attr({
