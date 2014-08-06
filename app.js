@@ -593,7 +593,7 @@ var shephy = {};
   cardHandlerTable['Planning Sheep'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return [{
-        description: 'Nothing happened',
+        description: 'No card to exile - nothing happened',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -615,7 +615,7 @@ var shephy = {};
   cardHandlerTable['Sheep Dog'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return [{
-        description: 'Nothing happened',
+        description: 'No card to discard - nothing happened',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
