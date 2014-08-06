@@ -1262,7 +1262,7 @@ describe('shephy', function () {
         var w0 = gt0.world;
 
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Nothing happened');
+        expect(gt0.moves[0].description).toEqual('No card to discard - nothing happened');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
