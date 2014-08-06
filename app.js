@@ -825,11 +825,7 @@ var shephy = {};
       $('#sheepStock' + rank + ' > .count').text(w.sheepStock[rank].length);
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
-    $('#field > .cards').text(
-      w.field
-      .map(function (c) {return c.rank;})
-      .join(', ')
-    );
+    $('#field > .cards').html(visualizeCards(w.field));
     $('#hand > .cards').html(visualizeCards(w.hand));
     $('#deck > .count').text(w.deck.length);
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
