@@ -1249,7 +1249,7 @@ describe('shephy', function () {
                        .concat(w0.hand[2].name),
           hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
         });
-        expect(gt1.moves.length).toEqual(3);  // 5 - (Planning Sheep + exiled)
+        expect(gt1.moves.length).toEqual(3);  // 5 - (Sheep Dog + discarded)
         expect(gt1.moves[0].description).toMatch(/Play /);
       });
       it('shows a move to do nothing if there is no card in Hand', function () {
