@@ -552,6 +552,32 @@ describe('shephy', function () {
         options.customize(w);
       return S.force(S.makeGameTree(w).moves[0].gameTreePromise);
     }
+    describe('All-purpose Sheep', function () {
+      it('asks which card in hand to copy', function () {
+        var gt0 = makeGameTreeAfterPlaying('All-purpose Sheep');
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(w0.hand.length);
+        for (var i = 0; i < w0.hand.length; i++)
+          expect(gt0.moves[i].description).toEqual('Copy ' + w0.hand[i].name);
+
+        var gt1 = S.force(gt0.moves[2].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).not.toBeLessThan(1);
+      });
+      it('shows a move to do nothing if there is no card in Hand', function () {
+        var gt0 = makeGameTreeAfterPlaying('All-purpose Sheep', {handCount: 1});
+        var w0 = gt0.world;
+        expect(gt0.moves.length).toEqual(1);
+        expect(gt0.moves[0].description).toEqual('No card in hand - nothing happened');
+
+        var gt1 = S.force(gt0.moves[0].gameTreePromise);
+        var w1 = gt1.world;
+        expect(changedRegionsBetween(w0, w1)).toEqual({});
+        expect(gt1.moves.length).toEqual(1);
+        expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
+      });
+    });
     describe('Be Fruitful', function () {
       it('shows a move for each sheep in Field', function () {
         var gt0 = makeGameTreeAfterPlaying('Be Fruitful', {
