@@ -298,6 +298,26 @@ var shephy = {};
 
   var cardHandlerTable = {};  //{{{2
 
+  cardHandlerTable['All-purpose Sheep'] = function (world, state) {  //{{{2
+    if (world.hand.length == 0) {
+      return [{
+        description: 'No card in hand - nothing happened',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      }];
+    } else {
+      return world.hand.map(function (c, i) {
+        return {
+          description: 'Copy ' + c.name,
+          gameTreePromise: S.delay(function () {
+            return S.makeGameTree(world, {step: c.name});
+          })
+        };
+      });
+    }
+  };
+
   cardHandlerTable['Be Fruitful'] = function (world, state) {  //{{{2
     if (state.rank === undefined) {
       if (world.field.length < 7) {
