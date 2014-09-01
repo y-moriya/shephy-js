@@ -800,9 +800,13 @@ var shephy = {};
   }
 
   function visualizeCard(card) {
+    var $body = $('<span>');
+    $body.addClass('body');
+    $body.text(card.name);
+
     var $card = $('<span>');
     $card.addClass('card');
-    $card.text(card.name);
+    $card.append($body);
     return $card;
   }
 
