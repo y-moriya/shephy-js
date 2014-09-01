@@ -1,11 +1,28 @@
 .card {
   display: inline-block;
-  width: 5.6ex;
-  height: 7.8ex;
   border: thin solid #000;
-  background: #eee;
   overflow: hidden;
   white-space: nowrap;
   margin: 0.5ex;
+}
+
+.card.sheep > .body {
+  display: inline-block;
+  width: 5.6ex;
+  height: 3.8ex;
   padding: 0.5ex;
+  border-top: 2ex solid #cff;
+  border-bottom: 2ex solid #3c3;
+  background: #fff;
+  text-align: center;
+}
+
+.card.event > .body {
+  display: inline-block;
+  width: 5.1ex;
+  padding: 0.5ex 0.5ex 0.5ex 0;
+  background: #ec8;
+  text-align: center;
+  line-height: 7.8ex;
+  border-left: 0.5ex solid #db7;
 }
