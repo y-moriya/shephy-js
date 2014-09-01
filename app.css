@@ -17,6 +17,14 @@
   text-align: center;
 }
 
+.card.sheep.rank1    > .body {border-bottom-color: #ce0;}
+.card.sheep.rank3    > .body {border-bottom-color: #9e0;}
+.card.sheep.rank10   > .body {border-bottom-color: #6e0;}
+.card.sheep.rank30   > .body {border-bottom-color: #0d0;}
+.card.sheep.rank100  > .body {border-bottom-color: #0a0;}
+.card.sheep.rank300  > .body {border-bottom-color: #080;}
+.card.sheep.rank1000 > .body {border-bottom-color: #060;}
+
 .card.event > .body {
   display: inline-block;
   width: 5.1ex;
