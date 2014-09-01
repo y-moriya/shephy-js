@@ -807,6 +807,7 @@ var shephy = {};
     var $card = $('<span>');
     $card.addClass('card');
     $card.addClass(cardType(card));
+    $card.addClass('rank' + card.rank);
     $card.append($body);
     return $card;
   }
