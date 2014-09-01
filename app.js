@@ -99,7 +99,6 @@ var shephy = {};
   }
 
   function makeEventCard(name) {
-    // TODO: Implement effects when a card is played.
     return {
       name: name
     };
