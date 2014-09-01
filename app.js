@@ -104,6 +104,10 @@ var shephy = {};
     };
   }
 
+  function cardType(card) {
+    return card.rank === undefined ? 'event' : 'sheep';
+  }
+
   function makeInitalDeck() {
     var names = [
       'All-purpose Sheep',
