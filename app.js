@@ -521,6 +521,37 @@ var shephy = {};
     return moves;
   };
 
+  cardHandlerTable['Inspiration'] = function (world, state) {  //{{{2
+    if (world.deck.length == 0) {
+      return [{
+        description: 'No card in deck - nothing happened',
+        gameTreePromise: S.delay(function () {
+          return S.makeGameTree(world);
+        })
+      }];
+    } else if (state.searched === undefined) {
+      return world.deck.map(function (c, i) {
+        return {
+          description: 'Put ' + c.name + ' into your hand',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            wn.hand.push(wn.deck.splice(i, 1)[0]);
+            return S.makeGameTree(wn, {step: state.step, searched: true});
+          })
+        };
+      });
+    } else {
+      return [{
+        description: 'Shuffle the deck',
+        gameTreePromise: S.delay(function () {
+          var wn = S.clone(world);
+          shuffle(wn.deck);
+          return S.makeGameTree(wn);
+        })
+      }];
+    }
+  };
+
   cardHandlerTable['Lightning'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     return (
