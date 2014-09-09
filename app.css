@@ -41,3 +41,13 @@
   line-height: 7.8ex;
   border-left: 0.5ex solid #db7;
 }
+
+.lined.cards > .card {
+  margin: 0;
+  width: 0;
+  overflow: visible;
+}
+
+.tightly.lined.cards > .card {margin-left: 0.25em;}
+.loosely.lined.cards > .card {margin-left: 1.5em;}
+.lined.cards > .card:first-child {margin-left: 0;}
