@@ -804,11 +804,15 @@ var shephy = {};
     $body.addClass('body');
     $body.text(card.name);
 
+    var $border = $('<span>');
+    $border.addClass('border');
+    $border.append($body);
+
     var $card = $('<span>');
     $card.addClass('card');
     $card.addClass(cardType(card));
     $card.addClass('rank' + card.rank);
-    $card.append($body);
+    $card.append($border);
     return $card;
   }
 

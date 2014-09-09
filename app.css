@@ -1,12 +1,19 @@
 .card {
   display: inline-block;
-  border: thin solid #000;
-  overflow: hidden;
-  white-space: nowrap;
   margin: 0.5ex;
 }
 
-.card.sheep > .body {
+.card > .border {
+  display: inline-block;
+  border: thin solid #000;
+}
+
+.card > .border > .body {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card.sheep > .border > .body {
   display: inline-block;
   width: 5.6ex;
   height: 3.8ex;
@@ -17,15 +24,15 @@
   text-align: center;
 }
 
-.card.sheep.rank1    > .body {border-bottom-color: #ce0;}
-.card.sheep.rank3    > .body {border-bottom-color: #9e0;}
-.card.sheep.rank10   > .body {border-bottom-color: #6e0;}
-.card.sheep.rank30   > .body {border-bottom-color: #0d0;}
-.card.sheep.rank100  > .body {border-bottom-color: #0a0;}
-.card.sheep.rank300  > .body {border-bottom-color: #080;}
-.card.sheep.rank1000 > .body {border-bottom-color: #060;}
+.card.sheep.rank1    > .border > .body {border-bottom-color: #ce0;}
+.card.sheep.rank3    > .border > .body {border-bottom-color: #9e0;}
+.card.sheep.rank10   > .border > .body {border-bottom-color: #6e0;}
+.card.sheep.rank30   > .border > .body {border-bottom-color: #0d0;}
+.card.sheep.rank100  > .border > .body {border-bottom-color: #0a0;}
+.card.sheep.rank300  > .border > .body {border-bottom-color: #080;}
+.card.sheep.rank1000 > .border > .body {border-bottom-color: #060;}
 
-.card.event > .body {
+.card.event > .border > .body {
   display: inline-block;
   width: 5.1ex;
   padding: 0.5ex 0.5ex 0.5ex 0;
