@@ -42,6 +42,7 @@
   border-left: 0.5ex solid #db7;
 }
 
+.stacked.cards > .card,
 .lined.cards > .card {
   margin: 0;
   width: 0;
@@ -74,3 +75,27 @@
 .lined.cards > .card:nth-child(20) {transform: rotate(-3deg);}
 .lined.cards > .card:nth-child(21) {transform: rotate(-4deg);}
 .lined.cards > .card:nth-child(22) {transform: rotate( 0deg);}
+
+.stacked.cards > .card {position: relative;}
+.stacked.cards > .card:nth-child( 1) {top: 0.00ex; left: 0.00ex;}
+.stacked.cards > .card:nth-child( 2) {top: 0.25ex; left: 0.25ex;}
+.stacked.cards > .card:nth-child( 3) {top: 0.50ex; left: 0.50ex;}
+.stacked.cards > .card:nth-child( 4) {top: 0.75ex; left: 0.75ex;}
+.stacked.cards > .card:nth-child( 5) {top: 1.00ex; left: 1.00ex;}
+.stacked.cards > .card:nth-child( 6) {top: 1.25ex; left: 1.25ex;}
+.stacked.cards > .card:nth-child( 7) {top: 1.50ex; left: 1.50ex;}
+.stacked.cards > .card:nth-child( 8) {top: 1.75ex; left: 1.75ex;}
+.stacked.cards > .card:nth-child( 9) {top: 2.00ex; left: 2.00ex;}
+.stacked.cards > .card:nth-child(10) {top: 2.25ex; left: 2.25ex;}
+.stacked.cards > .card:nth-child(11) {top: 2.50ex; left: 2.50ex;}
+.stacked.cards > .card:nth-child(12) {top: 2.75ex; left: 2.75ex;}
+.stacked.cards > .card:nth-child(13) {top: 3.00ex; left: 3.00ex;}
+.stacked.cards > .card:nth-child(14) {top: 3.25ex; left: 3.25ex;}
+.stacked.cards > .card:nth-child(15) {top: 3.50ex; left: 3.50ex;}
+.stacked.cards > .card:nth-child(16) {top: 3.75ex; left: 3.75ex;}
+.stacked.cards > .card:nth-child(17) {top: 4.00ex; left: 4.00ex;}
+.stacked.cards > .card:nth-child(18) {top: 4.25ex; left: 4.25ex;}
+.stacked.cards > .card:nth-child(19) {top: 4.50ex; left: 4.50ex;}
+.stacked.cards > .card:nth-child(20) {top: 4.75ex; left: 4.75ex;}
+.stacked.cards > .card:nth-child(21) {top: 5.00ex; left: 5.00ex;}
+.stacked.cards > .card:nth-child(22) {top: 5.25ex; left: 5.25ex;}
