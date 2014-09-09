@@ -99,10 +99,13 @@ var shephy = {};
   }
 
   function makeEventCard(name) {
-    // TODO: Implement effects when a card is played.
     return {
       name: name
     };
+  }
+
+  function cardType(card) {
+    return card.rank === undefined ? 'event' : 'sheep';
   }
 
   function makeInitalDeck() {
@@ -796,6 +799,23 @@ var shephy = {};
       return cs.map(function (c) {return c.name;}).join(', ');
   }
 
+  function visualizeCard(card) {
+    var $body = $('<span>');
+    $body.addClass('body');
+    $body.text(card.name);
+
+    var $card = $('<span>');
+    $card.addClass('card');
+    $card.addClass(cardType(card));
+    $card.addClass('rank' + card.rank);
+    $card.append($body);
+    return $card;
+  }
+
+  function visualizeCards(cards) {
+    return cards.map(visualizeCard);
+  }
+
   function nodizeMove(m) {
     var $m = $('<input>');
     $m.attr({
@@ -814,15 +834,11 @@ var shephy = {};
       $('#sheepStock' + rank + ' > .count').text(w.sheepStock[rank].length);
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
-    $('#field > .cards').text(
-      w.field
-      .map(function (c) {return c.rank;})
-      .join(', ')
-    );
-    $('#hand > .cards').text(textizeCards(w.hand));
+    $('#field > .cards').html(visualizeCards(w.field));
+    $('#hand > .cards').html(visualizeCards(w.hand));
     $('#deck > .count').text(w.deck.length);
-    $('#discardPile > .cards').text(textizeCards(w.discardPile));
-    $('#exile > .cards').text(textizeCards(w.exile));
+    $('#discardPile > .cards').html(visualizeCards(w.discardPile));
+    $('#exile > .cards').html(visualizeCards(w.exile));
 
     $('#message').text(
       gameTree.moves.length == 0

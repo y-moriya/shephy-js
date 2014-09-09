@@ -1,0 +1,36 @@
+.card {
+  display: inline-block;
+  border: thin solid #000;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0.5ex;
+}
+
+.card.sheep > .body {
+  display: inline-block;
+  width: 5.6ex;
+  height: 3.8ex;
+  padding: 0.5ex;
+  border-top: 2ex solid #cff;
+  border-bottom: 2ex solid #3c3;
+  background: #fff;
+  text-align: center;
+}
+
+.card.sheep.rank1    > .body {border-bottom-color: #ce0;}
+.card.sheep.rank3    > .body {border-bottom-color: #9e0;}
+.card.sheep.rank10   > .body {border-bottom-color: #6e0;}
+.card.sheep.rank30   > .body {border-bottom-color: #0d0;}
+.card.sheep.rank100  > .body {border-bottom-color: #0a0;}
+.card.sheep.rank300  > .body {border-bottom-color: #080;}
+.card.sheep.rank1000 > .body {border-bottom-color: #060;}
+
+.card.event > .body {
+  display: inline-block;
+  width: 5.1ex;
+  padding: 0.5ex 0.5ex 0.5ex 0;
+  background: #ec8;
+  text-align: center;
+  line-height: 7.8ex;
+  border-left: 0.5ex solid #db7;
+}
