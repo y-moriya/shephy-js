@@ -847,7 +847,7 @@ var shephy = {};
     $('#enemySheepCount > .count').text(w.enemySheepCount);
     $('#field > .cards').html(visualizeCards(w.field));
     $('#hand > .cards').html(visualizeCards(w.hand));
-    $('#deck > .count').text(w.deck.length);
+    $('#deck > .cards').html(visualizeCards(makeFaceDownCards(w.deck.length)));
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
 
