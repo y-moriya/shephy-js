@@ -69,28 +69,28 @@
 .loosely.lined.cards > .card {margin-left: 1.5em;}
 .lined.cards > .card:first-child {margin-left: 0;}
 
-.lined.cards > .card:nth-child( 1) {transform: rotate(-4deg);}
-.lined.cards > .card:nth-child( 2) {transform: rotate( 0deg);}
-.lined.cards > .card:nth-child( 3) {transform: rotate( 2deg);}
-.lined.cards > .card:nth-child( 4) {transform: rotate(-3deg);}
-.lined.cards > .card:nth-child( 5) {transform: rotate( 1deg);}
-.lined.cards > .card:nth-child( 6) {transform: rotate( 4deg);}
-.lined.cards > .card:nth-child( 7) {transform: rotate( 2deg);}
-.lined.cards > .card:nth-child( 8) {transform: rotate( 1deg);}
-.lined.cards > .card:nth-child( 9) {transform: rotate( 4deg);}
-.lined.cards > .card:nth-child(10) {transform: rotate(-3deg);}
-.lined.cards > .card:nth-child(11) {transform: rotate(-4deg);}
-.lined.cards > .card:nth-child(12) {transform: rotate( 0deg);}
-.lined.cards > .card:nth-child(13) {transform: rotate( 4deg);}
-.lined.cards > .card:nth-child(14) {transform: rotate(-1deg);}
-.lined.cards > .card:nth-child(15) {transform: rotate(-3deg);}
-.lined.cards > .card:nth-child(16) {transform: rotate( 1deg);}
-.lined.cards > .card:nth-child(17) {transform: rotate( 2deg);}
-.lined.cards > .card:nth-child(18) {transform: rotate(-1deg);}
-.lined.cards > .card:nth-child(19) {transform: rotate( 1deg);}
-.lined.cards > .card:nth-child(20) {transform: rotate(-3deg);}
-.lined.cards > .card:nth-child(21) {transform: rotate(-4deg);}
-.lined.cards > .card:nth-child(22) {transform: rotate( 0deg);}
+.lined.cards > .card:nth-child( 1) {transform: rotate(-4deg); -webkit-transform: rotate(-4deg);}
+.lined.cards > .card:nth-child( 2) {transform: rotate( 0deg); -webkit-transform: rotate( 0deg);}
+.lined.cards > .card:nth-child( 3) {transform: rotate( 2deg); -webkit-transform: rotate( 2deg);}
+.lined.cards > .card:nth-child( 4) {transform: rotate(-3deg); -webkit-transform: rotate(-3deg);}
+.lined.cards > .card:nth-child( 5) {transform: rotate( 1deg); -webkit-transform: rotate( 1deg);}
+.lined.cards > .card:nth-child( 6) {transform: rotate( 4deg); -webkit-transform: rotate( 4deg);}
+.lined.cards > .card:nth-child( 7) {transform: rotate( 2deg); -webkit-transform: rotate( 2deg);}
+.lined.cards > .card:nth-child( 8) {transform: rotate( 1deg); -webkit-transform: rotate( 1deg);}
+.lined.cards > .card:nth-child( 9) {transform: rotate( 4deg); -webkit-transform: rotate( 4deg);}
+.lined.cards > .card:nth-child(10) {transform: rotate(-3deg); -webkit-transform: rotate(-3deg);}
+.lined.cards > .card:nth-child(11) {transform: rotate(-4deg); -webkit-transform: rotate(-4deg);}
+.lined.cards > .card:nth-child(12) {transform: rotate( 0deg); -webkit-transform: rotate( 0deg);}
+.lined.cards > .card:nth-child(13) {transform: rotate( 4deg); -webkit-transform: rotate( 4deg);}
+.lined.cards > .card:nth-child(14) {transform: rotate(-1deg); -webkit-transform: rotate(-1deg);}
+.lined.cards > .card:nth-child(15) {transform: rotate(-3deg); -webkit-transform: rotate(-3deg);}
+.lined.cards > .card:nth-child(16) {transform: rotate( 1deg); -webkit-transform: rotate( 1deg);}
+.lined.cards > .card:nth-child(17) {transform: rotate( 2deg); -webkit-transform: rotate( 2deg);}
+.lined.cards > .card:nth-child(18) {transform: rotate(-1deg); -webkit-transform: rotate(-1deg);}
+.lined.cards > .card:nth-child(19) {transform: rotate( 1deg); -webkit-transform: rotate( 1deg);}
+.lined.cards > .card:nth-child(20) {transform: rotate(-3deg); -webkit-transform: rotate(-3deg);}
+.lined.cards > .card:nth-child(21) {transform: rotate(-4deg); -webkit-transform: rotate(-4deg);}
+.lined.cards > .card:nth-child(22) {transform: rotate( 0deg); -webkit-transform: rotate( 0deg);}
 
 .stacked.cards > .card {position: relative;}
 .stacked.cards > .card:nth-child( 1) {top: 0.00ex; left: 0.00ex;}
