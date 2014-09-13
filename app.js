@@ -105,7 +105,7 @@ var shephy = {};
   }
 
   function cardType(card) {
-    return card.rank === undefined ? 'event' : 'sheep';
+    return card.type || (card.rank === undefined ? 'event' : 'sheep');
   }
 
   function makeInitalDeck() {
