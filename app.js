@@ -799,6 +799,13 @@ var shephy = {};
       return cs.map(function (c) {return c.name;}).join(', ');
   }
 
+  function makeFaceDownCards(n) {
+    var cards = [];
+    for (var i = 0; i < n; i++)
+      cards.push({name: '', type: 'face-down'});
+    return cards;
+  }
+
   function visualizeCard(card) {
     var $body = $('<span>');
     $body.addClass('body');
