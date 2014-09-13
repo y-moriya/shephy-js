@@ -105,7 +105,7 @@ var shephy = {};
   }
 
   function cardType(card) {
-    return card.rank === undefined ? 'event' : 'sheep';
+    return card.type || (card.rank === undefined ? 'event' : 'sheep');
   }
 
   function makeInitalDeck() {
@@ -799,16 +799,27 @@ var shephy = {};
       return cs.map(function (c) {return c.name;}).join(', ');
   }
 
+  function makeFaceDownCards(n) {
+    var cards = [];
+    for (var i = 0; i < n; i++)
+      cards.push({name: '', type: 'face-down'});
+    return cards;
+  }
+
   function visualizeCard(card) {
     var $body = $('<span>');
     $body.addClass('body');
     $body.text(card.name);
 
+    var $border = $('<span>');
+    $border.addClass('border');
+    $border.append($body);
+
     var $card = $('<span>');
     $card.addClass('card');
     $card.addClass(cardType(card));
     $card.addClass('rank' + card.rank);
-    $card.append($body);
+    $card.append($border);
     return $card;
   }
 
@@ -831,12 +842,12 @@ var shephy = {};
   function drawGameTree(gameTree) {
     var w = gameTree.world;
     S.RANKS.forEach(function (rank) {
-      $('#sheepStock' + rank + ' > .count').text(w.sheepStock[rank].length);
+      $('#sheepStock' + rank).html(visualizeCards(w.sheepStock[rank]));
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
     $('#field > .cards').html(visualizeCards(w.field));
     $('#hand > .cards').html(visualizeCards(w.hand));
-    $('#deck > .count').text(w.deck.length);
+    $('#deck > .cards').html(visualizeCards(makeFaceDownCards(w.deck.length)));
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
 
