@@ -835,7 +835,7 @@ var shephy = {};
   function drawGameTree(gameTree) {
     var w = gameTree.world;
     S.RANKS.forEach(function (rank) {
-      $('#sheepStock' + rank + ' > .count').text(w.sheepStock[rank].length);
+      $('#sheepStock' + rank).html(visualizeCards(w.sheepStock[rank]));
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
     $('#field > .cards').html(visualizeCards(w.field));
