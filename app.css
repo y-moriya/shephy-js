@@ -99,3 +99,9 @@
 .stacked.cards > .card:nth-child(20) {top: 4.75ex; left: 4.75ex;}
 .stacked.cards > .card:nth-child(21) {top: 5.00ex; left: 5.00ex;}
 .stacked.cards > .card:nth-child(22) {top: 5.25ex; left: 5.25ex;}
+
+#sheepStock > .stacked.cards {
+  display: inline-block;
+  width: 10ex;
+  margin-bottom: 1em;
+}
