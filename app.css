@@ -42,6 +42,22 @@
   border-left: 0.5ex solid #db7;
 }
 
+.card.face-down {
+  line-height: 0;
+}
+.card.face-down > .border {
+  background: #393;
+}
+.card.face-down > .border > .body {
+  display: inline-block;
+  width: 4.6ex;
+  height: 6.8ex;
+  margin: 0.5ex;
+  padding: 0.5ex;
+  border-radius: 1ex;
+  background: #9d9;
+}
+
 .stacked.cards > .card,
 .lined.cards > .card {
   margin: 0;
