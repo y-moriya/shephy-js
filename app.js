@@ -799,6 +799,32 @@ var shephy = {};
       return cs.map(function (c) {return c.name;}).join(', ');
   }
 
+  var ruleTextFromCardNameTable = {
+    'All-purpose Sheep': 'Choose a card in your hand.\nPlay this card in place of the card you chose.',
+    'Be Fruitful': 'Duplicate one of your Sheep cards.',
+    'Crowding': 'Release all but two Sheep cards.',
+    'Dominion': 'Choose any number of Sheep cards in the Field.\nAdd their values and then replace them with\none Sheep card of equal of lesser value.',
+    'Falling Rock': 'Relase one Sheep card.',
+    'Fill the Earth': 'Place as many 1 Sheep cards as you like in the Field.',
+    'Flourish': 'Choose one of your Sheep cards\nand receive three Sheep cards of one rank lower.',
+    'Golden Hooves': 'Raise the rank of as many Sheep cards as you like,\nexcept for your highest-ranking Sheep card.',
+    'Inspiration': 'Look through the deck\nand add one card of your choice to your hand,\nand then re-shuffle the deck.',
+    'Lightning': 'Release your highest-ranking Sheep card.',
+    'Meteor': 'Release three Sheep cards,\nand then remove this card from the game.',
+    'Multiply': 'Place one 3 Sheep card in the Field.',
+    'Plague': 'Release all Sheep cards of one rank.',
+    'Planning Sheep': 'Remove one card in your hand from the game.',
+    'Sheep Dog': 'Discard one card from your hand.',
+    'Shephion': 'Release seven Sheep cards.',
+    'Slump': 'Relase half of your Sheep cards (Round down.)',
+    'Storm': 'Release two Sheep cards.',
+    'Wolves': 'Reduce the rank of your highest-ranking sheep card by one.\nIf your highest ranaking Sheep card is 1, release it.'
+  };
+
+  function helpTextFromCard(card) {
+    return card.name + '\n\n' + ruleTextFromCardNameTable[card.name];
+  }
+
   function makeFaceDownCards(n) {
     var cards = [];
     for (var i = 0; i < n; i++)
