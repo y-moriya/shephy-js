@@ -845,6 +845,7 @@ var shephy = {};
     $card.addClass('card');
     $card.addClass(cardType(card));
     $card.addClass('rank' + card.rank);
+    $card.attr('title', helpTextFromCard(card));
     $card.append($border);
     return $card;
   }
