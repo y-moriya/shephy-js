@@ -875,11 +875,19 @@ var shephy = {};
     return gameTree.moves.length == 1 && gameTree.moves[0].automated;
   }
 
+  var AUTOMATED_MOVE_DELAY = 500;
+
   function processMove(m) {
     var gt = S.force(m.gameTreePromise);
-    while (mayBeAutomated(gt))
-      gt = S.force(gt.moves[0].gameTreePromise);
-    drawGameTree(gt);
+    if (mayBeAutomated(gt)) {
+      drawWorld(gt.world);
+      setTimeout(
+        function () {processMove(gt.moves[0]);},
+        AUTOMATED_MOVE_DELAY
+      );
+    } else {
+      drawGameTree(gt);
+    }
   }
 
   function nodizeMove(m) {
