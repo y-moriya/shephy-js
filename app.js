@@ -914,12 +914,17 @@ var shephy = {};
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
 
-    $('#message').text(
-      gameTree.moves.length == 0
-      ? S.judgeGame(gameTree.world).description
-      : 'Choose a move:'
-    );
-    $('#moves').empty().append(gameTree.moves.map(nodizeMove));
+    if (mayBeAutomated(gameTree)) {
+      $('#message').text(gameTree.moves[0].description);
+      $('#moves').empty();
+    } else {
+      $('#message').text(
+        gameTree.moves.length == 0
+        ? S.judgeGame(gameTree.world).description
+        : 'Choose a move:'
+      );
+      $('#moves').empty().append(gameTree.moves.map(nodizeMove));
+    }
   }
 
 
