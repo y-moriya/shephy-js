@@ -882,7 +882,10 @@ var shephy = {};
       value: m.description
     });
     $m.click(function () {
-      drawGameTree(S.force(m.gameTreePromise));
+      var gt = S.force(m.gameTreePromise);
+      while (mayBeAutomated(gt))
+        gt = S.force(gt.moves[0].gameTreePromise);
+      drawGameTree(gt);
     });
     return $m;
   }
