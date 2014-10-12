@@ -933,7 +933,7 @@ var shephy = {};
   //       (Show "Start a game" instead of "Draw cards)
 
   $(function () {
-    drawGameTree(S.makeGameTree(S.makeInitalWorld()));
+    processMove(S.makeGameTree(S.makeInitalWorld()).moves[0]);
   });
 
   //}}}1
