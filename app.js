@@ -875,6 +875,13 @@ var shephy = {};
     return gameTree.moves.length == 1 && gameTree.moves[0].automated;
   }
 
+  function processMove(m) {
+    var gt = S.force(m.gameTreePromise);
+    while (mayBeAutomated(gt))
+      gt = S.force(gt.moves[0].gameTreePromise);
+    drawGameTree(gt);
+  }
+
   function nodizeMove(m) {
     var $m = $('<input>');
     $m.attr({
@@ -882,10 +889,7 @@ var shephy = {};
       value: m.description
     });
     $m.click(function () {
-      var gt = S.force(m.gameTreePromise);
-      while (mayBeAutomated(gt))
-        gt = S.force(gt.moves[0].gameTreePromise);
-      drawGameTree(gt);
+      processMove(m);
     });
     return $m;
   }
