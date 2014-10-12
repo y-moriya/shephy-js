@@ -871,6 +871,10 @@ var shephy = {};
     return cards.map(visualizeCard);
   }
 
+  function mayBeAutomated(gameTree) {
+    return gameTree.moves.length == 1 && gameTree.moves[0].automated;
+  }
+
   function nodizeMove(m) {
     var $m = $('<input>');
     $m.attr({
