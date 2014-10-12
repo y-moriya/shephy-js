@@ -902,14 +902,18 @@ var shephy = {};
     $('#exile > .cards').html(visualizeCards(w.exile));
   }
 
-  function drawGameTree(gameTree) {
-    drawWorld(gameTree.world);
+  function drawMoves(gameTree) {
     $('#message').text(
       gameTree.moves.length == 0
       ? S.judgeGame(gameTree.world).description
       : 'Choose a move:'
     );
     $('#moves').empty().append(gameTree.moves.map(nodizeMove));
+  }
+
+  function drawGameTree(gameTree) {
+    drawWorld(gameTree.world);
+    drawMoves(gameTree);
   }
 
 
