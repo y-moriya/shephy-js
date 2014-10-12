@@ -253,6 +253,7 @@ var shephy = {};
       return [
         {
           description: 'Remake Deck then fill Hand',
+          automated: true,
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.remakeDeckX(wn);
@@ -272,6 +273,7 @@ var shephy = {};
             5 - world.hand.length == 1
             ? 'Draw a card'
             : 'Draw cards',
+          automated: true,
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             while (S.shouldDraw(wn))
@@ -305,6 +307,7 @@ var shephy = {};
     if (world.hand.length == 0) {
       return [{
         description: 'No card in hand - nothing happened',
+        automated: true,
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -335,6 +338,7 @@ var shephy = {};
       } else {
         return [{
           description: 'Nothing happened',
+          automated: true,
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world);
           })
@@ -343,6 +347,7 @@ var shephy = {};
     } else {
       return [{
         description: 'Gain a ' + state.rank + ' Sheep card',
+        automated: true,
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           S.gainX(wn, state.rank);
@@ -356,6 +361,7 @@ var shephy = {};
     if (world.field.length <= 2) {
       return [{
         description: 'Too few sheep - nothing happened',
+        automated: true,
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -463,6 +469,7 @@ var shephy = {};
       } else {
         return [{
           description: 'Nothing happened',
+          automated: true,
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world);
           })
@@ -473,6 +480,7 @@ var shephy = {};
       if (lowerRank === undefined) {
         return [{
           description: 'Gain nothing',
+          automated: true,
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world);
           })
@@ -484,6 +492,7 @@ var shephy = {};
             n == 1
             ? 'Gain a ' + lowerRank + ' Sheep card'
             : 'Gain ' + n + ' cards of ' + lowerRank + ' Sheep',
+          automated: true,
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             for (var i = 1; i <= n; i++)
@@ -534,6 +543,7 @@ var shephy = {};
     if (world.deck.length == 0) {
       return [{
         description: 'No card in deck - nothing happened',
+        automated: true,
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -552,6 +562,7 @@ var shephy = {};
     } else {
       return [{
         description: 'Shuffle the deck',
+        automated: true,
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           shuffle(wn.deck);
@@ -601,6 +612,7 @@ var shephy = {};
     if (world.field.length < 7 && 0 < world.sheepStock[3].length) {
       return [{
         description: 'Gain a 3 Sheep card',
+        automated: true,
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           S.gainX(wn, 3);
@@ -610,6 +622,7 @@ var shephy = {};
     } else {
       return [{
         description: 'Nothing happened',
+        automated: true,
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -654,6 +667,7 @@ var shephy = {};
     if (world.hand.length == 0) {
       return [{
         description: 'No card to exile - nothing happened',
+        automated: true,
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -676,6 +690,7 @@ var shephy = {};
     if (world.hand.length == 0) {
       return [{
         description: 'No card to discard - nothing happened',
+        automated: true,
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -697,6 +712,7 @@ var shephy = {};
   cardHandlerTable['Shephion'] = function (world, state) {  //{{{2
     return [{
       description: 'Release all Sheep cards',
+      automated: true,
       gameTreePromise: S.delay(function () {
         var wn = S.clone(world);
         while (1 <= wn.field.length)
@@ -710,6 +726,7 @@ var shephy = {};
     if (world.field.length == 1) {
       return [{
         description: 'No sheep to release - nothing happened',
+        automated: true,
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
