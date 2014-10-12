@@ -879,14 +879,12 @@ var shephy = {};
 
   function processMove(m) {
     var gt = S.force(m.gameTreePromise);
+    drawGameTree(gt);
     if (mayBeAutomated(gt)) {
-      drawGameTree(gt);
       setTimeout(
         function () {processMove(gt.moves[0]);},
         AUTOMATED_MOVE_DELAY
       );
-    } else {
-      drawGameTree(gt);
     }
   }
 
