@@ -304,7 +304,7 @@ var shephy = {};
       ]);
     }
 
-    return world.hand.map(function (c, i) {
+    return mapOn(world, 'hand', function (c, i) {
       return {
         description: 'Play ' + c.name,
         gameTreePromise: S.delay(function () {
