@@ -223,9 +223,16 @@ var shephy = {};
     throw 'Invalid operation';
   };
 
-  // NB: This is destructive, though this is used to make code declarative.
+  // Move sets  {{{2
+  // NB: These functions are to make code declarative, but they're destructive.
+
   function automated(moves) {
     moves.automated = true;
+    return moves;
+  }
+
+  function described(description, moves) {
+    moves.description = description;
     return moves;
   }
 
