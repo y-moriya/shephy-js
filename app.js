@@ -915,7 +915,21 @@ var shephy = {};
         ? S.judgeGame(gameTree.world).description
         : 'Choose a move:'
       );
-      $('#moves').empty().append(gameTree.moves.map(nodizeMove));
+      gameTree.moves
+        .filter(function (m) {return m.cardRegion !== undefined;})
+        .forEach(function (m) {
+          v[m.cardRegion][m.cardIndex]
+            .click(function () {
+              processMove(m);
+            });
+        });
+      $('#moves')
+        .empty()
+        .append(
+          gameTree.moves
+          .filter(function (m) {return m.cardRegion === undefined;})
+          .map(nodizeMove)
+        );
     }
   }
 
