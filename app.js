@@ -223,6 +223,12 @@ var shephy = {};
     throw 'Invalid operation';
   };
 
+  // NB: This is destructive, though this is used to make code declarative.
+  function automated(moves) {
+    moves.automated = true;
+    return moves;
+  }
+
   // Core  {{{1
   S.makeGameTree = function (world, opt_state) {  //{{{2
     return {
