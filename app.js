@@ -924,13 +924,13 @@ var shephy = {};
     $('#exile > .cards').html(visualizeCards(w.exile));
 
     if (mayBeAutomated(gameTree)) {
-      $('#message').text(gameTree.moves[0].description);
+      $('#message').text(descriptionOfMoves(gameTree.moves));
       $('#moves').empty();
     } else {
       $('#message').text(
         gameTree.moves.length == 0
         ? S.judgeGame(gameTree.world).description
-        : 'Choose a move:'
+        : descriptionOfMoves(gameTree.moves)
       );
       gameTree.moves
         .filter(function (m) {return m.cardRegion !== undefined;})
