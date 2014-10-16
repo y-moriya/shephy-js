@@ -304,16 +304,18 @@ var shephy = {};
       ]);
     }
 
-    return mapOn(world, 'hand', function (c, i) {
-      return {
-        description: 'Play ' + c.name,
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          S.discardX(wn, i);
-          return S.makeGameTree(wn, {step: c.name});
-        })
-      };
-    });
+    return described('Choose a card to play from hand',
+      mapOn(world, 'hand', function (c, i) {
+        return {
+          description: 'Play ' + c.name,
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.discardX(wn, i);
+            return S.makeGameTree(wn, {step: c.name});
+          })
+        };
+      })
+    );
   };
 
   S.listPossibleMovesForPlayingCard = function (world, state) {  //{{{2
