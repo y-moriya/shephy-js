@@ -3,6 +3,11 @@
   margin: 0.5ex;
 }
 
+.clickable.card {
+  box-shadow: 0 0 0.5ex 0 #000;
+  cursor: pointer;
+}
+
 .card > .border {
   display: inline-block;
   border: thin solid #000;
