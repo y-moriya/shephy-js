@@ -896,8 +896,12 @@ var shephy = {};
       $('#sheepStock' + rank).html(visualizeCards(w.sheepStock[rank]));
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
-    $('#field > .cards').html(visualizeCards(w.field));
-    $('#hand > .cards').html(visualizeCards(w.hand));
+    var v = {
+      field: visualizeCards(w.field),
+      hand: visualizeCards(w.hand)
+    };
+    $('#field > .cards').html(v.field);
+    $('#hand > .cards').html(v.hand);
     $('#deck > .cards').html(visualizeCards(makeFaceDownCards(w.deck.length)));
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
