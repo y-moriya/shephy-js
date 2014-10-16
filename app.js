@@ -873,7 +873,7 @@ var shephy = {};
   }
 
   function mayBeAutomated(gameTree) {
-    return gameTree.moves.length == 1 && gameTree.moves[0].automated;
+    return gameTree.moves.automated;
   }
 
   var AUTOMATED_MOVE_DELAY = 500;
