@@ -872,6 +872,16 @@ var shephy = {};
     return gameTree.moves.automated;
   }
 
+  function descriptionOfMoves(moves) {
+    if (moves.description)
+      return moves.description;
+
+    if (moves.length == 1)
+      return moves[0].description;
+
+    return 'Choose a move';
+  }
+
   var AUTOMATED_MOVE_DELAY = 500;
 
   function processMove(m) {
