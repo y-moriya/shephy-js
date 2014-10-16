@@ -334,14 +334,16 @@ var shephy = {};
         })
       }]);
     } else {
-      return mapOn(world, 'hand', function (c, i) {
-        return {
-          description: 'Copy ' + c.name,
-          gameTreePromise: S.delay(function () {
-            return S.makeGameTree(world, {step: c.name});
-          })
-        };
-      });
+      return described('Choose a card to copy in hand',
+        mapOn(world, 'hand', function (c, i) {
+          return {
+            description: 'Copy ' + c.name,
+            gameTreePromise: S.delay(function () {
+              return S.makeGameTree(world, {step: c.name});
+            })
+          };
+        })
+      );
     }
   };
 
