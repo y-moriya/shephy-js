@@ -919,6 +919,7 @@ var shephy = {};
         .filter(function (m) {return m.cardRegion !== undefined;})
         .forEach(function (m) {
           v[m.cardRegion][m.cardIndex]
+            .addClass('clickable')
             .click(function () {
               processMove(m);
             });
