@@ -8,6 +8,10 @@
   cursor: pointer;
 }
 
+.clickable.card:hover {
+  box-shadow: 0 0 1.0ex 0 #cc0;
+}
+
 .card > .border {
   display: inline-block;
   border: thin solid #000;
