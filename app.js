@@ -490,7 +490,7 @@ var shephy = {};
   cardHandlerTable['Flourish'] = function (world, state) {  //{{{2
     if (state.rank === undefined) {
       if (world.field.length < 7) {
-        return world.field.map(function (c) {
+        return mapOn(world, 'field', function (c) {
           return {
             description: 'Choose ' + c.rank + ' Sheep card',
             gameTreePromise: S.delay(function () {
