@@ -350,14 +350,16 @@ var shephy = {};
   cardHandlerTable['Be Fruitful'] = function (world, state) {  //{{{2
     if (state.rank === undefined) {
       if (world.field.length < 7) {
-        return mapOn(world, 'field', function (c) {
-          return {
-            description: 'Copy ' + c.rank + ' Sheep card',
-            gameTreePromise: S.delay(function () {
-              return S.makeGameTree(world, {step: state.step, rank: c.rank});
-            })
-          };
-        });
+        return described('Choose a card to copy in the field',
+          mapOn(world, 'field', function (c) {
+            return {
+              description: 'Copy ' + c.rank + ' Sheep card',
+              gameTreePromise: S.delay(function () {
+                return S.makeGameTree(world, {step: state.step, rank: c.rank});
+              })
+            };
+          })
+        );
       } else {
         return automated([{
           description: 'Nothing happened',
