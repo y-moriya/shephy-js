@@ -949,6 +949,7 @@ var shephy = {};
     var w = gameTree.world;
     $('#enemySheepCount > .count').text(w.enemySheepCount);
     var v = {
+      deck: visualizeCards(makeFaceDownCards(w.deck.length)),
       field: visualizeCards(w.field),
       hand: visualizeCards(w.hand)
     };
@@ -959,7 +960,7 @@ var shephy = {};
     });
     $('#field > .cards').html(v.field);
     $('#hand > .cards').html(v.hand);
-    $('#deck > .cards').html(visualizeCards(makeFaceDownCards(w.deck.length)));
+    $('#deck > .cards').html(v.deck);
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
 
