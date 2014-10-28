@@ -389,17 +389,19 @@ var shephy = {};
         })
       }]);
     } else {
-      return mapOn(world, 'field', function (c, i) {
-        return {
-          description: 'Release ' + c.rank + ' Sheep card',
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.releaseX(wn, i);
-            var sn = wn.field.length <= 2 ? undefined : state;
-            return S.makeGameTree(wn, sn);
-          })
-        };
-      });
+      return described('Choose a card to release in the field',
+        mapOn(world, 'field', function (c, i) {
+          return {
+            description: 'Release ' + c.rank + ' Sheep card',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.releaseX(wn, i);
+              var sn = wn.field.length <= 2 ? undefined : state;
+              return S.makeGameTree(wn, sn);
+            })
+          };
+        })
+      );;
     }
   };
 
