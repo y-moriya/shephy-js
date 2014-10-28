@@ -389,7 +389,7 @@ var shephy = {};
         })
       }]);
     } else {
-      return world.field.map(function (c, i) {
+      return mapOn(world, 'field', function (c, i) {
         return {
           description: 'Release ' + c.rank + ' Sheep card',
           gameTreePromise: S.delay(function () {
