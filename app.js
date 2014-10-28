@@ -440,7 +440,7 @@ var shephy = {};
     else if (chosenIndice.length != world.field.length)
       moves.description = 'Choose a card in the field to combine, or';
     else
-      moves.description = 'Combine chosen Sheep cards';
+      moves.automated = true;
 
     return moves;
   };
