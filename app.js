@@ -947,9 +947,12 @@ var shephy = {};
 
   function drawGameTree(gameTree) {
     var w = gameTree.world;
+    var deckRevealed = gameTree.moves.some(function (m) {
+      return m.cardRegion === 'deck';
+    });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
     var v = {
-      deck: visualizeCards(makeFaceDownCards(w.deck.length)),
+      deck: visualizeCards(deckRevealed ? w.deck : makeFaceDownCards(w.deck.length)),
       field: visualizeCards(w.field),
       hand: visualizeCards(w.hand)
     };
