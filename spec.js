@@ -717,14 +717,13 @@ describe('shephy', function () {
           }
         });
         var w0 = gt0.world;
-        expect(gt0.moves.length).toEqual(7);
+        expect(gt0.moves.length).toEqual(6);
         expect(gt0.moves[0].description).toEqual('Choose 1 Sheep card');
         expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
         expect(gt0.moves[2].description).toEqual('Choose 3 Sheep card');
         expect(gt0.moves[3].description).toEqual('Choose 3 Sheep card');
         expect(gt0.moves[4].description).toEqual('Choose 3 Sheep card');
         expect(gt0.moves[5].description).toEqual('Choose 30 Sheep card');
-        expect(gt0.moves[6].description).toEqual('Cancel');
 
         var gt1 = S.force(gt0.moves[1].gameTreePromise);
         var w1 = gt1.world;

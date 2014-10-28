@@ -420,14 +420,7 @@ var shephy = {};
         };
       })
       .filter(function (m) {return chosenIndice.indexOf(m.cardIndex) == -1;});
-    if (chosenIndice.length == 0) {
-      moves.push({
-        description: 'Cancel',
-        gameTreePromise: S.delay(function () {
-          return S.makeGameTree(world);
-        })
-      });
-    } else {
+    if (chosenIndice.length != 0) {
       moves.push({
         description: 'Combine chosen Sheep cards',
         gameTreePromise: S.delay(function () {
