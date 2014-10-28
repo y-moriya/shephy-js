@@ -223,10 +223,26 @@ var shephy = {};
     throw 'Invalid operation';
   };
 
-  // NB: This is destructive, though this is used to make code declarative.
+  // Move sets  {{{2
+  // NB: These functions are to make code declarative, but they're destructive.
+
   function automated(moves) {
     moves.automated = true;
     return moves;
+  }
+
+  function described(description, moves) {
+    moves.description = description;
+    return moves;
+  }
+
+  function mapOn(world, regionName, moveMaker) {
+    return world[regionName].map(function (c, i) {
+      var move = moveMaker(c, i);
+      move.cardRegion = regionName;
+      move.cardIndex = i;
+      return move;
+    });
   }
 
   // Core  {{{1
@@ -865,6 +881,16 @@ var shephy = {};
     return gameTree.moves.automated;
   }
 
+  function descriptionOfMoves(moves) {
+    if (moves.description)
+      return moves.description;
+
+    if (moves.length == 1)
+      return moves[0].description;
+
+    return 'Choose a move';
+  }
+
   var AUTOMATED_MOVE_DELAY = 500;
 
   function processMove(m) {
@@ -896,22 +922,41 @@ var shephy = {};
       $('#sheepStock' + rank).html(visualizeCards(w.sheepStock[rank]));
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
-    $('#field > .cards').html(visualizeCards(w.field));
-    $('#hand > .cards').html(visualizeCards(w.hand));
+    var v = {
+      field: visualizeCards(w.field),
+      hand: visualizeCards(w.hand)
+    };
+    $('#field > .cards').html(v.field);
+    $('#hand > .cards').html(v.hand);
     $('#deck > .cards').html(visualizeCards(makeFaceDownCards(w.deck.length)));
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
 
     if (mayBeAutomated(gameTree)) {
-      $('#message').text(gameTree.moves[0].description);
+      $('#message').text(descriptionOfMoves(gameTree.moves));
       $('#moves').empty();
     } else {
       $('#message').text(
         gameTree.moves.length == 0
         ? S.judgeGame(gameTree.world).description
-        : 'Choose a move:'
+        : descriptionOfMoves(gameTree.moves)
       );
-      $('#moves').empty().append(gameTree.moves.map(nodizeMove));
+      gameTree.moves
+        .filter(function (m) {return m.cardRegion !== undefined;})
+        .forEach(function (m) {
+          v[m.cardRegion][m.cardIndex]
+            .addClass('clickable')
+            .click(function () {
+              processMove(m);
+            });
+        });
+      $('#moves')
+        .empty()
+        .append(
+          gameTree.moves
+          .filter(function (m) {return m.cardRegion === undefined;})
+          .map(nodizeMove)
+        );
     }
   }
 
