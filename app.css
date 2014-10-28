@@ -3,12 +3,12 @@
   margin: 0.5ex;
 }
 
-.clickable.card {
+.clickable.card > .border {
   box-shadow: 0 0 0.5ex 0 #000;
   cursor: pointer;
 }
 
-.clickable.card:hover {
+.clickable.card:hover > .border {
   box-shadow: 0 0 1.0ex 0 #cc0;
 }
 
