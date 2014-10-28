@@ -434,6 +434,14 @@ var shephy = {};
         })
       });
     }
+
+    if (chosenIndice.length == 0)
+      moves.description = 'Choose a card in the field to combine';
+    else if (chosenIndice.length != world.field.length)
+      moves.description = 'Choose a card in the field to combine, or';
+    else
+      moves.description = 'Combine chosen Sheep cards';
+
     return moves;
   };
 
