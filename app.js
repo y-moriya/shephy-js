@@ -543,6 +543,8 @@ var shephy = {};
       if (c.rank < highestRank && chosenIndice.indexOf(i) == -1) {
         moves.push({
           description: 'Choose ' + c.rank + ' Sheep card',
+          cardRegion: 'field',
+          cardIndex: i,
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world, {
               step: state.step,
