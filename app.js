@@ -474,6 +474,9 @@ var shephy = {};
           return S.makeGameTree(wn, state);
         })
       });
+    } else {
+      moves.description = 'No space in the field';
+      moves.automated = true;
     }
     moves.push({
       description: 'Cancel',
