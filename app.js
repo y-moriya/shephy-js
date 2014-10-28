@@ -407,10 +407,9 @@ var shephy = {};
 
   cardHandlerTable['Dominion'] = function (world, state) {  //{{{2
     var chosenIndice = state.chosenIndice || [];
-    var moves = [];
-    world.field.forEach(function (c, i) {
-      if (chosenIndice.indexOf(i) == -1) {
-        moves.push({
+    var moves =
+      mapOn(world, 'field', function (c, i) {
+        return {
           description: 'Choose ' + c.rank + ' Sheep card',
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world, {
@@ -418,9 +417,9 @@ var shephy = {};
               chosenIndice: (chosenIndice || []).concat([i]).sort()
             });
           })
-        });
-      }
-    });
+        };
+      })
+      .filter(function (m) {return chosenIndice.indexOf(m.cardIndex) == -1;});
     if (chosenIndice.length == 0) {
       moves.push({
         description: 'Cancel',
