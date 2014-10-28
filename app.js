@@ -928,14 +928,16 @@ var shephy = {};
 
   function drawGameTree(gameTree) {
     var w = gameTree.world;
-    S.RANKS.forEach(function (rank) {
-      $('#sheepStock' + rank).html(visualizeCards(w.sheepStock[rank]));
-    });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
     var v = {
       field: visualizeCards(w.field),
       hand: visualizeCards(w.hand)
     };
+    S.RANKS.forEach(function (rank) {
+      var vcs = visualizeCards(w.sheepStock[rank]);
+      v['sheepStock' + rank] = vcs;
+      $('#sheepStock' + rank).html(vcs);
+    });
     $('#field > .cards').html(v.field);
     $('#hand > .cards').html(v.hand);
     $('#deck > .cards').html(visualizeCards(makeFaceDownCards(w.deck.length)));
