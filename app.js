@@ -588,16 +588,18 @@ var shephy = {};
         })
       }]);
     } else if (state.searched === undefined) {
-      return mapOn(world, 'deck', function (c, i) {
-        return {
-          description: 'Put ' + c.name + ' into your hand',
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            wn.hand.push(wn.deck.splice(i, 1)[0]);
-            return S.makeGameTree(wn, {step: state.step, searched: true});
-          })
-        };
-      });
+      return described('Choose a card in the deck',
+        mapOn(world, 'deck', function (c, i) {
+          return {
+            description: 'Put ' + c.name + ' into your hand',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              wn.hand.push(wn.deck.splice(i, 1)[0]);
+              return S.makeGameTree(wn, {step: state.step, searched: true});
+            })
+          };
+        })
+      );
     } else {
       return automated([{
         description: 'Shuffle the deck',
