@@ -446,16 +446,18 @@ var shephy = {};
   };
 
   cardHandlerTable['Falling Rock'] = function (world, state) {  //{{{2
-    return mapOn(world, 'field', function (c, i) {
-      return {
-        description: 'Release ' + c.rank + ' Sheep card',
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          S.releaseX(wn, i);
-          return S.makeGameTree(wn);
-        })
-      };
-    });
+    return described('Choose a card to release in the field',
+      mapOn(world, 'field', function (c, i) {
+        return {
+          description: 'Release ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.releaseX(wn, i);
+            return S.makeGameTree(wn);
+          })
+        };
+      })
+    );
   };
 
   cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
