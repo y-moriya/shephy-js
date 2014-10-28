@@ -963,7 +963,7 @@ var shephy = {};
     });
     $('#field > .cards').html(v.field);
     $('#hand > .cards').html(v.hand);
-    $('#deck > .cards').html(v.deck);
+    $('#deck > .cards').html(v.deck).toggleClass('lined', !deckRevealed);
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
 
