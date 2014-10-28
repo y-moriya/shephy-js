@@ -465,6 +465,8 @@ var shephy = {};
     if (world.field.length < 7) {
       moves.push({
         description: 'Gain a 1 Sheep card',
+        cardRegion: 'sheepStock1',
+        cardIndex: world.sheepStock[1].length - 1,
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           S.gainX(wn, 1);
