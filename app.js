@@ -539,6 +539,7 @@ var shephy = {};
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     var chosenIndice = state.chosenIndice || [];
     var moves = [];
+
     world.field.forEach(function (c, i) {
       if (c.rank < highestRank && chosenIndice.indexOf(i) == -1) {
         moves.push({
@@ -554,6 +555,9 @@ var shephy = {};
         });
       }
     });
+    if (moves.length != 0)
+      moves.description = 'Choose a card in the field, or'
+
     moves.push({
       description:
         chosenIndice.length == 0
