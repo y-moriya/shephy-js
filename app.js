@@ -463,6 +463,7 @@ var shephy = {};
   cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
     var moves = [];
     if (world.field.length < 7) {
+      moves.description = 'Gain a 1 Sheep card, or';
       moves.push({
         description: 'Gain a 1 Sheep card',
         cardRegion: 'sheepStock1',
