@@ -588,7 +588,7 @@ var shephy = {};
         })
       }]);
     } else if (state.searched === undefined) {
-      return world.deck.map(function (c, i) {
+      return mapOn(world, 'deck', function (c, i) {
         return {
           description: 'Put ' + c.name + ' into your hand',
           gameTreePromise: S.delay(function () {
