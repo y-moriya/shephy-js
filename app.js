@@ -236,6 +236,15 @@ var shephy = {};
     return moves;
   }
 
+  function mapOn(world, regionName, moveMaker) {
+    return world[regionName].map(function (c, i) {
+      var move = moveMaker(c, i);
+      move.cardRegion = regionName;
+      move.cardIndex = i;
+      return move;
+    });
+  }
+
   // Core  {{{1
   S.makeGameTree = function (world, opt_state) {  //{{{2
     return {
