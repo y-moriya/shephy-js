@@ -635,19 +635,21 @@ var shephy = {};
 
   cardHandlerTable['Meteor'] = function (world, state) {  //{{{2
     var n = Math.min(state.rest || 3, world.field.length);
-    return mapOn(world, 'field', function (c, i) {
-      return {
-        description: 'Release ' + c.rank + ' Sheep card',
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          if (state.rest === undefined)
-            S.exileX(wn, wn.discardPile, wn.discardPile.length - 1);
-          S.releaseX(wn, i);
-          var sn = n == 1 ? undefined : {step: state.step, rest: n - 1};
-          return S.makeGameTree(wn, sn);
-        })
-      };
-    });
+    return described('Choose a card to release in the field',
+      mapOn(world, 'field', function (c, i) {
+        return {
+          description: 'Release ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            if (state.rest === undefined)
+              S.exileX(wn, wn.discardPile, wn.discardPile.length - 1);
+            S.releaseX(wn, i);
+            var sn = n == 1 ? undefined : {step: state.step, rest: n - 1};
+            return S.makeGameTree(wn, sn);
+          })
+        };
+      })
+    );
   };
 
   cardHandlerTable['Multiply'] = function (world, state) {  //{{{2
