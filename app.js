@@ -674,7 +674,7 @@ var shephy = {};
 
   cardHandlerTable['Plague'] = function (world, state) {  //{{{2
     return (
-      world.field.map(function (c) {
+      mapOn(world, 'field', function (c) {
         var r = c.rank;
         return {
           description: 'Release all ' + r + ' Sheep cards',
