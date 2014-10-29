@@ -673,7 +673,7 @@ var shephy = {};
   };
 
   cardHandlerTable['Plague'] = function (world, state) {  //{{{2
-    return (
+    return described('Choose a card to release in the field',
       mapOn(world, 'field', function (c) {
         var r = c.rank;
         return {
