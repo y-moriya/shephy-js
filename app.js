@@ -713,16 +713,18 @@ var shephy = {};
         })
       }]);
     } else {
-      return mapOn(world, 'hand', function (c, i) {
-        return {
-          description: 'Exile ' + c.name,
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.exileX(wn, wn.hand, i);
-            return S.makeGameTree(wn);
-          })
-        };
-      });
+      return described('Choose a card to exile in hand',
+        mapOn(world, 'hand', function (c, i) {
+          return {
+            description: 'Exile ' + c.name,
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.exileX(wn, wn.hand, i);
+              return S.makeGameTree(wn);
+            })
+          };
+        })
+      );
     }
   };
 
