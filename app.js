@@ -614,7 +614,7 @@ var shephy = {};
 
   cardHandlerTable['Lightning'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
-    return (
+    return described('Choose a card to release in the field',
       world.field
       .map(function (c, i) {return [c, i];})
       .filter(function (x) {return x[0].rank == highestRank;})
