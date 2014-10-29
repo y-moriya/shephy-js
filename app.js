@@ -795,7 +795,7 @@ var shephy = {};
 
   cardHandlerTable['Storm'] = function (world, state) {  //{{{2
     var n = Math.min(state.rest || 2, world.field.length);
-    return world.field.map(function (c, i) {
+    return mapOn(world, 'field', function (c, i) {
       return {
         description: 'Release ' + c.rank + ' Sheep card',
         gameTreePromise: S.delay(function () {
