@@ -814,7 +814,7 @@ var shephy = {};
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     if (highestRank == 1)
       return cardHandlerTable['Lightning'](world, state);
-    return (
+    return described('Choose a card to reduce its rank in the field',
       world.field
       .map(function (c, i) {return [c, i];})
       .filter(function (x) {return x[0].rank == highestRank;})
