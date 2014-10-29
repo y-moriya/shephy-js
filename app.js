@@ -775,19 +775,21 @@ var shephy = {};
     } else {
       var n = state.initialCount || world.field.length;
       var countToKeep = Math.ceil(n / 2);
-      return mapOn(world, 'field', function (c, i) {
-        return {
-          description: 'Release ' + c.rank + ' Sheep card',
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.releaseX(wn, i);
-            var sn = wn.field.length == countToKeep
-              ? undefined
-              : {step: state.step, initialCount: n};
-            return S.makeGameTree(wn, sn);
-          })
-        };
-      });
+      return described('Choose a card to release in the field',
+        mapOn(world, 'field', function (c, i) {
+          return {
+            description: 'Release ' + c.rank + ' Sheep card',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.releaseX(wn, i);
+              var sn = wn.field.length == countToKeep
+                ? undefined
+                : {step: state.step, initialCount: n};
+              return S.makeGameTree(wn, sn);
+            })
+          };
+        })
+      );
     }
   };
 
