@@ -673,10 +673,9 @@ var shephy = {};
   };
 
   cardHandlerTable['Plague'] = function (world, state) {  //{{{2
-    var ranks = uniq(world.field.map(function (c) {return c.rank;}));
     return (
-      ranks
-      .map(function (r) {
+      world.field.map(function (c) {
+        var r = c.rank;
         return {
           description: 'Release all ' + r + ' Sheep cards',
           gameTreePromise: S.delay(function () {
