@@ -737,7 +737,7 @@ var shephy = {};
         })
       }]);
     } else {
-      return world.hand.map(function (c, i) {
+      return mapOn(world, 'hand', function (c, i) {
         return {
           description: 'Discard ' + c.name,
           gameTreePromise: S.delay(function () {
