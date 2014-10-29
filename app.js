@@ -573,6 +573,9 @@ var shephy = {};
         return S.makeGameTree(wn);
       })
     });
+    if (moves.length == 1)
+      moves.automated = true;
+
     return moves;
   };
 
