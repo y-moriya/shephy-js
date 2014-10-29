@@ -737,16 +737,18 @@ var shephy = {};
         })
       }]);
     } else {
-      return mapOn(world, 'hand', function (c, i) {
-        return {
-          description: 'Discard ' + c.name,
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.discardX(wn, i);
-            return S.makeGameTree(wn);
-          })
-        };
-      });
+      return described('Choose a card to discard in hand',
+        mapOn(world, 'hand', function (c, i) {
+          return {
+            description: 'Discard ' + c.name,
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.discardX(wn, i);
+              return S.makeGameTree(wn);
+            })
+          };
+        })
+      );
     }
   };
 
