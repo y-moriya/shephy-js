@@ -775,7 +775,7 @@ var shephy = {};
     } else {
       var n = state.initialCount || world.field.length;
       var countToKeep = Math.ceil(n / 2);
-      return world.field.map(function (c, i) {
+      return mapOn(world, 'field', function (c, i) {
         return {
           description: 'Release ' + c.rank + ' Sheep card',
           gameTreePromise: S.delay(function () {
