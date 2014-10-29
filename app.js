@@ -304,16 +304,18 @@ var shephy = {};
       ]);
     }
 
-    return world.hand.map(function (c, i) {
-      return {
-        description: 'Play ' + c.name,
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          S.discardX(wn, i);
-          return S.makeGameTree(wn, {step: c.name});
-        })
-      };
-    });
+    return described('Choose a card to play from hand',
+      mapOn(world, 'hand', function (c, i) {
+        return {
+          description: 'Play ' + c.name,
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.discardX(wn, i);
+            return S.makeGameTree(wn, {step: c.name});
+          })
+        };
+      })
+    );
   };
 
   S.listPossibleMovesForPlayingCard = function (world, state) {  //{{{2
@@ -332,28 +334,32 @@ var shephy = {};
         })
       }]);
     } else {
-      return world.hand.map(function (c, i) {
-        return {
-          description: 'Copy ' + c.name,
-          gameTreePromise: S.delay(function () {
-            return S.makeGameTree(world, {step: c.name});
-          })
-        };
-      });
+      return described('Choose a card to copy in hand',
+        mapOn(world, 'hand', function (c, i) {
+          return {
+            description: 'Copy ' + c.name,
+            gameTreePromise: S.delay(function () {
+              return S.makeGameTree(world, {step: c.name});
+            })
+          };
+        })
+      );
     }
   };
 
   cardHandlerTable['Be Fruitful'] = function (world, state) {  //{{{2
     if (state.rank === undefined) {
       if (world.field.length < 7) {
-        return world.field.map(function (c) {
-          return {
-            description: 'Copy ' + c.rank + ' Sheep card',
-            gameTreePromise: S.delay(function () {
-              return S.makeGameTree(world, {step: state.step, rank: c.rank});
-            })
-          };
-        });
+        return described('Choose a card to copy in the field',
+          mapOn(world, 'field', function (c) {
+            return {
+              description: 'Copy ' + c.rank + ' Sheep card',
+              gameTreePromise: S.delay(function () {
+                return S.makeGameTree(world, {step: state.step, rank: c.rank});
+              })
+            };
+          })
+        );
       } else {
         return automated([{
           description: 'Nothing happened',
@@ -383,26 +389,27 @@ var shephy = {};
         })
       }]);
     } else {
-      return world.field.map(function (c, i) {
-        return {
-          description: 'Release ' + c.rank + ' Sheep card',
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.releaseX(wn, i);
-            var sn = wn.field.length <= 2 ? undefined : state;
-            return S.makeGameTree(wn, sn);
-          })
-        };
-      });
+      return described('Choose a card to release in the field',
+        mapOn(world, 'field', function (c, i) {
+          return {
+            description: 'Release ' + c.rank + ' Sheep card',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.releaseX(wn, i);
+              var sn = wn.field.length <= 2 ? undefined : state;
+              return S.makeGameTree(wn, sn);
+            })
+          };
+        })
+      );;
     }
   };
 
   cardHandlerTable['Dominion'] = function (world, state) {  //{{{2
     var chosenIndice = state.chosenIndice || [];
-    var moves = [];
-    world.field.forEach(function (c, i) {
-      if (chosenIndice.indexOf(i) == -1) {
-        moves.push({
+    var moves =
+      mapOn(world, 'field', function (c, i) {
+        return {
           description: 'Choose ' + c.rank + ' Sheep card',
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world, {
@@ -410,17 +417,10 @@ var shephy = {};
               chosenIndice: (chosenIndice || []).concat([i]).sort()
             });
           })
-        });
-      }
-    });
-    if (chosenIndice.length == 0) {
-      moves.push({
-        description: 'Cancel',
-        gameTreePromise: S.delay(function () {
-          return S.makeGameTree(world);
-        })
-      });
-    } else {
+        };
+      })
+      .filter(function (m) {return chosenIndice.indexOf(m.cardIndex) == -1;});
+    if (chosenIndice.length != 0) {
       moves.push({
         description: 'Combine chosen Sheep cards',
         gameTreePromise: S.delay(function () {
@@ -434,33 +434,49 @@ var shephy = {};
         })
       });
     }
+
+    if (chosenIndice.length == 0)
+      moves.description = 'Choose a card in the field to combine';
+    else if (chosenIndice.length != world.field.length)
+      moves.description = 'Choose a card in the field to combine, or';
+    else
+      moves.automated = true;
+
     return moves;
   };
 
   cardHandlerTable['Falling Rock'] = function (world, state) {  //{{{2
-    return world.field.map(function (c, i) {
-      return {
-        description: 'Release ' + c.rank + ' Sheep card',
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          S.releaseX(wn, i);
-          return S.makeGameTree(wn);
-        })
-      };
-    });
+    return described('Choose a card to release in the field',
+      mapOn(world, 'field', function (c, i) {
+        return {
+          description: 'Release ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.releaseX(wn, i);
+            return S.makeGameTree(wn);
+          })
+        };
+      })
+    );
   };
 
   cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
     var moves = [];
     if (world.field.length < 7) {
+      moves.description = 'Gain a 1 Sheep card, or';
       moves.push({
         description: 'Gain a 1 Sheep card',
+        cardRegion: 'sheepStock1',
+        cardIndex: world.sheepStock[1].length - 1,
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           S.gainX(wn, 1);
           return S.makeGameTree(wn, state);
         })
       });
+    } else {
+      moves.description = 'No space in the field';
+      moves.automated = true;
     }
     moves.push({
       description: 'Cancel',
@@ -474,14 +490,16 @@ var shephy = {};
   cardHandlerTable['Flourish'] = function (world, state) {  //{{{2
     if (state.rank === undefined) {
       if (world.field.length < 7) {
-        return world.field.map(function (c) {
-          return {
-            description: 'Choose ' + c.rank + ' Sheep card',
-            gameTreePromise: S.delay(function () {
-              return S.makeGameTree(world, {step: state.step, rank: c.rank});
-            })
-          };
-        });
+        return described('Choose a card in the field',
+          mapOn(world, 'field', function (c) {
+            return {
+              description: 'Choose ' + c.rank + ' Sheep card',
+              gameTreePromise: S.delay(function () {
+                return S.makeGameTree(world, {step: state.step, rank: c.rank});
+              })
+            };
+          })
+        );
       } else {
         return automated([{
           description: 'Nothing happened',
@@ -521,10 +539,13 @@ var shephy = {};
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     var chosenIndice = state.chosenIndice || [];
     var moves = [];
+
     world.field.forEach(function (c, i) {
       if (c.rank < highestRank && chosenIndice.indexOf(i) == -1) {
         moves.push({
           description: 'Choose ' + c.rank + ' Sheep card',
+          cardRegion: 'field',
+          cardIndex: i,
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world, {
               step: state.step,
@@ -534,6 +555,9 @@ var shephy = {};
         });
       }
     });
+    if (moves.length != 0)
+      moves.description = 'Choose a card in the field, or'
+
     moves.push({
       description:
         chosenIndice.length == 0
@@ -549,6 +573,9 @@ var shephy = {};
         return S.makeGameTree(wn);
       })
     });
+    if (moves.length == 1)
+      moves.automated = true;
+
     return moves;
   };
 
@@ -561,16 +588,18 @@ var shephy = {};
         })
       }]);
     } else if (state.searched === undefined) {
-      return world.deck.map(function (c, i) {
-        return {
-          description: 'Put ' + c.name + ' into your hand',
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            wn.hand.push(wn.deck.splice(i, 1)[0]);
-            return S.makeGameTree(wn, {step: state.step, searched: true});
-          })
-        };
-      });
+      return described('Choose a card in the deck',
+        mapOn(world, 'deck', function (c, i) {
+          return {
+            description: 'Put ' + c.name + ' into your hand',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              wn.hand.push(wn.deck.splice(i, 1)[0]);
+              return S.makeGameTree(wn, {step: state.step, searched: true});
+            })
+          };
+        })
+      );
     } else {
       return automated([{
         description: 'Shuffle the deck',
@@ -585,13 +614,15 @@ var shephy = {};
 
   cardHandlerTable['Lightning'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
-    return (
+    return described('Choose a card to release in the field',
       world.field
       .map(function (c, i) {return [c, i];})
       .filter(function (x) {return x[0].rank == highestRank;})
       .map(function (x) {
         return {
           description: 'Release ' + x[0].rank + ' Sheep card',
+          cardRegion: 'field',
+          cardIndex: x[1],
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.releaseX(wn, x[1]);
@@ -604,19 +635,21 @@ var shephy = {};
 
   cardHandlerTable['Meteor'] = function (world, state) {  //{{{2
     var n = Math.min(state.rest || 3, world.field.length);
-    return world.field.map(function (c, i) {
-      return {
-        description: 'Release ' + c.rank + ' Sheep card',
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          if (state.rest === undefined)
-            S.exileX(wn, wn.discardPile, wn.discardPile.length - 1);
-          S.releaseX(wn, i);
-          var sn = n == 1 ? undefined : {step: state.step, rest: n - 1};
-          return S.makeGameTree(wn, sn);
-        })
-      };
-    });
+    return described('Choose a card to release in the field',
+      mapOn(world, 'field', function (c, i) {
+        return {
+          description: 'Release ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            if (state.rest === undefined)
+              S.exileX(wn, wn.discardPile, wn.discardPile.length - 1);
+            S.releaseX(wn, i);
+            var sn = n == 1 ? undefined : {step: state.step, rest: n - 1};
+            return S.makeGameTree(wn, sn);
+          })
+        };
+      })
+    );
   };
 
   cardHandlerTable['Multiply'] = function (world, state) {  //{{{2
@@ -640,10 +673,9 @@ var shephy = {};
   };
 
   cardHandlerTable['Plague'] = function (world, state) {  //{{{2
-    var ranks = uniq(world.field.map(function (c) {return c.rank;}));
-    return (
-      ranks
-      .map(function (r) {
+    return described('Choose a card to release in the field',
+      mapOn(world, 'field', function (c) {
+        var r = c.rank;
         return {
           description: 'Release all ' + r + ' Sheep cards',
           gameTreePromise: S.delay(function () {
@@ -681,16 +713,18 @@ var shephy = {};
         })
       }]);
     } else {
-      return world.hand.map(function (c, i) {
-        return {
-          description: 'Exile ' + c.name,
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.exileX(wn, wn.hand, i);
-            return S.makeGameTree(wn);
-          })
-        };
-      });
+      return described('Choose a card to exile in hand',
+        mapOn(world, 'hand', function (c, i) {
+          return {
+            description: 'Exile ' + c.name,
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.exileX(wn, wn.hand, i);
+              return S.makeGameTree(wn);
+            })
+          };
+        })
+      );
     }
   };
 
@@ -703,16 +737,18 @@ var shephy = {};
         })
       }]);
     } else {
-      return world.hand.map(function (c, i) {
-        return {
-          description: 'Discard ' + c.name,
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.discardX(wn, i);
-            return S.makeGameTree(wn);
-          })
-        };
-      });
+      return described('Choose a card to discard in hand',
+        mapOn(world, 'hand', function (c, i) {
+          return {
+            description: 'Discard ' + c.name,
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.discardX(wn, i);
+              return S.makeGameTree(wn);
+            })
+          };
+        })
+      );
     }
   };
 
@@ -739,48 +775,54 @@ var shephy = {};
     } else {
       var n = state.initialCount || world.field.length;
       var countToKeep = Math.ceil(n / 2);
-      return world.field.map(function (c, i) {
-        return {
-          description: 'Release ' + c.rank + ' Sheep card',
-          gameTreePromise: S.delay(function () {
-            var wn = S.clone(world);
-            S.releaseX(wn, i);
-            var sn = wn.field.length == countToKeep
-              ? undefined
-              : {step: state.step, initialCount: n};
-            return S.makeGameTree(wn, sn);
-          })
-        };
-      });
+      return described('Choose a card to release in the field',
+        mapOn(world, 'field', function (c, i) {
+          return {
+            description: 'Release ' + c.rank + ' Sheep card',
+            gameTreePromise: S.delay(function () {
+              var wn = S.clone(world);
+              S.releaseX(wn, i);
+              var sn = wn.field.length == countToKeep
+                ? undefined
+                : {step: state.step, initialCount: n};
+              return S.makeGameTree(wn, sn);
+            })
+          };
+        })
+      );
     }
   };
 
   cardHandlerTable['Storm'] = function (world, state) {  //{{{2
     var n = Math.min(state.rest || 2, world.field.length);
-    return world.field.map(function (c, i) {
-      return {
-        description: 'Release ' + c.rank + ' Sheep card',
-        gameTreePromise: S.delay(function () {
-          var wn = S.clone(world);
-          S.releaseX(wn, i);
-          var sn = n == 1 ? undefined : {step: state.step, rest: n - 1};
-          return S.makeGameTree(wn, sn);
-        })
-      };
-    });
+    return described('Choose a card to release in the field',
+      mapOn(world, 'field', function (c, i) {
+        return {
+          description: 'Release ' + c.rank + ' Sheep card',
+          gameTreePromise: S.delay(function () {
+            var wn = S.clone(world);
+            S.releaseX(wn, i);
+            var sn = n == 1 ? undefined : {step: state.step, rest: n - 1};
+            return S.makeGameTree(wn, sn);
+          })
+        };
+      })
+    );
   };
 
   cardHandlerTable['Wolves'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     if (highestRank == 1)
       return cardHandlerTable['Lightning'](world, state);
-    return (
+    return described('Choose a card to reduce its rank in the field',
       world.field
       .map(function (c, i) {return [c, i];})
       .filter(function (x) {return x[0].rank == highestRank;})
       .map(function (x) {
         return {
           description: 'Reduce the rank of ' + x[0].rank + ' Sheep card',
+          cardRegion: 'field',
+          cardIndex: x[1],
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.releaseX(wn, x[1]);
@@ -918,17 +960,23 @@ var shephy = {};
 
   function drawGameTree(gameTree) {
     var w = gameTree.world;
-    S.RANKS.forEach(function (rank) {
-      $('#sheepStock' + rank).html(visualizeCards(w.sheepStock[rank]));
+    var deckRevealed = gameTree.moves.some(function (m) {
+      return m.cardRegion === 'deck';
     });
     $('#enemySheepCount > .count').text(w.enemySheepCount);
     var v = {
+      deck: visualizeCards(deckRevealed ? w.deck : makeFaceDownCards(w.deck.length)),
       field: visualizeCards(w.field),
       hand: visualizeCards(w.hand)
     };
+    S.RANKS.forEach(function (rank) {
+      var vcs = visualizeCards(w.sheepStock[rank]);
+      v['sheepStock' + rank] = vcs;
+      $('#sheepStock' + rank).html(vcs);
+    });
     $('#field > .cards').html(v.field);
     $('#hand > .cards').html(v.hand);
-    $('#deck > .cards').html(visualizeCards(makeFaceDownCards(w.deck.length)));
+    $('#deck > .cards').html(v.deck).toggleClass('lined', !deckRevealed);
     $('#discardPile > .cards').html(visualizeCards(w.discardPile));
     $('#exile > .cards').html(visualizeCards(w.exile));
 
