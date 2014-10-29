@@ -621,6 +621,8 @@ var shephy = {};
       .map(function (x) {
         return {
           description: 'Release ' + x[0].rank + ' Sheep card',
+          cardRegion: 'field',
+          cardIndex: x[1],
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.releaseX(wn, x[1]);
