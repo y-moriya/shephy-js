@@ -981,14 +981,15 @@ var shephy = {};
     $('#exile > .cards').html(visualizeCards(w.exile));
 
     if (mayBeAutomated(gameTree)) {
-      $('#message').text(descriptionOfMoves(gameTree.moves));
+      $('#message').prepend("<p class=\"log\">" + descriptionOfMoves(gameTree.moves) + "</p>");
       $('#moves').empty();
     } else {
-      $('#message').text(
+      var msg = 
         gameTree.moves.length == 0
         ? S.judgeGame(gameTree.world).description
-        : descriptionOfMoves(gameTree.moves)
-      );
+        : descriptionOfMoves(gameTree.moves);
+      $('#message').prepend("<p class=\"log\">" + msg + "</p>")
+      
       gameTree.moves
         .filter(function (m) {return m.cardRegion !== undefined;})
         .forEach(function (m) {
