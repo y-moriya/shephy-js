@@ -125,6 +125,16 @@
 .stacked.cards > .card:nth-child(21) {top: 6.00ex; left: 6.00ex;}
 .stacked.cards > .card:nth-child(22) {top: 6.30ex; left: 6.30ex;}
 
+.logs {
+  height: 200px;
+  width: 600px;
+  overflow: auto;
+}
+
+p.log {
+  margin: 0px;
+}
+
 #sheepStock > .stacked.cards {
   display: inline-block;
   width: 10ex;

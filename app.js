@@ -109,6 +109,7 @@ var shephy = {};
   }
 
   function makeInitalDeck() {
+  /*
     var names = [
       'All-purpose Sheep',
       'Be Fruitful',
@@ -133,6 +134,33 @@ var shephy = {};
       'Storm',
       'Wolves'
     ];
+    */
+    
+    var names = [
+      '万能ひつじ',
+      '産めよ',
+      '産めよ',
+      '産めよ',
+      '過密',
+      '統率',
+      '統率',
+      '落石',
+      '地に満ちよ',
+      '繁栄',
+      '黄金の蹄',
+      '霊感',
+      '落雷',
+      'メテオ',
+      '増やせよ',
+      '疫病',
+      '対策ひつじ',
+      '牧羊犬',
+      'シェフィオン',
+      '暴落',
+      '嵐',
+      '狼'
+    ];
+    
     var cards = names.map(makeEventCard);
     shuffle(cards);
     return cards;
@@ -204,19 +232,19 @@ var shephy = {};
     if (world.field.some(function (c) {return c.rank == 1000;})) {
       return {
         result: 'win',
-        description: 'You win!'
+        description: 'あなたの勝ちです！'
       };
     }
     if (world.enemySheepCount == 1000) {
       return {
         result: 'lose',
-        description: 'Enemies reached 1000 sheep - you lose.'
+        description: '敵ひつじが1000匹に達しました。あなたの負けです。'
       };
     }
     if (world.field.length == 0) {
       return {
         result: 'lose',
-        description: 'You lost all your sheep - you lose.'
+        description: 'あなたの牧場からは羊がいなくなってしまいました……。あなたの負けです。'
       };
     }
 
@@ -274,7 +302,7 @@ var shephy = {};
     if (world.hand.length == 0 && world.deck.length == 0) {
       return automated([
         {
-          description: 'Remake Deck then fill Hand',
+          description: '山札を再作成し、手札を補充します。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.remakeDeckX(wn);
@@ -291,9 +319,7 @@ var shephy = {};
       return automated([
         {
           description:
-            5 - world.hand.length == 1
-            ? 'Draw a card'
-            : 'Draw cards',
+            '手札を' + (5 - world.hand.length) + '枚補充しました。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             while (S.shouldDraw(wn))
@@ -304,10 +330,10 @@ var shephy = {};
       ]);
     }
 
-    return described('Choose a card to play from hand',
+    return described('使用するカードを手札から選んでください。',
       mapOn(world, 'hand', function (c, i) {
         return {
-          description: 'Play ' + c.name,
+          description: c.name + 'を使用しました。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.discardX(wn, i);
@@ -325,19 +351,19 @@ var shephy = {};
 
   var cardHandlerTable = {};  //{{{2
 
-  cardHandlerTable['All-purpose Sheep'] = function (world, state) {  //{{{2
+  cardHandlerTable['万能ひつじ'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return automated([{
-        description: 'No card in hand - nothing happened',
+        description: '手札にコピー出来るカードが残っていません。何も起こりませんでした。',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
       }]);
     } else {
-      return described('Choose a card to copy in hand',
+      return described('コピーするカードを選んでください。',
         mapOn(world, 'hand', function (c, i) {
           return {
-            description: 'Copy ' + c.name,
+            description: c.name + 'をコピーします。',
             gameTreePromise: S.delay(function () {
               return S.makeGameTree(world, {step: c.name});
             })
@@ -347,13 +373,13 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Be Fruitful'] = function (world, state) {  //{{{2
+  cardHandlerTable['産めよ'] = function (world, state) {  //{{{2
     if (state.rank === undefined) {
       if (world.field.length < 7) {
-        return described('Choose a card to copy in the field',
+        return described('コピーするひつじを選んでください。',
           mapOn(world, 'field', function (c) {
             return {
-              description: 'Copy ' + c.rank + ' Sheep card',
+              description: c.rank + ' ひつじカードをコピーしました。',
               gameTreePromise: S.delay(function () {
                 return S.makeGameTree(world, {step: state.step, rank: c.rank});
               })
@@ -362,7 +388,7 @@ var shephy = {};
         );
       } else {
         return automated([{
-          description: 'Nothing happened',
+          description: '何も起きませんでした。',
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world);
           })
@@ -370,7 +396,7 @@ var shephy = {};
       }
     } else {
       return automated([{
-        description: 'Gain a ' + state.rank + ' Sheep card',
+        description: state.rank + ' ひつじカードを得ました。',
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           S.gainX(wn, state.rank);
@@ -380,19 +406,19 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Crowding'] = function (world, state) {  //{{{2
+  cardHandlerTable['過密'] = function (world, state) {  //{{{2
     if (world.field.length <= 2) {
       return automated([{
-        description: 'Too few sheep - nothing happened',
+        description: 'ひつじカードがすでに2枚以下のため、何も起きませんでした。',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
       }]);
     } else {
-      return described('Choose a card to release in the field',
+      return described('手放すひつじカードを選んでください。',
         mapOn(world, 'field', function (c, i) {
           return {
-            description: 'Release ' + c.rank + ' Sheep card',
+            description: c.rank + ' ひつじカードを手放しました。',
             gameTreePromise: S.delay(function () {
               var wn = S.clone(world);
               S.releaseX(wn, i);
@@ -405,12 +431,12 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Dominion'] = function (world, state) {  //{{{2
+  cardHandlerTable['統率'] = function (world, state) {  //{{{2
     var chosenIndice = state.chosenIndice || [];
     var moves =
       mapOn(world, 'field', function (c, i) {
         return {
-          description: 'Choose ' + c.rank + ' Sheep card',
+          description: c.rank + ' ひつじカードを選びました。',
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world, {
               step: state.step,
@@ -422,7 +448,7 @@ var shephy = {};
       .filter(function (m) {return chosenIndice.indexOf(m.cardIndex) == -1;});
     if (chosenIndice.length != 0) {
       moves.push({
-        description: 'Combine chosen Sheep cards',
+        description: '選ばれたひつじカードを統率します。',
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           for (var i = chosenIndice.length - 1; 0 <= i; i--)
@@ -435,21 +461,22 @@ var shephy = {};
       });
     }
 
+    // 最初の1回だけでもいいんじゃないかなあ
     if (chosenIndice.length == 0)
-      moves.description = 'Choose a card in the field to combine';
+      moves.description = '統率するひつじカードを選んでください。';
     else if (chosenIndice.length != world.field.length)
-      moves.description = 'Choose a card in the field to combine, or';
+      moves.description = '統率するひつじカードを選んでください。';
     else
       moves.automated = true;
 
     return moves;
   };
 
-  cardHandlerTable['Falling Rock'] = function (world, state) {  //{{{2
-    return described('Choose a card to release in the field',
+  cardHandlerTable['落石'] = function (world, state) {  //{{{2
+    return described('手放すひつじカード1枚を選んでください。',
       mapOn(world, 'field', function (c, i) {
         return {
-          description: 'Release ' + c.rank + ' Sheep card',
+          description: c.rank + ' ひつじカードを手放しました。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.releaseX(wn, i);
@@ -460,12 +487,12 @@ var shephy = {};
     );
   };
 
-  cardHandlerTable['Fill the Earth'] = function (world, state) {  //{{{2
+  cardHandlerTable['地に満ちよ'] = function (world, state) {  //{{{2
     var moves = [];
     if (world.field.length < 7) {
-      moves.description = 'Gain a 1 Sheep card, or';
+      moves.description = '1 ひつじカードを得ました。';
       moves.push({
-        description: 'Gain a 1 Sheep card',
+        description: '1 ひつじカードを得ました。',
         cardRegion: 'sheepStock1',
         cardIndex: world.sheepStock[1].length - 1,
         gameTreePromise: S.delay(function () {
@@ -475,7 +502,7 @@ var shephy = {};
         })
       });
     } else {
-      moves.description = 'No space in the field';
+      moves.description = 'もう牧場に空きがありません。';
       moves.automated = true;
     }
     moves.push({
@@ -487,13 +514,13 @@ var shephy = {};
     return moves;
   };
 
-  cardHandlerTable['Flourish'] = function (world, state) {  //{{{2
+  cardHandlerTable['繁栄'] = function (world, state) {  //{{{2
     if (state.rank === undefined) {
       if (world.field.length < 7) {
-        return described('Choose a card in the field',
+        return described('繁栄させるひつじカードを選んでください。',
           mapOn(world, 'field', function (c) {
             return {
-              description: 'Choose ' + c.rank + ' Sheep card',
+              description: c.rank + ' ひつじカードを選びました。',
               gameTreePromise: S.delay(function () {
                 return S.makeGameTree(world, {step: state.step, rank: c.rank});
               })
@@ -502,7 +529,7 @@ var shephy = {};
         );
       } else {
         return automated([{
-          description: 'Nothing happened',
+          description: '何も起きませんでした。', // 牧場に空きがないため。
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world);
           })
@@ -512,7 +539,7 @@ var shephy = {};
       var lowerRank = S.dropRank(state.rank);
       if (lowerRank === undefined) {
         return automated([{
-          description: 'Gain nothing',
+          description: '何も得られませんでした。', // 1ランクより下はないため。
           gameTreePromise: S.delay(function () {
             return S.makeGameTree(world);
           })
@@ -522,8 +549,8 @@ var shephy = {};
         return automated([{
           description:
             n == 1
-            ? 'Gain a ' + lowerRank + ' Sheep card'
-            : 'Gain ' + n + ' cards of ' + lowerRank + ' Sheep',
+            ? lowerRank + ' ひつじカードを得ました。'
+            : lowerRank + ' ひつじカードを' + n + '枚得ました。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             for (var i = 1; i <= n; i++)
@@ -535,7 +562,7 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Golden Hooves'] = function (world, state) {  //{{{2
+  cardHandlerTable['黄金の蹄'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     var chosenIndice = state.chosenIndice || [];
     var moves = [];
@@ -543,7 +570,7 @@ var shephy = {};
     world.field.forEach(function (c, i) {
       if (c.rank < highestRank && chosenIndice.indexOf(i) == -1) {
         moves.push({
-          description: 'Choose ' + c.rank + ' Sheep card',
+          description: c.rank + ' ひつじカードを選びました。',
           cardRegion: 'field',
           cardIndex: i,
           gameTreePromise: S.delay(function () {
@@ -556,13 +583,13 @@ var shephy = {};
       }
     });
     if (moves.length != 0)
-      moves.description = 'Choose a card in the field, or'
+      moves.description = 'ひつじカードを選んでください。'
 
     moves.push({
       description:
         chosenIndice.length == 0
-        ? 'Cancel'
-        : 'Raise ranks of chosen Sheep cards',
+        ? 'キャンセルしました。'
+        : '選ばれたひつじカードが1ランクアップしました。',
       gameTreePromise: S.delay(function () {
         var wn = S.clone(world);
         for (var i = chosenIndice.length - 1; 0 <= i; i--) {
@@ -579,19 +606,19 @@ var shephy = {};
     return moves;
   };
 
-  cardHandlerTable['Inspiration'] = function (world, state) {  //{{{2
+  cardHandlerTable['霊感'] = function (world, state) {  //{{{2
     if (world.deck.length == 0) {
       return automated([{
-        description: 'No card in deck - nothing happened',
+        description: '山札には何もありませんでした。',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
       }]);
     } else if (state.searched === undefined) {
-      return described('Choose a card in the deck',
+      return described('山札からカードを選んでください。',
         mapOn(world, 'deck', function (c, i) {
           return {
-            description: 'Put ' + c.name + ' into your hand',
+            description: c.name + ' カードを手札に得ました。',
             gameTreePromise: S.delay(function () {
               var wn = S.clone(world);
               wn.hand.push(wn.deck.splice(i, 1)[0]);
@@ -602,7 +629,7 @@ var shephy = {};
       );
     } else {
       return automated([{
-        description: 'Shuffle the deck',
+        description: '山札をシャッフルしました。',
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           shuffle(wn.deck);
@@ -612,15 +639,15 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Lightning'] = function (world, state) {  //{{{2
+  cardHandlerTable['落雷'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
-    return described('Choose a card to release in the field',
+    return described('手放すひつじカードを選んでください。',
       world.field
       .map(function (c, i) {return [c, i];})
       .filter(function (x) {return x[0].rank == highestRank;})
       .map(function (x) {
         return {
-          description: 'Release ' + x[0].rank + ' Sheep card',
+          description: x[0].rank + ' ひつじカードを手放しました。',
           cardRegion: 'field',
           cardIndex: x[1],
           gameTreePromise: S.delay(function () {
@@ -633,12 +660,12 @@ var shephy = {};
     );
   };
 
-  cardHandlerTable['Meteor'] = function (world, state) {  //{{{2
+  cardHandlerTable['メテオ'] = function (world, state) {  //{{{2
     var n = Math.min(state.rest || 3, world.field.length);
-    return described('Choose a card to release in the field',
+    return described('手放すひつじカードを3枚選んでください。',
       mapOn(world, 'field', function (c, i) {
         return {
-          description: 'Release ' + c.rank + ' Sheep card',
+          description: c.rank + ' ひつじカードを手放しました。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             if (state.rest === undefined)
@@ -652,10 +679,10 @@ var shephy = {};
     );
   };
 
-  cardHandlerTable['Multiply'] = function (world, state) {  //{{{2
+  cardHandlerTable['増やせよ'] = function (world, state) {  //{{{2
     if (world.field.length < 7 && 0 < world.sheepStock[3].length) {
       return automated([{
-        description: 'Gain a 3 Sheep card',
+        description: '3 ひつじカードを得ました。',
         gameTreePromise: S.delay(function () {
           var wn = S.clone(world);
           S.gainX(wn, 3);
@@ -664,7 +691,7 @@ var shephy = {};
       }]);
     } else {
       return automated([{
-        description: 'Nothing happened',
+        description: '何も起きませんでした。',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -672,12 +699,12 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Plague'] = function (world, state) {  //{{{2
-    return described('Choose a card to release in the field',
+  cardHandlerTable['疫病'] = function (world, state) {  //{{{2
+    return described('手放すひつじカードを選んでください。',
       mapOn(world, 'field', function (c) {
         var r = c.rank;
         return {
-          description: 'Release all ' + r + ' Sheep cards',
+          description: r + ' ひつじカードすべてを手放しました。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             for (var i = wn.field.length - 1; 0 <= i; i--) {
@@ -704,19 +731,19 @@ var shephy = {};
     return us;
   }
 
-  cardHandlerTable['Planning Sheep'] = function (world, state) {  //{{{2
+  cardHandlerTable['対策ひつじ'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return automated([{
-        description: 'No card to exile - nothing happened',
+        description: '追放するカードがありません。何も起きませんでした。',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
       }]);
     } else {
-      return described('Choose a card to exile in hand',
+      return described('追放するカードを選んでください。',
         mapOn(world, 'hand', function (c, i) {
           return {
-            description: 'Exile ' + c.name,
+            description: c.name + ' カードを追放しました。',
             gameTreePromise: S.delay(function () {
               var wn = S.clone(world);
               S.exileX(wn, wn.hand, i);
@@ -728,19 +755,19 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Sheep Dog'] = function (world, state) {  //{{{2
+  cardHandlerTable['牧羊犬'] = function (world, state) {  //{{{2
     if (world.hand.length == 0) {
       return automated([{
-        description: 'No card to discard - nothing happened',
+        description: '捨てるカードがありません。何も起きませんでした。',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
       }]);
     } else {
-      return described('Choose a card to discard in hand',
+      return described('捨てるカードを選んでください。',
         mapOn(world, 'hand', function (c, i) {
           return {
-            description: 'Discard ' + c.name,
+            description: c.name + ' カードを捨てました。',
             gameTreePromise: S.delay(function () {
               var wn = S.clone(world);
               S.discardX(wn, i);
@@ -752,9 +779,9 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Shephion'] = function (world, state) {  //{{{2
+  cardHandlerTable['シェフィオン'] = function (world, state) {  //{{{2
     return automated([{
-      description: 'Release all Sheep cards',
+      description: 'すべてのひつじカードを手放しました。',
       gameTreePromise: S.delay(function () {
         var wn = S.clone(world);
         while (1 <= wn.field.length)
@@ -764,10 +791,10 @@ var shephy = {};
     }]);
   };
 
-  cardHandlerTable['Slump'] = function (world, state) {  //{{{2
+  cardHandlerTable['暴落'] = function (world, state) {  //{{{2
     if (world.field.length == 1) {
       return automated([{
-        description: 'No sheep to release - nothing happened',
+        description: '手放すひつじカードがありません。何も起きませんでした。',
         gameTreePromise: S.delay(function () {
           return S.makeGameTree(world);
         })
@@ -775,10 +802,10 @@ var shephy = {};
     } else {
       var n = state.initialCount || world.field.length;
       var countToKeep = Math.ceil(n / 2);
-      return described('Choose a card to release in the field',
+      return described('手放すひつじカードを選んでください。',
         mapOn(world, 'field', function (c, i) {
           return {
-            description: 'Release ' + c.rank + ' Sheep card',
+            description: c.rank + ' ひつじカードを手放しました。',
             gameTreePromise: S.delay(function () {
               var wn = S.clone(world);
               S.releaseX(wn, i);
@@ -793,12 +820,12 @@ var shephy = {};
     }
   };
 
-  cardHandlerTable['Storm'] = function (world, state) {  //{{{2
+  cardHandlerTable['嵐'] = function (world, state) {  //{{{2
     var n = Math.min(state.rest || 2, world.field.length);
-    return described('Choose a card to release in the field',
+    return described('手放すひつじカードを選んでください。',
       mapOn(world, 'field', function (c, i) {
         return {
-          description: 'Release ' + c.rank + ' Sheep card',
+          description: c.rank + ' ひつじカードを手放しました。',
           gameTreePromise: S.delay(function () {
             var wn = S.clone(world);
             S.releaseX(wn, i);
@@ -810,17 +837,17 @@ var shephy = {};
     );
   };
 
-  cardHandlerTable['Wolves'] = function (world, state) {  //{{{2
+  cardHandlerTable['狼'] = function (world, state) {  //{{{2
     var highestRank = max(world.field.map(function (c) {return c.rank;}));
     if (highestRank == 1)
-      return cardHandlerTable['Lightning'](world, state);
-    return described('Choose a card to reduce its rank in the field',
+      return cardHandlerTable['落雷'](world, state);
+    return described('ランクダウンさせるひつじカードを選んでください。',
       world.field
       .map(function (c, i) {return [c, i];})
       .filter(function (x) {return x[0].rank == highestRank;})
       .map(function (x) {
         return {
-          description: 'Reduce the rank of ' + x[0].rank + ' Sheep card',
+          description: x[0].rank + ' ひつじカードがランクダウンしました。',
           cardRegion: 'field',
           cardIndex: x[1],
           gameTreePromise: S.delay(function () {
@@ -837,7 +864,7 @@ var shephy = {};
   function unimplementedCardHandler(world, state) {  //{{{2
     // TODO: Throw an error after all event cards are implemented.
     return [{
-      description: 'Nothing happened (not implemented yet)',
+      description: '何も起きませんでした。（まだ実装されていません。）',
       gameTreePromise: S.delay(function () {
         return S.makeGameTree(world);
       })
@@ -863,6 +890,7 @@ var shephy = {};
       return cs.map(function (c) {return c.name;}).join(', ');
   }
 
+  /*
   var ruleTextFromCardNameTable = {
     'All-purpose Sheep': 'Choose a card in your hand.\nPlay this card in place of the card you chose.',
     'Be Fruitful': 'Duplicate one of your Sheep cards.',
@@ -883,6 +911,29 @@ var shephy = {};
     'Slump': 'Relase half of your Sheep cards (Round down.)',
     'Storm': 'Release two Sheep cards.',
     'Wolves': 'Reduce the rank of your highest-ranking sheep card by one.\nIf your highest ranaking Sheep card is 1, release it.'
+  };
+  */
+
+  var ruleTextFromCardNameTable = {
+    '万能ひつじ': '手札1枚を選び、それと同じ効果を持つカードとして使う。',
+    '産めよ': 'ひつじカード1枚をコピーする。',
+    '過密': '2枚以下になるまで、ひつじカードを手放す。',
+    '統率': 'ひつじカードを何枚か選び、数を足して1枚にする（合計値以内のひつじカード1枚に置き換える）。',
+    '落石': 'ひつじカード1枚を手放す。',
+    '地に満ちよ': '[1]を好きなだけ得る。',
+    '繁栄': 'ひつじカード1枚を選ぶ。その1ランク下のカードを3枚得る。',
+    '黄金の蹄': '最大でないひつじカードを好きなだけ選び、それぞれ1ランクアップする。',
+    '霊感': '山札を見て好きなカード1枚を手札にし、残りをよく切る。',
+    '落雷': '最大のひつじカード1枚を手放す。',
+    'メテオ': 'このカードを追放する。ひつじカード3枚を手放す。',
+    '増やせよ': '[3]を得る。',
+    '疫病': 'ひつじカード1種類すべてを手放す。',
+    '対策ひつじ': '手札1枚を追放する。',
+    '牧羊犬': '手札1枚を捨てる。',
+    'シェフィオン': 'ひつじカード7枚を手放す。',
+    '暴落': '枚数が半分になるまで、ひつじカードを手放す（奇数なら残り枚数は切り上げ）。',
+    '嵐': '羊カード2枚を手放す。',
+    '狼': '最大のひつじカード1枚を選び、1ランクダウンする（[1]なら手放す）。'
   };
 
   function helpTextFromCard(card) {
@@ -981,14 +1032,15 @@ var shephy = {};
     $('#exile > .cards').html(visualizeCards(w.exile));
 
     if (mayBeAutomated(gameTree)) {
-      $('#message').text(descriptionOfMoves(gameTree.moves));
+      $('#message').prepend("<p class=\"log\">" + descriptionOfMoves(gameTree.moves) + "</p>");
       $('#moves').empty();
     } else {
-      $('#message').text(
+      var msg = 
         gameTree.moves.length == 0
         ? S.judgeGame(gameTree.world).description
-        : descriptionOfMoves(gameTree.moves)
-      );
+        : descriptionOfMoves(gameTree.moves);
+      $('#message').prepend("<p class=\"log\">" + msg + "</p>")
+      
       gameTree.moves
         .filter(function (m) {return m.cardRegion !== undefined;})
         .forEach(function (m) {
