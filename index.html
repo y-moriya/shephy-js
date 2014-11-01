@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Shephy JS</title>
+    <title>Shephy JS - 日本語版</title>
     <link href="app.css" rel="stylesheet">
   </head>
   <body>
     <div id="world">
       <div id="sheepStock">
-        Sheep stocks:
+        ひつじたち:
         <div id="sheepStock1" class="stacked cards"></div>
         <div id="sheepStock3" class="stacked cards"></div>
         <div id="sheepStock10" class="stacked cards"></div>
@@ -17,16 +17,17 @@
         <div id="sheepStock300" class="stacked cards"></div>
         <div id="sheepStock1000" class="stacked cards"></div>
       </div>
-      <div id="enemySheepCount">Enemy: <span class="count"></span></div>
-      <div id="field">Field: <span class="cards"></span></div>
-      <div id="hand">Hand: <span class="cards"></span></div>
-      <div id="deck">Deck: <span class="tightly lined cards"></span></div>
-      <div id="discardPile">Discard pile: <span class="loosely lined cards"></span></div>
-      <div id="exile">Exile: <span class="loosely lined cards"></span></div>
+      <div id="enemySheepCount">敵ひつじ: <span class="count"></span></div>
+      <div id="field">あなたの牧場: <span class="cards"></span></div>
+      <div id="hand">手札: <span class="cards"></span></div>
+      <div id="deck">山札: <span class="tightly lined cards"></span></div>
+      <div id="discardPile">捨て札: <span class="loosely lined cards"></span></div>
+      <div id="exile">除外: <span class="loosely lined cards"></span></div>
     </div>
     <div id="console">
-      <div id="message"></div>
       <div id="moves"></div>
+      <div id="message" class="logs">
+      </div>
     </div>
     <script src="vendor/jquery/jquery-2.0.3.min.js"></script>
     <script src="app.js"></script>
