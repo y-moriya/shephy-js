@@ -506,7 +506,7 @@ var shephy = {};
       moves.automated = true;
     }
     moves.push({
-      description: 'Cancel',
+      description: 'キャンセルしました。',
       gameTreePromise: S.delay(function () {
         return S.makeGameTree(world);
       })

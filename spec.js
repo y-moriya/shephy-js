@@ -454,7 +454,7 @@ describe('shephy', function () {
 
       expect(moves).toEqual(any(Array));
       expect(moves.length).toEqual(1);
-      expect(moves[0].description).toEqual('Draw cards');
+      expect(moves[0].description).toEqual('手札を5枚補充しました。');
       expect(moves[0].gameTreePromise).toEqual(any(Function));
 
       var wd = S.force(moves[0].gameTreePromise).world;
@@ -484,7 +484,7 @@ describe('shephy', function () {
 
       var moves = S.listPossibleMoves(w);
       expect(moves.length).toEqual(1);
-      expect(moves[0].description).toEqual('Remake Deck then fill Hand');
+      expect(moves[0].description).toEqual('山札を再作成し、手札を補充します。');
       var wd = S.force(moves[0].gameTreePromise).world;
       expect(wd.hand.length).toEqual(5);
       expect(wd.deck.length).toEqual(17);
@@ -521,7 +521,7 @@ describe('shephy', function () {
       var moves = S.listPossibleMoves(w);
       expect(moves.length).toEqual(5);
       for (var i = 0; i < 5; i++) {
-        expect(moves[i].description).toEqual('Play ' + w.hand[i].name);
+        expect(moves[i].description).toEqual(w.hand[i].name + 'を使用しました。');
       }
     });
   });
@@ -551,11 +551,11 @@ describe('shephy', function () {
     }
     describe('All-purpose Sheep', function () {
       it('asks which card in hand to copy', function () {
-        var gt0 = makeGameTreeAfterPlaying('All-purpose Sheep');
+        var gt0 = makeGameTreeAfterPlaying('万能ひつじ');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(w0.hand.length);
         for (var i = 0; i < w0.hand.length; i++)
-          expect(gt0.moves[i].description).toEqual('Copy ' + w0.hand[i].name);
+          expect(gt0.moves[i].description).toEqual(w0.hand[i].name + 'をコピーします。');
 
         var gt1 = S.force(gt0.moves[2].gameTreePromise);
         var w1 = gt1.world;
@@ -563,21 +563,21 @@ describe('shephy', function () {
         expect(gt1.moves.length).not.toBeLessThan(1);
       });
       it('shows a move to do nothing if there is no card in Hand', function () {
-        var gt0 = makeGameTreeAfterPlaying('All-purpose Sheep', {handCount: 1});
+        var gt0 = makeGameTreeAfterPlaying('万能ひつじ', {handCount: 1});
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('No card in hand - nothing happened');
+        expect(gt0.moves[0].description).toEqual('手札にコピー出来るカードが残っていません。何も起こりませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
+        expect(gt1.moves[0].description).toEqual('山札を再作成し、手札を補充します。');
       });
     });
     describe('Be Fruitful', function () {
       it('shows a move for each sheep in Field', function () {
-        var gt0 = makeGameTreeAfterPlaying('Be Fruitful', {
+        var gt0 = makeGameTreeAfterPlaying('産めよ', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -587,13 +587,13 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(5);
-        expect(gt0.moves[0].description).toEqual('Copy 1 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードをコピーしました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Gain a 1 Sheep card');
+        expect(gt1.moves[0].description).toEqual('1 ひつじカードを得ました。');
 
         var gt1d = S.force(gt1.moves[0].gameTreePromise);
         var w1d = gt1d.world;
@@ -602,14 +602,14 @@ describe('shephy', function () {
           field: [1, 3, 30, 30, 100, 1]
         });
         expect(gt1d.moves.length).toEqual(4);
-        expect(gt1d.moves[0].description).toMatch(/Play /);
-        expect(gt0.moves[2].description).toEqual('Copy 30 Sheep card');
+        expect(gt1d.moves[0].description).toMatch(/を使用しました。$/);
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードをコピーしました。');
 
         var gt3 = S.force(gt0.moves[2].gameTreePromise);
         var w3 = gt3.world;
         expect(changedRegionsBetween(w0, w3)).toEqual({});
         expect(gt3.moves.length).toEqual(1);
-        expect(gt3.moves[0].description).toEqual('Gain a 30 Sheep card');
+        expect(gt3.moves[0].description).toEqual('30 ひつじカードを得ました。');
 
         var gt3d = S.force(gt3.moves[0].gameTreePromise);
         var w3d = gt3d.world;
@@ -618,10 +618,10 @@ describe('shephy', function () {
           field: [1, 3, 30, 30, 100, 30]
         });
         expect(gt3d.moves.length).toEqual(4);
-        expect(gt3d.moves[0].description).toMatch(/Play /);
+        expect(gt3d.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows a move for nothing if Field is full', function () {
-        var gt0 = makeGameTreeAfterPlaying('Be Fruitful', {
+        var gt0 = makeGameTreeAfterPlaying('増やせよ', {
           customize: function (w) {
             for (var i = 1; i <= 6; i++)
               S.gainX(w, 1);
@@ -629,18 +629,18 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Nothing happened');
+        expect(gt0.moves[0].description).toEqual('何も起きませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Crowding', function () {
       it('repeats asking which Sheep card to release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Crowding', {
+        var gt0 = makeGameTreeAfterPlaying('過密', {
           customize: function (w) {
             S.gainX(w, 1);
             S.gainX(w, 30);
@@ -650,11 +650,11 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(5);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
-        expect(gt0.moves[4].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[1].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt0.moves[3].description).toEqual('100 ひつじカードを手放しました。');
+        expect(gt0.moves[4].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -663,10 +663,10 @@ describe('shephy', function () {
           field: [1, 30, 100, 100]
         });
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt1.moves[1].description).toEqual('Release 30 Sheep card');
-        expect(gt1.moves[2].description).toEqual('Release 100 Sheep card');
-        expect(gt1.moves[3].description).toEqual('Release 100 Sheep card');
+        expect(gt1.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt1.moves[1].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt1.moves[2].description).toEqual('100 ひつじカードを手放しました。');
+        expect(gt1.moves[3].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt2 = S.force(gt1.moves[0].gameTreePromise);
         var w2 = gt2.world;
@@ -675,9 +675,9 @@ describe('shephy', function () {
           field: [30, 100, 100]
         });
         expect(gt2.moves.length).toEqual(3);
-        expect(gt2.moves[0].description).toEqual('Release 30 Sheep card');
-        expect(gt2.moves[1].description).toEqual('Release 100 Sheep card');
-        expect(gt2.moves[2].description).toEqual('Release 100 Sheep card');
+        expect(gt2.moves[0].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt2.moves[1].description).toEqual('100 ひつじカードを手放しました。');
+        expect(gt2.moves[2].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt3 = S.force(gt2.moves[0].gameTreePromise);
         var w3 = gt3.world;
@@ -686,28 +686,28 @@ describe('shephy', function () {
           field: [100, 100]
         });
         expect(gt3.moves.length).toEqual(4);
-        expect(gt3.moves[0].description).toMatch(/^Play /);
+        expect(gt3.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('does nothing if not so many Sheep cards are in the Field', function () {
-        var gt0 = makeGameTreeAfterPlaying('Crowding', {
+        var gt0 = makeGameTreeAfterPlaying('過密', {
           customize: function (w) {
             S.gainX(w, 100);
           }
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Too few sheep - nothing happened');
+        expect(gt0.moves[0].description).toEqual('ひつじカードがすでに2枚以下のため、何も起きませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/^Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Dominion', function () {
       it('repeats asking choice of sheep then composite them', function () {
-        var gt0 = makeGameTreeAfterPlaying('Dominion', {
+        var gt0 = makeGameTreeAfterPlaying('統率', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 3);
@@ -718,50 +718,50 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(6);
-        expect(gt0.moves[0].description).toEqual('Choose 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Choose 3 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Choose 3 Sheep card');
-        expect(gt0.moves[4].description).toEqual('Choose 3 Sheep card');
-        expect(gt0.moves[5].description).toEqual('Choose 30 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを選びました。');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt0.moves[2].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt0.moves[3].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt0.moves[4].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt0.moves[5].description).toEqual('30 ひつじカードを選びました。');
 
         var gt1 = S.force(gt0.moves[1].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(6);
-        expect(gt1.moves[0].description).toEqual('Choose 1 Sheep card');
-        expect(gt1.moves[1].description).toEqual('Choose 3 Sheep card');
-        expect(gt1.moves[2].description).toEqual('Choose 3 Sheep card');
-        expect(gt1.moves[3].description).toEqual('Choose 3 Sheep card');
-        expect(gt1.moves[4].description).toEqual('Choose 30 Sheep card');
-        expect(gt1.moves[5].description).toEqual('Combine chosen Sheep cards');
+        expect(gt1.moves[0].description).toEqual('1 ひつじカードを選びました。');
+        expect(gt1.moves[1].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt1.moves[2].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt1.moves[3].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt1.moves[4].description).toEqual('30 ひつじカードを選びました。');
+        expect(gt1.moves[5].description).toEqual('選ばれたひつじカードを統率します。');
 
         var gt2 = S.force(gt1.moves[1].gameTreePromise);
         var w2 = gt2.world;
         expect(changedRegionsBetween(w1, w2)).toEqual({});
         expect(gt2.moves.length).toEqual(5);
-        expect(gt2.moves[0].description).toEqual('Choose 1 Sheep card');
-        expect(gt2.moves[1].description).toEqual('Choose 3 Sheep card');
-        expect(gt2.moves[2].description).toEqual('Choose 3 Sheep card');
-        expect(gt2.moves[3].description).toEqual('Choose 30 Sheep card');
-        expect(gt2.moves[4].description).toEqual('Combine chosen Sheep cards');
+        expect(gt2.moves[0].description).toEqual('1 ひつじカードを選びました。');
+        expect(gt2.moves[1].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt2.moves[2].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt2.moves[3].description).toEqual('30 ひつじカードを選びました。');
+        expect(gt2.moves[4].description).toEqual('選ばれたひつじカードを統率します。');
 
         var gt3 = S.force(gt2.moves[1].gameTreePromise);
         var w3 = gt3.world;
         expect(changedRegionsBetween(w2, w3)).toEqual({});
         expect(gt3.moves.length).toEqual(4);
-        expect(gt3.moves[0].description).toEqual('Choose 1 Sheep card');
-        expect(gt3.moves[1].description).toEqual('Choose 3 Sheep card');
-        expect(gt3.moves[2].description).toEqual('Choose 30 Sheep card');
-        expect(gt3.moves[3].description).toEqual('Combine chosen Sheep cards');
+        expect(gt3.moves[0].description).toEqual('1 ひつじカードを選びました。');
+        expect(gt3.moves[1].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt3.moves[2].description).toEqual('30 ひつじカードを選びました。');
+        expect(gt3.moves[3].description).toEqual('選ばれたひつじカードを統率します。');
 
         var gt4 = S.force(gt3.moves[1].gameTreePromise);
         var w4 = gt4.world;
         expect(changedRegionsBetween(w3, w4)).toEqual({});
         expect(gt4.moves.length).toEqual(3);
-        expect(gt4.moves[0].description).toEqual('Choose 1 Sheep card');
-        expect(gt4.moves[1].description).toEqual('Choose 30 Sheep card');
-        expect(gt4.moves[2].description).toEqual('Combine chosen Sheep cards');
+        expect(gt4.moves[0].description).toEqual('1 ひつじカードを選びました。');
+        expect(gt4.moves[1].description).toEqual('30 ひつじカードを選びました。');
+        expect(gt4.moves[2].description).toEqual('選ばれたひつじカードを統率します。');
 
         var gt5 = S.force(gt4.moves[2].gameTreePromise);
         var w5 = gt5.world;
@@ -771,12 +771,12 @@ describe('shephy', function () {
           field: [1, 30, 10]
         });
         expect(gt5.moves.length).toEqual(4);
-        expect(gt5.moves[0].description).toMatch(/^Play /);
+        expect(gt5.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Falling Rock', function () {
       it('asks which Sheep card to release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Falling Rock', {
+        var gt0 = makeGameTreeAfterPlaying('落石', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -785,10 +785,10 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(4);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 3 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを手放しました。');
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt0.moves[3].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt1a = S.force(gt0.moves[0].gameTreePromise);
         var w1a = gt1a.world;
@@ -797,7 +797,7 @@ describe('shephy', function () {
           field: [3, 30, 100]
         });
         expect(gt1a.moves.length).toEqual(4);
-        expect(gt1a.moves[0].description).toMatch(/^Play /);
+        expect(gt1a.moves[0].description).toMatch(/を使用しました。$/);
 
         var gt1b = S.force(gt0.moves[2].gameTreePromise);
         var w1b = gt1b.world;
@@ -806,16 +806,16 @@ describe('shephy', function () {
           field: [1, 3, 100]
         });
         expect(gt1b.moves.length).toEqual(4);
-        expect(gt1b.moves[0].description).toMatch(/^Play /);
+        expect(gt1b.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Fill the Earth', function () {
       it('shows two moves - gain or not', function () {
-        var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
+        var gt0 = makeGameTreeAfterPlaying('地に満ちよ');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(2);
-        expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Cancel');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを得ました。');
+        expect(gt0.moves[1].description).toEqual('キャンセルしました。');
 
         var gt1g = S.force(gt0.moves[0].gameTreePromise);
         var w1g = gt1g.world;
@@ -824,21 +824,21 @@ describe('shephy', function () {
           field: [1, 1]
         });
         expect(gt1g.moves.length).toEqual(2);
-        expect(gt1g.moves[0].description).toEqual('Gain a 1 Sheep card');
-        expect(gt1g.moves[1].description).toEqual('Cancel');
+        expect(gt1g.moves[0].description).toEqual('1 ひつじカードを得ました。');
+        expect(gt1g.moves[1].description).toEqual('キャンセルしました。');
 
         var gt1c = S.force(gt0.moves[1].gameTreePromise);
         var w1c = gt1c.world;
         expect(changedRegionsBetween(w0, w1c)).toEqual({});
         expect(gt1c.moves.length).toEqual(4);
-        expect(gt1c.moves[0].description).toMatch(/Play /);
+        expect(gt1c.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('repeats the same two moves until user cancels', function () {
-        var gt0 = makeGameTreeAfterPlaying('Fill the Earth');
+        var gt0 = makeGameTreeAfterPlaying('地に満ちよ');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(2);
-        expect(gt0.moves[0].description).toEqual('Gain a 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Cancel');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを得ました。');
+        expect(gt0.moves[1].description).toEqual('キャンセルしました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -847,8 +847,8 @@ describe('shephy', function () {
           field: [1, 1]
         });
         expect(gt1.moves.length).toEqual(2);
-        expect(gt1.moves[0].description).toEqual('Gain a 1 Sheep card');
-        expect(gt1.moves[1].description).toEqual('Cancel');
+        expect(gt1.moves[0].description).toEqual('1 ひつじカードを得ました。');
+        expect(gt1.moves[1].description).toEqual('キャンセルしました。');
 
         var gt2 = S.force(gt1.moves[0].gameTreePromise);
         var w2 = gt2.world;
@@ -857,23 +857,23 @@ describe('shephy', function () {
           field: [1, 1, 1]
         });
         expect(gt2.moves.length).toEqual(2);
-        expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
-        expect(gt2.moves[1].description).toEqual('Cancel');
+        expect(gt2.moves[0].description).toEqual('1 ひつじカードを得ました。');
+        expect(gt2.moves[1].description).toEqual('キャンセルしました。');
       });
       it('shows only "cancel" if there is no space in Field', function () {
-        var gt = makeGameTreeAfterPlaying('Fill the Earth', {
+        var gt = makeGameTreeAfterPlaying('地に満ちよ', {
           customize: function (w) {
             for (var i = 0; i < 6; i++)
               S.gainX(w, 3);
           }
         });
         expect(gt.moves.length).toEqual(1);
-        expect(gt.moves[0].description).toEqual('Cancel');
+        expect(gt.moves[0].description).toEqual('キャンセルしました。');
       });
     });
     describe('Flourish', function () {
       it('shows a move for each sheep in Field to gain 3 cards', function () {
-        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+        var gt0 = makeGameTreeAfterPlaying('繁栄', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -882,13 +882,13 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(4);
-        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを選びました。');
 
         var gt2 = S.force(gt0.moves[1].gameTreePromise);
         var w2 = gt2.world;
         expect(changedRegionsBetween(w0, w2)).toEqual({});
         expect(gt2.moves.length).toEqual(1);
-        expect(gt2.moves[0].description).toEqual('Gain 3 cards of 1 Sheep');
+        expect(gt2.moves[0].description).toEqual('1 ひつじカードを3枚得ました。');
 
         var gt2d = S.force(gt2.moves[0].gameTreePromise);
         var w2d = gt2d.world;
@@ -897,10 +897,10 @@ describe('shephy', function () {
           field: [1, 3, 30, 100, 1, 1, 1]
         });
         expect(gt2d.moves.length).toEqual(4);
-        expect(gt2d.moves[0].description).toMatch(/Play /);
+        expect(gt2d.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows a move to gain 2 cards if Field is nearly full', function () {
-        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+        var gt0 = makeGameTreeAfterPlaying('繁栄', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -910,13 +910,13 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(5);
-        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを選びました。');
 
         var gt2 = S.force(gt0.moves[1].gameTreePromise);
         var w2 = gt2.world;
         expect(changedRegionsBetween(w0, w2)).toEqual({});
         expect(gt2.moves.length).toEqual(1);
-        expect(gt2.moves[0].description).toEqual('Gain 2 cards of 1 Sheep');
+        expect(gt2.moves[0].description).toEqual('1 ひつじカードを2枚得ました。');
 
         var gt2d = S.force(gt2.moves[0].gameTreePromise);
         var w2d = gt2d.world;
@@ -925,10 +925,10 @@ describe('shephy', function () {
           field: [1, 3, 30, 100, 100, 1, 1]
         });
         expect(gt2d.moves.length).toEqual(4);
-        expect(gt2d.moves[0].description).toMatch(/Play /);
+        expect(gt2d.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows a move to gain 1 cards if Field is nearly full', function () {
-        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+        var gt0 = makeGameTreeAfterPlaying('繁栄', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -939,13 +939,13 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(6);
-        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを選びました。');
 
         var gt2 = S.force(gt0.moves[1].gameTreePromise);
         var w2 = gt2.world;
         expect(changedRegionsBetween(w0, w2)).toEqual({});
         expect(gt2.moves.length).toEqual(1);
-        expect(gt2.moves[0].description).toEqual('Gain a 1 Sheep card');
+        expect(gt2.moves[0].description).toEqual('1 ひつじカードを得ました。');
 
         var gt2d = S.force(gt2.moves[0].gameTreePromise);
         var w2d = gt2d.world;
@@ -954,10 +954,10 @@ describe('shephy', function () {
           field: [1, 3, 30, 100, 100, 100, 1]
         });
         expect(gt2d.moves.length).toEqual(4);
-        expect(gt2d.moves[0].description).toMatch(/Play /);
+        expect(gt2d.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows a move for nothing if Field is full', function () {
-        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+        var gt0 = makeGameTreeAfterPlaying('繁栄', {
           customize: function (w) {
             for (var i = 1; i <= 6; i++)
               S.gainX(w, 1);
@@ -965,16 +965,16 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Nothing happened');
+        expect(gt0.moves[0].description).toEqual('何も起きませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows a move for nothing if 1 Sheep is chosen', function () {
-        var gt0 = makeGameTreeAfterPlaying('Flourish', {
+        var gt0 = makeGameTreeAfterPlaying('繁栄', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -983,24 +983,24 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(4);
-        expect(gt0.moves[0].description).toEqual('Choose 1 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを選びました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Gain nothing');
+        expect(gt1.moves[0].description).toEqual('何も得られませんでした。');
 
         var gt1d = S.force(gt1.moves[0].gameTreePromise);
         var w1d = gt1d.world;
         expect(changedRegionsBetween(w1, w1d)).toEqual({});
         expect(gt1d.moves.length).toEqual(4);
-        expect(gt1d.moves[0].description).toMatch(/Play /);
+        expect(gt1d.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Golden Hooves', function () {
       it('repeats asking choice of sheep', function () {
-        var gt0 = makeGameTreeAfterPlaying('Golden Hooves', {
+        var gt0 = makeGameTreeAfterPlaying('黄金の蹄', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -1009,31 +1009,31 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(4);
-        expect(gt0.moves[0].description).toEqual('Choose 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Choose 3 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Choose 30 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Cancel');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを選びました。');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードを選びました。');
+        expect(gt0.moves[3].description).toEqual('キャンセルしました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(3);
-        expect(gt1.moves[0].description).toEqual('Choose 3 Sheep card');
-        expect(gt1.moves[1].description).toEqual('Choose 30 Sheep card');
-        expect(gt1.moves[2].description).toEqual('Raise ranks of chosen Sheep cards');
+        expect(gt1.moves[0].description).toEqual('3 ひつじカードを選びました。');
+        expect(gt1.moves[1].description).toEqual('30 ひつじカードを選びました。');
+        expect(gt1.moves[2].description).toEqual('選ばれたひつじカードが1ランクアップしました。');
 
         var gt2 = S.force(gt1.moves[0].gameTreePromise);
         var w2 = gt2.world;
         expect(changedRegionsBetween(w1, w2)).toEqual({});
         expect(gt2.moves.length).toEqual(2);
-        expect(gt2.moves[0].description).toEqual('Choose 30 Sheep card');
-        expect(gt2.moves[1].description).toEqual('Raise ranks of chosen Sheep cards');
+        expect(gt2.moves[0].description).toEqual('30 ひつじカードを選びました。');
+        expect(gt2.moves[1].description).toEqual('選ばれたひつじカードが1ランクアップしました。');
 
         var gt3 = S.force(gt2.moves[0].gameTreePromise);
         var w3 = gt3.world;
         expect(changedRegionsBetween(w2, w3)).toEqual({});
         expect(gt3.moves.length).toEqual(1);
-        expect(gt3.moves[0].description).toEqual('Raise ranks of chosen Sheep cards');
+        expect(gt3.moves[0].description).toEqual('選ばれたひつじカードが1ランクアップしました。');
 
         var gt2d = S.force(gt2.moves[1].gameTreePromise);
         var w2d = gt2d.world;
@@ -1043,10 +1043,10 @@ describe('shephy', function () {
           field: [30, 100, 10, 3]
         });
         expect(gt2d.moves.length).toEqual(4);
-        expect(gt2d.moves[0].description).toMatch(/Play /);
+        expect(gt2d.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('does nothing if Field if full', function () {
-        var gt0 = makeGameTreeAfterPlaying('Golden Hooves', {
+        var gt0 = makeGameTreeAfterPlaying('黄金の蹄', {
           customize: function (w) {
             for (var i = 1; i <= 6; i++)
               S.gainX(w, 1);
@@ -1054,22 +1054,22 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Cancel');
+        expect(gt0.moves[0].description).toEqual('キャンセルしました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Inspiration', function () {
       it('asks which card in deck to put it into hand', function () {
-        var gt0 = makeGameTreeAfterPlaying('Inspiration', {keepDeck: true});
+        var gt0 = makeGameTreeAfterPlaying('霊感', {keepDeck: true});
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(w0.deck.length);
         for (var i = 0; i < w0.deck.length; i++)
-          expect(gt0.moves[i].description).toEqual('Put ' + w0.deck[i].name + ' into your hand');
+          expect(gt0.moves[i].description).toEqual(w0.deck[i].name + ' カードを手札に得ました。');
 
         function cardToName(c) {
           return c.name;
@@ -1084,7 +1084,7 @@ describe('shephy', function () {
           deck: w1deck
         });
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Shuffle the deck');
+        expect(gt1.moves[0].description).toEqual('山札をシャッフルしました。');
 
         var gt2 = S.force(gt1.moves[0].gameTreePromise);
         var w2 = gt2.world;
@@ -1093,24 +1093,24 @@ describe('shephy', function () {
         });
         expect(w2.deck.map(cardToName).sort()).toEqual(w1.deck.map(cardToName).sort())
         expect(gt2.moves.length).toEqual(5);
-        expect(gt2.moves[0].description).toMatch(/Play /);
+        expect(gt2.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('does nothing if deck is empty', function () {
-        var gt0 = makeGameTreeAfterPlaying('Inspiration');
+        var gt0 = makeGameTreeAfterPlaying('霊感');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('No card in deck - nothing happened');
+        expect(gt0.moves[0].description).toEqual('山札には何もありませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Lightning', function () {
       it('asks Sheep cards with the highest rank to release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Lightning', {
+        var gt0 = makeGameTreeAfterPlaying('落雷', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -1120,8 +1120,8 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(2);
-        expect(gt0.moves[0].description).toEqual('Release 100 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[0].description).toEqual('100 ひつじカードを手放しました。');
+        expect(gt0.moves[1].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1130,12 +1130,12 @@ describe('shephy', function () {
           field: [1, 3, 30, 100]
         });
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/^Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Meteor', function () {
       it('asks three Sheep cards to release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Meteor', {
+        var gt0 = makeGameTreeAfterPlaying('メテオ', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -1145,10 +1145,10 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(4);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 3 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを手放しました。');
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt0.moves[3].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1156,12 +1156,12 @@ describe('shephy', function () {
           sheepStock1: 7,
           field: [3, 30, 100],
           discardPile: [],
-          exile: ['Meteor']
+          exile: ['メテオ']
         });
         expect(gt1.moves.length).toEqual(3);
-        expect(gt1.moves[0].description).toEqual('Release 3 Sheep card');
-        expect(gt1.moves[1].description).toEqual('Release 30 Sheep card');
-        expect(gt1.moves[2].description).toEqual('Release 100 Sheep card');
+        expect(gt1.moves[0].description).toEqual('3 ひつじカードを手放しました。');
+        expect(gt1.moves[1].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt1.moves[2].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt2 = S.force(gt1.moves[2].gameTreePromise);
         var w2 = gt2.world;
@@ -1170,8 +1170,8 @@ describe('shephy', function () {
           field: [3, 30]
         });
         expect(gt2.moves.length).toEqual(2);
-        expect(gt2.moves[0].description).toEqual('Release 3 Sheep card');
-        expect(gt2.moves[1].description).toEqual('Release 30 Sheep card');
+        expect(gt2.moves[0].description).toEqual('3 ひつじカードを手放しました。');
+        expect(gt2.moves[1].description).toEqual('30 ひつじカードを手放しました。');
 
         var gt3 = S.force(gt2.moves[0].gameTreePromise);
         var w3 = gt3.world;
@@ -1180,13 +1180,13 @@ describe('shephy', function () {
           field: [30]
         });
         expect(gt3.moves.length).toEqual(1);
-        expect(gt3.moves[0].description).toEqual('Draw a card');
+        expect(gt3.moves[0].description).toEqual('手札を1枚補充しました。');
       });
       it('stops asking if no Sheep card is in the Field', function () {
-        var gt0 = makeGameTreeAfterPlaying('Meteor', {keepDeck: true});
+        var gt0 = makeGameTreeAfterPlaying('メテオ', {keepDeck: true});
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1194,16 +1194,16 @@ describe('shephy', function () {
           sheepStock1: 7,
           field: [],
           discardPile: [],
-          exile: ['Meteor']
+          exile: ['メテオ']
         });
         expect(gt1.moves.length).toEqual(0);
       });
     });
     describe('Multiply', function () {
       it('puts a 3 Sheep card into Field', function () {
-        var gt0 = makeGameTreeAfterPlaying('Multiply');
+        var gt0 = makeGameTreeAfterPlaying('増やせよ');
         var w0 = gt0.world;
-        expect(gt0.moves[0].description).toEqual('Gain a 3 Sheep card');
+        expect(gt0.moves[0].description).toEqual('3 ひつじカードを得ました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1213,14 +1213,14 @@ describe('shephy', function () {
         });
       });
       it('does nothing if there is no space in Field', function () {
-        var gt0 = makeGameTreeAfterPlaying('Multiply', {
+        var gt0 = makeGameTreeAfterPlaying('産めよ', {
           customize: function (w) {
             for (var i = 0; i < 6; i++)
               S.gainX(w, 1);
           }
         });
         var w0 = gt0.world;
-        expect(gt0.moves[0].description).toEqual('Nothing happened');
+        expect(gt0.moves[0].description).toEqual('何も起きませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1229,7 +1229,7 @@ describe('shephy', function () {
     });
     describe('Plague', function () {
       it('asks a representative Sheep card release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Plague', {
+        var gt0 = makeGameTreeAfterPlaying('疫病', {
           customize: function (w) {
             S.gainX(w, 1);
             S.gainX(w, 30);
@@ -1239,11 +1239,11 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(5);
-        expect(gt0.moves[0].description).toEqual('Release all 1 Sheep cards');
-        expect(gt0.moves[1].description).toEqual('Release all 1 Sheep cards');
-        expect(gt0.moves[2].description).toEqual('Release all 30 Sheep cards');
-        expect(gt0.moves[3].description).toEqual('Release all 100 Sheep cards');
-        expect(gt0.moves[4].description).toEqual('Release all 100 Sheep cards');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードすべてを手放しました。');
+        expect(gt0.moves[1].description).toEqual('1 ひつじカードすべてを手放しました。');
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードすべてを手放しました。');
+        expect(gt0.moves[3].description).toEqual('100 ひつじカードすべてを手放しました。');
+        expect(gt0.moves[4].description).toEqual('100 ひつじカードすべてを手放しました。');
 
         var gt1a = S.force(gt0.moves[0].gameTreePromise);
         var w1a = gt1a.world;
@@ -1252,7 +1252,7 @@ describe('shephy', function () {
           field: [30, 100, 100]
         });
         expect(gt1a.moves.length).toEqual(4);
-        expect(gt1a.moves[0].description).toMatch(/^Play /);
+        expect(gt1a.moves[0].description).toMatch(/を使用しました。$/);
 
         var gt1b = S.force(gt0.moves[1].gameTreePromise);
         var w1b = gt1b.world;
@@ -1261,7 +1261,7 @@ describe('shephy', function () {
           field: [30, 100, 100]
         });
         expect(gt1b.moves.length).toEqual(4);
-        expect(gt1b.moves[0].description).toMatch(/^Play /);
+        expect(gt1b.moves[0].description).toMatch(/を使用しました。$/);
 
         var gt1c = S.force(gt0.moves[2].gameTreePromise);
         var w1c = gt1c.world;
@@ -1270,7 +1270,7 @@ describe('shephy', function () {
           field: [1, 1, 100, 100]
         });
         expect(gt1c.moves.length).toEqual(4);
-        expect(gt1c.moves[0].description).toMatch(/^Play /);
+        expect(gt1c.moves[0].description).toMatch(/を使用しました。$/);
 
         var gt1d = S.force(gt0.moves[3].gameTreePromise);
         var w1d = gt1d.world;
@@ -1279,7 +1279,7 @@ describe('shephy', function () {
           field: [1, 1, 30]
         });
         expect(gt1d.moves.length).toEqual(4);
-        expect(gt1d.moves[0].description).toMatch(/^Play /);
+        expect(gt1d.moves[0].description).toMatch(/を使用しました。$/);
 
         var gt1e = S.force(gt0.moves[4].gameTreePromise);
         var w1e = gt1e.world;
@@ -1288,16 +1288,16 @@ describe('shephy', function () {
           field: [1, 1, 30]
         });
         expect(gt1e.moves.length).toEqual(4);
-        expect(gt1e.moves[0].description).toMatch(/^Play /);
+        expect(gt1e.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Planning Sheep', function () {
       it('shows moves to exile a card', function () {
-        var gt0 = makeGameTreeAfterPlaying('Planning Sheep');
+        var gt0 = makeGameTreeAfterPlaying('対策ひつじ');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(w0.hand.length);
         for (var i = 0; i < w0.hand.length; i++)
-          expect(gt0.moves[i].description).toEqual('Exile ' + w0.hand[i].name);
+          expect(gt0.moves[i].description).toEqual(w0.hand[i].name + ' カードを追放しました。');
 
         var gt1 = S.force(gt0.moves[2].gameTreePromise);
         var w1 = gt1.world;
@@ -1306,28 +1306,28 @@ describe('shephy', function () {
           hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
         });
         expect(gt1.moves.length).toEqual(3);  // 5 - (Planning Sheep + exiled)
-        expect(gt1.moves[0].description).toMatch(/Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows a move to do nothing if there is no card in Hand', function () {
-        var gt0 = makeGameTreeAfterPlaying('Planning Sheep', {handCount: 1});
+        var gt0 = makeGameTreeAfterPlaying('対策ひつじ', {handCount: 1});
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('No card to exile - nothing happened');
+        expect(gt0.moves[0].description).toEqual('追放するカードがありません。何も起きませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
+        expect(gt1.moves[0].description).toEqual('山札を再作成し、手札を補充します。');
       });
     });
     describe('Sheep Dog', function () {
       it('shows moves to discard a card', function () {
-        var gt0 = makeGameTreeAfterPlaying('Sheep Dog');
+        var gt0 = makeGameTreeAfterPlaying('牧羊犬');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(w0.hand.length);
         for (var i = 0; i < w0.hand.length; i++)
-          expect(gt0.moves[i].description).toEqual('Discard ' + w0.hand[i].name);
+          expect(gt0.moves[i].description).toEqual(w0.hand[i].name + ' カードを捨てました。');
 
         var gt1 = S.force(gt0.moves[2].gameTreePromise);
         var w1 = gt1.world;
@@ -1337,24 +1337,24 @@ describe('shephy', function () {
           hand: [w0.hand[0].name, w0.hand[1].name, w0.hand[3].name]
         });
         expect(gt1.moves.length).toEqual(3);  // 5 - (Sheep Dog + discarded)
-        expect(gt1.moves[0].description).toMatch(/Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows a move to do nothing if there is no card in Hand', function () {
-        var gt0 = makeGameTreeAfterPlaying('Sheep Dog', {handCount: 1});
+        var gt0 = makeGameTreeAfterPlaying('牧羊犬', {handCount: 1});
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('No card to discard - nothing happened');
+        expect(gt0.moves[0].description).toEqual('捨てるカードがありません。何も起きませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(1);
-        expect(gt1.moves[0].description).toEqual('Remake Deck then fill Hand');
+        expect(gt1.moves[0].description).toEqual('山札を再作成し、手札を補充します。');
       });
     });
     describe('Shephion', function () {
       it('shows a move to release all Sheep cards', function () {
-        var gt0 = makeGameTreeAfterPlaying('Shephion', {
+        var gt0 = makeGameTreeAfterPlaying('シェフィオン', {
           customize: function (w) {
             S.gainX(w, 1);
             S.gainX(w, 30);
@@ -1364,7 +1364,7 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Release all Sheep cards');
+        expect(gt0.moves[0].description).toEqual('すべてのひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1379,7 +1379,7 @@ describe('shephy', function () {
     });
     describe('Slump', function () {
       it('repeats asking which Sheep card to release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Slump', {
+        var gt0 = makeGameTreeAfterPlaying('暴落', {
           customize: function (w) {
             S.gainX(w, 1);
             S.gainX(w, 30);
@@ -1389,11 +1389,11 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(5);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
-        expect(gt0.moves[4].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[1].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt0.moves[3].description).toEqual('100 ひつじカードを手放しました。');
+        expect(gt0.moves[4].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1402,10 +1402,10 @@ describe('shephy', function () {
           field: [1, 30, 100, 100]
         });
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt1.moves[1].description).toEqual('Release 30 Sheep card');
-        expect(gt1.moves[2].description).toEqual('Release 100 Sheep card');
-        expect(gt1.moves[3].description).toEqual('Release 100 Sheep card');
+        expect(gt1.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt1.moves[1].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt1.moves[2].description).toEqual('100 ひつじカードを手放しました。');
+        expect(gt1.moves[3].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt2 = S.force(gt1.moves[0].gameTreePromise);
         var w2 = gt2.world;
@@ -1414,24 +1414,24 @@ describe('shephy', function () {
           field: [30, 100, 100]
         });
         expect(gt2.moves.length).toEqual(4);
-        expect(gt2.moves[0].description).toMatch(/^Play /);
+        expect(gt2.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('does nothing if there is only one Sheep card in the Field', function () {
-        var gt0 = makeGameTreeAfterPlaying('Slump');
+        var gt0 = makeGameTreeAfterPlaying('暴落');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('No sheep to release - nothing happened');
+        expect(gt0.moves[0].description).toEqual('手放すひつじカードがありません。何も起きませんでした。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
         expect(changedRegionsBetween(w0, w1)).toEqual({});
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/^Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
     describe('Storm', function () {
       it('asks two Sheep cards to release', function () {
-        var gt0 = makeGameTreeAfterPlaying('Storm', {
+        var gt0 = makeGameTreeAfterPlaying('嵐', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -1440,10 +1440,10 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(4);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 3 Sheep card');
-        expect(gt0.moves[2].description).toEqual('Release 30 Sheep card');
-        expect(gt0.moves[3].description).toEqual('Release 100 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[1].description).toEqual('3 ひつじカードを手放しました。');
+        expect(gt0.moves[2].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt0.moves[3].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1452,9 +1452,9 @@ describe('shephy', function () {
           field: [3, 30, 100]
         });
         expect(gt1.moves.length).toEqual(3);
-        expect(gt1.moves[0].description).toEqual('Release 3 Sheep card');
-        expect(gt1.moves[1].description).toEqual('Release 30 Sheep card');
-        expect(gt1.moves[2].description).toEqual('Release 100 Sheep card');
+        expect(gt1.moves[0].description).toEqual('3 ひつじカードを手放しました。');
+        expect(gt1.moves[1].description).toEqual('30 ひつじカードを手放しました。');
+        expect(gt1.moves[2].description).toEqual('100 ひつじカードを手放しました。');
 
         var gt2 = S.force(gt1.moves[2].gameTreePromise);
         var w2 = gt2.world;
@@ -1463,13 +1463,13 @@ describe('shephy', function () {
           field: [3, 30]
         });
         expect(gt2.moves.length).toEqual(4);
-        expect(gt2.moves[0].description).toMatch(/^Play /);
+        expect(gt2.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('asks one Sheep card to release if it is only one in the Field', function () {
-        var gt0 = makeGameTreeAfterPlaying('Storm');
+        var gt0 = makeGameTreeAfterPlaying('嵐');
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(1);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1482,7 +1482,7 @@ describe('shephy', function () {
     });
     describe('Wolves', function () {
       it('asks Sheep cards with the highest rank to reduce', function () {
-        var gt0 = makeGameTreeAfterPlaying('Wolves', {
+        var gt0 = makeGameTreeAfterPlaying('狼', {
           customize: function (w) {
             S.gainX(w, 3);
             S.gainX(w, 30);
@@ -1492,8 +1492,8 @@ describe('shephy', function () {
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(2);
-        expect(gt0.moves[0].description).toEqual('Reduce the rank of 100 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Reduce the rank of 100 Sheep card');
+        expect(gt0.moves[0].description).toEqual('100 ひつじカードがランクダウンしました。');
+        expect(gt0.moves[1].description).toEqual('100 ひつじカードがランクダウンしました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1503,18 +1503,18 @@ describe('shephy', function () {
           field: [1, 3, 30, 100, 30]
         });
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/^Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
       it('shows moves to release a Sheep if the highest rank is 1', function () {
-        var gt0 = makeGameTreeAfterPlaying('Wolves', {
+        var gt0 = makeGameTreeAfterPlaying('狼', {
           customize: function (w) {
             S.gainX(w, 1);
           }
         });
         var w0 = gt0.world;
         expect(gt0.moves.length).toEqual(2);
-        expect(gt0.moves[0].description).toEqual('Release 1 Sheep card');
-        expect(gt0.moves[1].description).toEqual('Release 1 Sheep card');
+        expect(gt0.moves[0].description).toEqual('1 ひつじカードを手放しました。');
+        expect(gt0.moves[1].description).toEqual('1 ひつじカードを手放しました。');
 
         var gt1 = S.force(gt0.moves[0].gameTreePromise);
         var w1 = gt1.world;
@@ -1523,7 +1523,7 @@ describe('shephy', function () {
           field: [1]
         });
         expect(gt1.moves.length).toEqual(4);
-        expect(gt1.moves[0].description).toMatch(/^Play /);
+        expect(gt1.moves[0].description).toMatch(/を使用しました。$/);
       });
     });
   });
